@@ -1,0 +1,19 @@
+.viewport {
+  position: relative;
+  flex: 1 0 0;
+  width: 1px;
+  height: 321px;
+  overflow: hidden;
+}
+
+.item {
+  will-change: transform, opacity;
+}
+
+@media (max-width: 809.98px) {
+  .viewport {
+    flex: none;
+    width: 100%;
+    height: 170px;
+  }
+}

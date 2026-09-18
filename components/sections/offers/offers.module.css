@@ -1,0 +1,475 @@
+/* "Les offres": two offer cards under a centred, marker-underlined title.
+   The section background is the colour the hero's wave divider is filled
+   with (globals.css --color-surface-offers), so the hand-off has no seam;
+   a faint dot grid textures it. Pale cards keep the mockups prominent. */
+.section {
+  --offers-ink: #10251c;
+  --offers-lime: #c8f53e;
+  --offers-note: #6d8059;
+  --offers-card: #f5f8e7;
+  --offers-card-border: #e5ebd3;
+  --offers-plate: #c8e681;
+  --offers-title-size: 72px;
+  position: relative;
+  width: 100%;
+  padding: 96px 24px 140px;
+  background-color: var(--color-surface-offers, #fffcee);
+  background-image: radial-gradient(circle, rgb(145 157 86 / 0.26) 1.1px, transparent 1.7px);
+  background-size: 24px 24px;
+  background-position: 12px 12px;
+  color: var(--offers-ink);
+  font-family: "Outfit", sans-serif;
+}
+
+.inner {
+  display: grid;
+  gap: 40px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* ---- Section header ---- */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* Line + label + line eyebrow, in the olive the reference uses. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  color: var(--color-primary-dark, #8aa61f);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.eyebrowLine {
+  display: block;
+  width: 46px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* Title: two inline AnimatedHeading halves laid out as one line (wrapping
+   between the halves on narrow screens), in the hero's Morna Bold. The
+   container carries the same font so the gap between halves scales with it. */
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  column-gap: 0.26em;
+  margin: 0;
+  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-size: var(--offers-title-size);
+  line-height: 1;
+}
+
+.titlePart {
+  /* unframer's base stylesheet sets [data-framer-component-type]
+     { position: absolute } on RichText's wrapper; same fix as the hero's
+     .titleWrapper, but inline here so the two halves sit side by side. */
+  position: relative !important;
+  display: inline-block;
+  width: auto;
+}
+
+.titleText {
+  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
+  --framer-font-size: var(--offers-title-size);
+  --framer-font-style: normal;
+  --framer-font-weight: 700;
+  --framer-letter-spacing: -0.01em;
+  --framer-line-height: 100%;
+  --framer-text-color: var(--offers-ink);
+  display: inline-block;
+  font-family: var(--framer-font-family);
+  font-size: var(--framer-font-size);
+  font-style: var(--framer-font-style);
+  font-weight: var(--framer-font-weight);
+  letter-spacing: var(--framer-letter-spacing);
+  line-height: var(--framer-line-height);
+  color: var(--framer-text-color);
+  white-space: nowrap;
+}
+
+/* The underlined run ("prend forme."). */
+.titleMark {
+  position: relative;
+  display: inline-block;
+}
+
+.titleStroke {
+  position: absolute;
+  left: -2%;
+  bottom: -0.12em;
+  width: 104%;
+  height: 0.26em;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.titleStroke path {
+  fill: none;
+  stroke: var(--offers-lime);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+/* ---- Cards ---- */
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 40px;
+  padding: 76px 44px 96px;
+  border: 1px solid var(--offers-card-border);
+  border-radius: 24px;
+  background: var(--offers-card);
+}
+
+.card[data-figure="left"] {
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.88fr);
+}
+
+.card[data-figure="left"] .copy {
+  order: 2;
+}
+
+.card[data-figure="left"] .figure {
+  order: 1;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  min-width: 0;
+}
+
+/* `< Site vitrine >`: the brand's chevron brackets around a monospace label. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.tagBracket {
+  display: block;
+  flex: none;
+  width: 16px;
+  height: 22px;
+}
+
+.offerHeading {
+  display: grid;
+  gap: 12px;
+}
+
+.cardTitle {
+  margin: 0;
+  white-space: pre-line;
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+}
+
+.lead {
+  margin: 0;
+  max-width: 35ch;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #627467;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.015em;
+}
+
+.features li {
+  white-space: nowrap;
+}
+
+.features li + li::before {
+  content: "·";
+  margin-right: 14px;
+}
+
+/* Same forest pill as the hero CTA (hero.module.css .ctaButton), kept local
+   so the section stays self-contained; lime arrow like the hero's. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  padding: 17px 32px;
+  border-radius: 999px;
+  background-color: var(--offers-ink);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+  outline-offset: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background-color: #1f4433;
+}
+
+.cta:focus-visible {
+  outline: 2px solid #ffffff;
+}
+
+.ctaArrow {
+  flex: none;
+  color: var(--offers-lime);
+  transition: transform 0.3s ease;
+}
+
+.ctaArrowDiagonal {
+  transform: rotate(-45deg);
+}
+
+.cta:hover .ctaArrow,
+.cta:focus-visible .ctaArrow {
+  transform: translateX(3px);
+}
+
+.cta:hover .ctaArrowDiagonal,
+.cta:focus-visible .ctaArrowDiagonal {
+  transform: rotate(-45deg) translateX(3px);
+}
+
+/* The source PNGs include transparent margins. Size the figure around the
+   visible device so scaling and annotation anchors follow the actual mockup. */
+.figure {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  aspect-ratio: var(--figure-ratio);
+}
+
+.plate,
+.shot {
+  position: absolute;
+  width: var(--image-width);
+  height: var(--image-height);
+  left: var(--image-left);
+  top: var(--image-top);
+}
+
+.plate {
+  z-index: 0;
+  background: var(--offers-plate);
+  opacity: 0.35;
+  -webkit-mask: var(--plate-mask) center / 100% 100% no-repeat;
+  mask: var(--plate-mask) center / 100% 100% no-repeat;
+  transform: translate(12px, 10px);
+  pointer-events: none;
+}
+
+.figure[data-shift="left"] .plate {
+  opacity: 0.26;
+  transform: translate(-8px, 8px);
+}
+
+.shot {
+  z-index: 1;
+  display: block;
+  max-width: none;
+}
+
+/* Annotations are attached to the visible figure. Only the writing rotates;
+   arrow endpoints stay aligned with the devices as the card scales. */
+.note {
+  position: absolute;
+  z-index: 2;
+  font-family: "Caveat", "Outfit", cursive;
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1.05;
+  text-align: center;
+  color: var(--offers-note);
+  pointer-events: none;
+}
+
+.noteText {
+  display: block;
+  transform: rotate(-3deg);
+}
+
+.noteArrow {
+  position: absolute;
+  overflow: visible;
+  color: var(--offers-note);
+}
+
+.noteTopRight {
+  top: -66px;
+  right: 0;
+  width: 260px;
+}
+
+.noteTopRight .noteArrow {
+  top: 0;
+  right: calc(100% + 8px);
+  width: 90px;
+  height: 90px;
+}
+
+.noteBottomLeft {
+  bottom: -64px;
+  left: -370px;
+  width: 240px;
+}
+
+.noteBottomLeft .noteArrow {
+  bottom: 14px;
+  left: calc(100% + 10px);
+  width: 160px;
+  height: 96px;
+}
+
+.noteBottomCenter {
+  bottom: -72px;
+  left: 38%;
+  width: 270px;
+}
+
+.noteBottomCenter .noteArrow {
+  top: -22px;
+  right: calc(100% + 6px);
+  width: 110px;
+  height: 48px;
+}
+
+.noteBottomRight {
+  bottom: -72px;
+  left: calc(100% + 90px);
+  width: 220px;
+}
+
+.noteBottomRight .noteArrow {
+  bottom: 22px;
+  right: calc(100% + 6px);
+  width: 160px;
+  height: 60px;
+}
+
+/* ---- Tablet ---- */
+@media (max-width: 1199.98px) {
+  .section {
+    --offers-title-size: 58px;
+  }
+
+  .card {
+    gap: 36px;
+    padding: 44px;
+  }
+
+  .offerHeading {
+  display: grid;
+  gap: 12px;
+}
+
+.cardTitle {
+    font-size: 36px;
+  }
+
+  .lead {
+    font-size: 19px;
+  }
+
+  /* The notes need the desktop card's spare room around the illustration. */
+  .note {
+    display: none;
+  }
+}
+
+/* Stack the cards before the copy or illustration becomes cramped. */
+@media (max-width: 1023.98px) {
+  .section {
+    --offers-title-size: 42px;
+    padding: 72px 16px 96px;
+  }
+
+  .inner {
+    gap: 24px;
+  }
+
+  .card,
+  .card[data-figure="left"] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding: 28px 22px 30px;
+    border-radius: 24px;
+  }
+
+  /* Copy first, illustration second, whichever side it takes on desktop. */
+  .card[data-figure="left"] .copy {
+    order: 1;
+  }
+
+  .card[data-figure="left"] .figure {
+    order: 2;
+  }
+
+  .offerHeading {
+  display: grid;
+  gap: 12px;
+}
+
+.cardTitle {
+    font-size: 32px;
+  }
+
+  .lead {
+    font-size: 18px;
+  }
+
+  .features {
+    font-size: 13px;
+  }
+
+  .cta {
+    padding: 15px 26px;
+    font-size: 16px;
+  }
+
+  .plate,
+  .figure[data-shift="left"] .plate {
+    transform: translate(6px, 6px);
+  }
+}

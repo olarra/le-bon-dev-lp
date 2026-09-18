@@ -1,0 +1,344 @@
+/* Section - Brands and Statistics (.framer-75zw9r) */
+.section {
+  --hero-cream: #f8f9e6;
+  --hero-olive-light: #e8ebcf;
+  --hero-olive: #d7ddb9;
+  --hero-dots: #919d56;
+  --hero-bracket-dark: #183c2d;
+  --hero-bracket-light: #4f7751;
+  --hero-marker: #c8e87c;
+  background-color: var(--hero-cream);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, var(--hero-cream) 0%, rgb(248 249 230 / 0.94) 22%, rgb(248 249 230 / 0) 66%),
+    radial-gradient(ellipse at -14% 76%, rgb(215 221 185 / 0.9) 0%, rgb(215 221 185 / 0.4) 42%, rgb(215 221 185 / 0) 76%),
+    radial-gradient(ellipse at 112% 88%, var(--hero-olive) 0%, rgb(215 221 185 / 0.3) 45%, rgb(215 221 185 / 0) 78%),
+    linear-gradient(180deg, var(--hero-cream) 8%, var(--hero-olive-light) 64%, var(--hero-olive) 100%);
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  /* clip contains the decoration without creating an inert scroll container. */
+  overflow: clip;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+  width: 100%;
+  /* The utility strip is in flow above this space for the floating navbar. */
+  padding-top: 166px;
+}
+
+/*
+ * Halftone dot texture (see HalftoneBackground): its own CSS module already
+ * sets position/inset/pointer-events, this just puts it behind the
+ * section's content in the stacking order.
+ */
+.dotGrid {
+  z-index: 0;
+}
+
+.divider {
+  position: relative;
+  z-index: 1;
+  display: block;
+  flex: none;
+  width: 100%;
+  height: 63px;
+  pointer-events: none;
+}
+
+/* Heading Container */
+.headingContainer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-flow: column;
+  place-content: center;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  height: min-content;
+}
+
+.headingAndLabel {
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  place-content: center;
+  /* stretch (default): the heading fills this box's full width — needed so
+     its text wraps against the real 950px box (matching the source) rather
+     than a shrink-to-fit width, which the "Brands" label's fixed %
+     position assumes. */
+  /* 0, not a visible gap: the two title lines should read as one tight
+     two-line heading (spaced only by line-height), not two separate
+     blocks with extra space between them. */
+  gap: 0;
+  width: 100%;
+  max-width: 950px;
+  height: min-content;
+}
+
+/* Spiral field: ripple/ring texture behind the heading, ported from the AURA
+   template's `.hero-field` (pure CSS, no canvas/SVG). Source used white
+   rings + a dark vignette mask on a black section; adapted here to the
+   olive accent already used for the halftone dots, at low opacity, so it
+   reads on this section's light cream background instead of disappearing.
+   Positioned relative to .headingContainer (not .section) and centered via
+   translate, so it tracks the text block itself regardless of the ticker/
+   divider height below — z-index -1 keeps it behind this container's own
+   text children while staying above .dotGrid at the .section level. */
+.spiralField {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: min(1100px, 92vw);
+  height: min(1100px, 92vw);
+  /* Keep centering independent of GSAP's cursor-driven transform. */
+  translate: -50% -50%;
+  pointer-events: none;
+  will-change: transform;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(145, 157, 86, 0.4), transparent 34%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(145, 157, 86, 0.28) 0 1px, transparent 1px 7px);
+  mask-image: radial-gradient(ellipse at center, black 5%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 5%, transparent 72%);
+}
+
+/* Eyebrow/kicker above the title. Plain letter-spaced label, no pill. */
+.eyebrow {
+  margin: 0 0 20px;
+  font-family: "Outfit", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  color: #10251c;
+}
+
+.titleWrapper {
+  /* unframer's base stylesheet sets [data-framer-component-type] {
+     position: absolute } on the RichText wrapper AnimatedHeading renders.
+     That attribute selector and this class selector have the *same*
+     specificity, so without `!important` it's a coin flip which one wins
+     depending on CSS bundle order — sometimes the two title lines (and
+     the subtitle after them) end up stacked exactly on top of each other
+     instead of in normal flex flow. Forcing it removes the ambiguity. */
+  position: relative !important;
+  width: 100%;
+}
+
+.title {
+  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
+  --framer-font-size: 105px;
+  --framer-font-style: normal;
+  --framer-font-weight: 700;
+  --framer-letter-spacing: -0.01em;
+  --framer-line-height: 90%;
+  /* The shared style preset's class-level default is "start", but this
+     heading's own instance carries an inline override to "center" — that's
+     the one that actually applies (inline beats class), confirmed against
+     the published page's live computed style. */
+  --framer-text-alignment: center;
+  --framer-text-color: #10251c;
+  margin: 0;
+  font-family: var(--framer-font-family);
+  font-size: var(--framer-font-size);
+  font-style: var(--framer-font-style);
+  font-weight: var(--framer-font-weight);
+  letter-spacing: var(--framer-letter-spacing);
+  line-height: var(--framer-line-height);
+  text-align: var(--framer-text-alignment);
+  color: var(--framer-text-color);
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 640px;
+  font-family: "Outfit", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 140%;
+  text-align: center;
+  color: #10251c;
+}
+
+/* CTA button: hand-written (not the generated framer/button.jsx used
+   elsewhere) so it can match the ported header's own CTA styling —
+   bright lime pill, dark text, arrow that rotates on hover, both
+   inverting to a darker/lighter pair on hover. Colors are the same
+   family the header's button already uses (Artora's lime accent). */
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 36px;
+  border-radius: 999px;
+  background-color: #10251c;
+  color: #ffffff;
+  font-family: "Outfit", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  outline-offset: 4px;
+  transition: background-color 0.3s ease;
+}
+/* "Pilule forêt": dark near-black forest green at rest, a lighter forest
+   green on hover *and* keyboard focus (:focus-visible gets the same
+   background plus a visible ring, so keyboard users get an equivalent but
+   distinguishable state rather than only the hover style). */
+.ctaButton:hover,
+.ctaButton:focus-visible {
+  background-color: #1f4433;
+}
+.ctaButton:focus-visible {
+  outline: 2px solid #ffffff;
+}
+.ctaArrow {
+  color: #c8f53e;
+  transition: transform 0.3s ease;
+}
+.ctaButton:hover .ctaArrow,
+.ctaButton:focus-visible .ctaArrow {
+  transform: rotate(-45deg);
+}
+
+/* One typographic baseline; the SVG marker sits behind the word without
+   adding padding or changing its font metrics. */
+.highlight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: calc(100% - 40px);
+  min-height: 48px;
+}
+
+.highlightBracket {
+  display: block;
+  flex: none;
+  width: 29px;
+  height: 40px;
+}
+
+.highlightText {
+  max-width: 700px;
+  min-width: 0;
+  margin: 0;
+  font-family: "Outfit", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  color: #10251c;
+}
+
+.highlightMark {
+  position: relative;
+  isolation: isolate;
+  display: inline;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.highlightStroke {
+  position: absolute;
+  z-index: -1;
+  inset: -0.08em -0.24em;
+  width: calc(100% + 0.48em);
+  height: 1.45em;
+  color: var(--hero-marker);
+  pointer-events: none;
+}
+
+/* Ticker Container */
+.tickerContainer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-flow: row;
+  place-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: min-content;
+  overflow: hidden;
+}
+
+@media (min-width: 810px) and (max-width: 1199.98px) {
+  .title {
+    /* Scaled from the 105px desktop size for Morna Bold (much wider per
+       character than Oswald), same ratio the old Oswald values used. */
+    --framer-font-size: 80px;
+    --framer-letter-spacing: -0.01em;
+  }
+}
+
+@media (max-width: 809.98px) {
+  .section {
+    background-image:
+      radial-gradient(ellipse at 50% 0%, var(--hero-cream) 0%, rgb(248 249 230 / 0.96) 28%, rgb(248 249 230 / 0) 72%),
+      radial-gradient(ellipse at -30% 68%, rgb(215 221 185 / 0.7) 0%, rgb(215 221 185 / 0) 74%),
+      radial-gradient(ellipse at 120% 88%, rgb(215 221 185 / 0.8) 0%, rgb(215 221 185 / 0) 76%),
+      linear-gradient(180deg, var(--hero-cream) 10%, var(--hero-olive-light) 68%, var(--hero-olive) 100%);
+  }
+  .content {
+    gap: 40px;
+    padding-top: 126px;
+  }
+  .headingContainer {
+    gap: 32px;
+  }
+  .headingAndLabel {
+    gap: 0;
+    padding: 0 20px;
+  }
+  .title {
+    --framer-font-size: 41px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    padding: 0 20px;
+  }
+  .subtitle {
+    font-size: 17px;
+    padding: 0 20px;
+  }
+  .ctaButton {
+    padding: 13px 24px;
+    font-size: 14px;
+  }
+  .highlight {
+    max-width: calc(100% - 32px);
+    gap: 10px;
+  }
+  .highlightBracket {
+    /* Same ~1219:1661 ratio as the SVGs' own viewBox (kept proportional so
+       the CSS size doesn't letterbox against it). */
+    width: 25px;
+    height: 34px;
+  }
+  .highlightText {
+    /* No explicit break at this width (there isn't one anywhere now) - the
+       700px cap is far wider than the actual phone viewport, so the
+       sentence just wraps to whatever's available, same as any other
+       paragraph here. */
+    font-size: 15px;
+  }
+  .tickerContainer {
+    padding: 0;
+  }
+  .divider {
+    /* Same 63px layout box, with a shallower 25px curve on narrow screens. */
+    padding-top: 38px;
+    box-sizing: border-box;
+  }
+}
