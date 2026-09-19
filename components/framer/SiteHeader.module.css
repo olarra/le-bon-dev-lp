@@ -57,10 +57,10 @@
     inset 0 1px 0 rgb(255 255 255 / 65%);
 }
 
-/* Move into the space released by the banner as it leaves the hero. */
-.header[data-ready="true"] {
-  transition: top 200ms ease;
-}
+/* The header's top offset follows the utility bar's visible height frame by
+   frame while the next section pushes the bar out (SiteHeader.tsx), so it
+   must not be eased: a transition here would make the pill trail behind the
+   bar's native, scroll-synced push. */
 
 /* Keep the opaque cream fallback where backdrop blur is unavailable. */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {

@@ -43,6 +43,18 @@ type Props = {
   itemWidth?: number
   /** Minimum gap between items in px at scale 1 (only used with `itemWidth`). */
   itemGap?: number
+  /**
+   * Freeze the ribbon (no motion-value writes at all). Meant for when it's
+   * off screen or covered - the loop otherwise animates every item forever.
+   */
+  paused?: boolean
+  /**
+   * Same as `paused`, read live from a ref on every frame: lets a scroll
+   * handler pause/resume the ribbon without re-rendering the owner (a
+   * re-render of the hero would re-apply Framer's inline styles over the
+   * GSAP-driven title transforms).
+   */
+  pausedRef?: { readonly current: boolean }
   className?: string
 }
 
@@ -100,6 +112,8 @@ export function Ticker({
   scale = 1,
   itemWidth,
   itemGap = 24,
+  paused = false,
+  pausedRef,
   className,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -166,6 +180,7 @@ export function Ticker({
   }
 
   useAnimationFrame((_time, delta) => {
+    if (paused || pausedRef?.current) return
     const target = speedTargetRef.current
     let factor = speedFactorRef.current
     if (factor !== target) {

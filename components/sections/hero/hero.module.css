@@ -1,5 +1,22 @@
-/* Section - Brands and Statistics (.framer-75zw9r) */
-.section {
+/* Section - Brands and Statistics (.framer-75zw9r)
+ *
+ * Structure (see HeroSection.tsx):
+ *   .hero                 section root, anchor, stacking context
+ *   ├ .stage              backdrop: gradient, dot grid, brand ribbon
+ *   └ .flow               TopBar + .content (heading block, ghost slot for the ribbon)
+ *
+ * Normal mode (phones, viewports under 700px tall): .stage fills the section
+ * and everything scrolls away like any section.
+ *
+ * Pinned mode (810px+ wide and 700px+ tall, at the end of this file): the
+ * stage is position: sticky for one viewport of scroll while #page-body
+ * (app/page.tsx) slides over it and its decorations blur; the heading block
+ * is position: sticky too, in .flow, whose bottom is exactly where #page-body
+ * begins - so the text holds still, then gets pushed up by the incoming
+ * section's edge, the way the reference behaves. All of that is native
+ * sticky positioning, synced to scroll by the browser itself; no per-scroll
+ * JavaScript positions anything. */
+.hero {
   --hero-cream: #f8f9e6;
   --hero-olive-light: #e8ebcf;
   --hero-olive: #d7ddb9;
@@ -7,47 +24,88 @@
   --hero-bracket-dark: #183c2d;
   --hero-bracket-light: #4f7751;
   --hero-marker: #c8e87c;
+  /* Ribbon geometry, shared by the real ribbon in .stage and its ghost slot
+     in .flow so the heading composition leaves room for it. Read by
+     Ticker.module.css too. */
+  --ticker-height: 321px;
+  --ticker-bottom: 0px;
+  --content-gap: 60px;
+  position: relative;
+  z-index: 0;
+  width: 100%;
+}
+
+/* Backdrop. In normal mode it simply fills the section. */
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: clip;
   background-color: var(--hero-cream);
   background-image:
     radial-gradient(ellipse at 50% 0%, var(--hero-cream) 0%, rgb(248 249 230 / 0.94) 22%, rgb(248 249 230 / 0) 66%),
     radial-gradient(ellipse at -14% 76%, rgb(215 221 185 / 0.9) 0%, rgb(215 221 185 / 0.4) 42%, rgb(215 221 185 / 0) 76%),
     radial-gradient(ellipse at 112% 88%, var(--hero-olive) 0%, rgb(215 221 185 / 0.3) 45%, rgb(215 221 185 / 0) 78%),
     linear-gradient(180deg, var(--hero-cream) 8%, var(--hero-olive-light) 64%, var(--hero-olive) 100%);
+}
+
+/* Text layer. Transparent to the pointer except for its interactive parts,
+   so hovering the ribbon (in .stage, underneath) still reaches it. */
+.flow {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  /* clip contains the decoration without creating an inert scroll container. */
-  overflow: clip;
+  min-height: 100vh;
+  min-height: 100svh;
+  pointer-events: none;
+}
+
+.flow > * {
+  pointer-events: auto;
 }
 
 .content {
   position: relative;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: center;
-  gap: 60px;
   width: 100%;
   /* The utility strip is in flow above this space for the floating navbar. */
   padding-top: 166px;
+  pointer-events: none;
+}
+
+/* Flexible spacers around the heading: they share whatever height is left
+   between the header clearance and the ribbon slot, so the heading (and the
+   spiral centred on it) sits in the middle of its band at every size. When
+   the content is taller than the viewport they are simply 0. */
+.spacerTop,
+.spacerMid {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Same box as the real ribbon (which is absolutely positioned in .stage),
+   so the flow reserves its room. */
+.tickerGhost {
+  flex: none;
+  width: 100%;
+  height: var(--ticker-height);
+  margin-top: var(--content-gap);
+  margin-bottom: var(--ticker-bottom);
 }
 
 /*
  * Halftone dot texture (see HalftoneBackground): its own CSS module already
  * sets position/inset/pointer-events, this just puts it behind the
- * section's content in the stacking order.
+ * stage's ribbon in the stacking order.
  */
 .dotGrid {
   z-index: 0;
-}
-
-.divider {
-  position: relative;
-  z-index: 1;
-  display: block;
-  flex: none;
-  width: 100%;
-  height: 63px;
-  pointer-events: none;
 }
 
 /* Heading Container */
@@ -55,12 +113,14 @@
   position: relative;
   z-index: 1;
   display: flex;
+  flex: none;
   flex-flow: column;
   place-content: center;
   align-items: center;
   gap: 40px;
   width: 100%;
   height: min-content;
+  pointer-events: auto;
 }
 
 .headingAndLabel {
@@ -86,10 +146,10 @@
    rings + a dark vignette mask on a black section; adapted here to the
    olive accent already used for the halftone dots, at low opacity, so it
    reads on this section's light cream background instead of disappearing.
-   Positioned relative to .headingContainer (not .section) and centered via
-   translate, so it tracks the text block itself regardless of the ticker/
-   divider height below — z-index -1 keeps it behind this container's own
-   text children while staying above .dotGrid at the .section level. */
+   Positioned relative to .headingContainer (not the section) and centered
+   via translate, so it tracks the text block itself — and moves with it when
+   the incoming section pushes the heading up. z-index -1 keeps it behind
+   this container's own text children. */
 .spiralField {
   position: absolute;
   top: 50%;
@@ -118,6 +178,14 @@
   text-transform: uppercase;
   text-align: center;
   color: #10251c;
+}
+
+/* Our own wrapper per title line: the target of the GSAP magnetic drift
+   (HeroSection.tsx), kept separate from Framer's RichText wrapper inside it,
+   whose inline styles Framer re-applies on every render. */
+.titleLine {
+  width: 100%;
+  will-change: transform;
 }
 
 .titleWrapper {
@@ -259,17 +327,20 @@
   pointer-events: none;
 }
 
-/* Ticker Container */
+/* Ticker Container: the real ribbon, anchored to the bottom of the stage in
+   the box the flow's .tickerGhost reserves. */
 .tickerContainer {
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--ticker-bottom);
   z-index: 1;
   display: flex;
   flex-flow: row;
   place-content: center;
   align-items: center;
   gap: 10px;
-  width: 100%;
-  height: min-content;
+  height: var(--ticker-height);
   overflow: hidden;
 }
 
@@ -283,7 +354,11 @@
 }
 
 @media (max-width: 809.98px) {
-  .section {
+  .hero {
+    --ticker-height: 170px;
+    --content-gap: 40px;
+  }
+  .stage {
     background-image:
       radial-gradient(ellipse at 50% 0%, var(--hero-cream) 0%, rgb(248 249 230 / 0.96) 28%, rgb(248 249 230 / 0) 72%),
       radial-gradient(ellipse at -30% 68%, rgb(215 221 185 / 0.7) 0%, rgb(215 221 185 / 0) 74%),
@@ -291,7 +366,6 @@
       linear-gradient(180deg, var(--hero-cream) 10%, var(--hero-olive-light) 68%, var(--hero-olive) 100%);
   }
   .content {
-    gap: 40px;
     padding-top: 126px;
   }
   .headingContainer {
@@ -333,12 +407,167 @@
        paragraph here. */
     font-size: 15px;
   }
-  .tickerContainer {
-    padding: 0;
+}
+
+/* ---- Pinned mode: desktop and tablet, on viewports tall enough to hold the
+   whole hero (a pinned hero taller than its viewport would hide its own
+   bottom, the ribbon, before the next section ever covered it - hence the
+   height gate). The section is two viewports tall: the stage sticks to the
+   top for the first, while #page-body, pulled up by one viewport
+   (globals.css), slides over it. .flow is exactly one viewport tall and
+   ends where #page-body begins, so its sticky heading holds still and is
+   then pushed up by the incoming edge, with --push-gap of air between them.
+   Vertical sizes lean on vh so everything fits from ~700px tall upwards.
+   Gated on height only, so phones tall enough get it too. svh, not dvh: on
+   phones the dynamic viewport grows as the browser bar collapses mid-scroll,
+   which would resize the pinned stage (and rebuild the dot grid) while
+   scrolling; the small viewport is stable, and #page-body covers the strip
+   that opens below it anyway.
+   ---- */
+@media (max-height: 699px) {
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
   }
-  .divider {
-    /* Same 63px layout box, with a shallower 25px curve on narrow screens. */
-    padding-top: 38px;
-    box-sizing: border-box;
+}
+
+@media (min-height: 700px) {
+  .hero {
+    --ticker-height: clamp(190px, 26vh, 321px);
+    --ticker-bottom: clamp(8px, 3vh, 40px);
+    --content-gap: clamp(24px, 4vh, 60px);
+    --push-gap: 24px;
+    --hero-blur: 14px;
+    height: 200vh;
+    height: 200svh;
+  }
+
+  .stage {
+    position: -webkit-sticky;
+    position: sticky;
+    inset: auto;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+  }
+
+  /* No bottom padding here on purpose: a sticky element is confined to its
+     container's content box, so padding would make BOTH sticky children (the
+     utility bar and the heading) start moving that much before the incoming
+     section actually reaches them. The heading's own air is its margin
+     below (--push-gap); the utility bar has none, so it's pushed at the
+     exact moment of contact and the header steps up in step with it. */
+  .flow {
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    margin-top: -100vh;
+    margin-top: -100svh;
+  }
+
+  .content {
+    min-height: 0;
+    /* Clears the floating header (top offset + utility bar + 70px pill). */
+    padding-top: clamp(96px, 11vh, 150px);
+  }
+
+  .headingContainer {
+    position: -webkit-sticky;
+    position: sticky;
+    /* Its own rest offset, measured by HeroSection.tsx, so sticking starts
+       from the very first pixel of scroll with no jump. */
+    top: var(--heading-top, 0px);
+    /* Sticky confines the element's *margin* box to its container, so this
+       is the air kept between the heading and the incoming section at the
+       moment of contact - without affecting the utility bar. */
+    margin-bottom: var(--push-gap);
+    /* Its exit is a translate (CSS scroll timeline, or the JS fallback in
+       HeroSection.tsx where that's unsupported): keep it on its own layer. */
+    will-change: transform;
+  }
+
+  /* Cover effect: --hero-cover (0 untouched → 1 by ~70% of the slide-over)
+     is written by HeroSection's scroll handler. Only the decorations blur;
+     the text stays crisp and is pushed instead. filter is only attached
+     while covering is in progress (data-covering), so the hero at rest pays
+     nothing for it. */
+  .hero[data-covering="true"] .dotGrid,
+  .hero[data-covering="true"] .tickerContainer {
+    filter: blur(calc(var(--hero-cover, 0) * var(--hero-blur, 14px)));
+  }
+}
+
+/* Phones in pinned mode: the phone ribbon (0.6x cards) keeps its 170px
+   box, the header clearance accounts for the taller mobile header stack
+   (12px offset + utility bar + 72px pill ≈ 124px), and the blur is capped
+   lower for mobile GPUs. */
+@media (max-width: 809.98px) and (min-height: 700px) {
+  .hero {
+    --ticker-height: 170px;
+    --ticker-bottom: clamp(8px, 2vh, 24px);
+    --content-gap: 32px;
+    --hero-blur: 10px;
+  }
+
+  .content {
+    padding-top: clamp(120px, 15vh, 150px);
+  }
+}
+
+@media (min-width: 1200px) and (min-height: 700px) {
+  .title {
+    --framer-font-size: min(105px, 10vh);
+  }
+}
+
+@media (min-width: 810px) and (max-width: 1199.98px) and (min-height: 700px) {
+  .title {
+    --framer-font-size: min(80px, 10vh);
+  }
+}
+
+/* ---- Text exit, on top of the native push. The sticky push alone moves the
+   heading at exactly the incoming section's speed, a constant 1:1 ride with
+   a constant gap to the edge; on the reference the text runs ahead at
+   roughly twice the section's speed from the moment of contact, so the gap
+   keeps growing. Here the text block is tall and the backdrop behind it is
+   plain, so a big, ever-growing gap just reads as an empty stretch to
+   scroll through once the text is gone. So the extra translate is a short
+   "lift-off": 10% of the contact-to-cover distance in total, front-loaded
+   (linear() points) so the block visibly detaches right at contact, then
+   rides a fixed ~100px ahead of the section for the rest of the way. Driven
+   by a scroll-progress timeline, so it's synced to the scroll by the browser
+   like the push itself - no per-frame JS. Browsers without scroll-driven
+   animations get the same animation from HeroSection.tsx's JS fallback
+   (keep travel and easing points in sync there). ---- */
+@supports (animation-timeline: scroll()) {
+  @media (min-height: 700px) {
+    .headingContainer {
+      animation: hero-text-exit both linear(0, 0.55 20%, 0.85 45%, 1);
+      animation-duration: auto;
+      animation-timeline: scroll(root block);
+      animation-range: calc(100svh - var(--heading-bottom, 60vh) - var(--push-gap, 24px)) 100svh;
+    }
+  }
+}
+
+@keyframes hero-text-exit {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(-0.1 * (var(--heading-bottom, 60vh) + var(--push-gap, 24px)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero[data-covering="true"] .dotGrid,
+  .hero[data-covering="true"] .tickerContainer {
+    filter: none;
+  }
+
+  .headingContainer {
+    animation: none;
   }
 }

@@ -12,7 +12,10 @@
   --offers-title-size: 72px;
   position: relative;
   width: 100%;
-  padding: 96px 24px 140px;
+  /* Top padding clears the floating header when this section lands at the
+     top of the viewport after sliding over the hero: the header's pill ends
+     94px down (24px offset + 70px), so the eyebrow starts ~66px below it. */
+  padding: 160px 24px 140px;
   background-color: var(--color-surface-offers, #fffcee);
   background-image: radial-gradient(circle, rgb(145 157 86 / 0.26) 1.1px, transparent 1.7px);
   background-size: 24px 24px;
@@ -422,7 +425,9 @@
 @media (max-width: 1023.98px) {
   .section {
     --offers-title-size: 42px;
-    padding: 72px 16px 96px;
+    /* Clears the mobile header when the section lands at the top (12px
+       offset + 72px pill ≈ 84px once the utility bar is pushed out). */
+    padding: 136px 16px 96px;
   }
 
   .inner {

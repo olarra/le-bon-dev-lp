@@ -19,26 +19,71 @@ body {
   padding: 0;
 }
 
-/* overflow-x lives on html alone (see the `html` rule below), not body:
-   pairing overflow-x:clip with body's default overflow-y:visible made the
-   browser silently promote that visible axis to auto (the CSS overflow
-   spec forces this when one axis is non-visible and the other isn't),
-   turning body into a scroll container of its own. Since body's own
-   scrollTop never actually moves - the page only ever scrolls via html -
-   any position:sticky descendant of body (e.g. TopBar.module.css) measured
-   itself against that inert container instead of the real viewport scroll
-   and never stuck at all. html's own overflow-x: hidden below is already
-   sufficient on its own to stop horizontal scroll at the document root. */
+/* overflow-x lives on html alone (see the `html` rule below), not body. A
+   non-visible overflow on one axis makes the browser treat the other axis as
+   auto too (CSS Overflow spec), which would turn body into a scroll container
+   and re-parent every position:sticky descendant (the hero, its utility bar)
+   to a box whose scrollTop never moves. html's own overflow-x: hidden is
+   enough on its own to stop horizontal scroll at the document root. */
 body {
   overflow-x: visible;
+}
+
+/* Everything after the hero (app/page.tsx). In the hero's pinned mode
+   (hero.module.css) the hero's stage is position: sticky at z-index 0 and
+   exactly one viewport tall, so this block, one level up in z-order and with
+   its own opaque background, slides over it on scroll. Rounded leading
+   corners and a soft shadow at that edge make the overlap read as a surface,
+   like the reference. overflow: clip keeps the child sections' square
+   backgrounds inside the rounded corners without creating a scroll
+   container. The "scroll stops at this block's start" behaviour is
+   components/atoms/SectionStop.tsx, not CSS. */
+.page-body {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: var(--color-surface-offers);
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -18px 48px rgb(16 37 28 / 12%);
+  overflow: clip;
+}
+
+/* Pinned mode (same query and viewport unit as hero.module.css): the hero
+   section is two viewports tall with its stage stuck for the first; pulling
+   this block up by one viewport makes it slide over that stuck stage. */
+@media (min-height: 700px) {
+  .page-body {
+    margin-top: -100vh;
+    margin-top: -100svh;
+  }
+}
+
+@media (max-width: 809.98px) {
+  .page-body {
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+/* No pin on short viewports (the hero scrolls away normally there), so no
+   rounded edge to sell. */
+@media (max-height: 699px) {
+  .page-body {
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 html body {
   background: var(--token-b0bb3938-008d-419c-b18a-42b0ef391a52, rgb(254, 250, 231));
 }
 
+/* Anchor targets land below the floating header. */
+:root {
+  --scroll-padding-top: 132px;
+}
+
 html {
-  scroll-padding-top: 132px;
+  scroll-padding-top: var(--scroll-padding-top);
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -55,8 +100,8 @@ html {
 }
 
 @media (max-width: 1099.98px) {
-  html {
-    scroll-padding-top: 104px;
+  :root {
+    --scroll-padding-top: 104px;
   }
 }
 

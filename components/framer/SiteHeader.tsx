@@ -24,6 +24,11 @@ export function SiteHeader() {
 
     const topBar = document.getElementById("hero-topbar")
     const hero = document.getElementById("statistics")
+    // What slides over the hero in its pinned mode (see app/page.tsx). Its
+    // top edge is the hero's visible bottom whether or not the hero is
+    // pinned, so it's the right thing to measure the utility bar's exit by;
+    // a pinned hero's own bottom would sit at the viewport bottom forever.
+    const pageBody = document.getElementById("page-body")
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
     let topBarHeight = 0
     let scrollFrame = 0
@@ -38,27 +43,43 @@ export function SiteHeader() {
       topBarHeight = topBar?.getBoundingClientRect().height ?? 0
     }
     const updateScroll = () => {
+      // Where the hero visibly ends right now: the top of what slides over
+      // it in pinned mode, its own bottom edge otherwise. null on pages
+      // without a hero.
+      const heroVisibleBottom = pageBody
+        ? pageBody.getBoundingClientRect().top
+        : hero
+          ? hero.getBoundingClientRect().bottom
+          : null
+
+      // The pill only shrinks once the hero has fully left - i.e. the slide-
+      // over is complete - not on the first pixels of scroll, so the hero
+      // stays framed by the full-size nav for the whole transition. 48px of
+      // hysteresis keeps it from flickering at the edge. Pages without a
+      // hero fall back to a plain scroll-distance threshold.
       const y = window.scrollY
-      const nextScrolled = wasScrolled ? y >= 32 : y > 80
+      const nextScrolled = heroVisibleBottom === null
+        ? (wasScrolled ? y >= 32 : y > 80)
+        : (wasScrolled ? heroVisibleBottom < 48 : heroVisibleBottom <= 0)
       if (nextScrolled !== wasScrolled) {
         wasScrolled = nextScrolled
         setScrolled(nextScrolled)
       }
 
-      // Ease out over the final 140px of the hero; the next section gets
-      // the normal header offset. CSS variables avoid a render per pixel.
-      const remaining = topBar && hero
-        ? hero.getBoundingClientRect().bottom - topBarHeight
+      // The utility bar is position: sticky in a container that ends exactly
+      // where the next section begins (HeroSection.tsx .flow), so the
+      // incoming section's edge pushes it out natively at the moment of
+      // entry - nothing here fades or moves it. The header only follows: its
+      // extra offset equals the bar's still-visible height, so it steps up
+      // in lockstep as the bar is pushed over its own height, and is back at
+      // the base offset once the bar is gone. CSS variables avoid a render
+      // per pixel.
+      const visibleBar = topBar && heroVisibleBottom !== null
+        ? Math.min(topBarHeight, Math.max(0, heroVisibleBottom))
         : 0
-      const progress = reducedMotion.matches
-        ? Number(remaining > 140)
-        : Math.min(1, Math.max(0, remaining / 140))
-      header.style.setProperty("--topbar-offset", `${topBarHeight * progress}px`)
+      header.style.setProperty("--topbar-offset", `${visibleBar}px`)
       if (topBar) {
-        topBar.style.setProperty("--topbar-progress", String(progress))
-        // Keep its visible bottom above the header throughout the exit.
-        topBar.style.setProperty("--topbar-shift", `${-topBarHeight * (1 - progress)}px`)
-        topBar.inert = progress === 0
+        topBar.inert = visibleBar === 0
       }
     }
     const scheduleUpdate = () => {

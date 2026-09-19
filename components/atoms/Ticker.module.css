@@ -1,8 +1,11 @@
+/* Height is overridable by the parent through --ticker-height (the hero sets
+   it from the viewport height in its pinned mode); the path is re-fitted to
+   whatever box results, see resolvePath in Ticker.tsx. */
 .viewport {
   position: relative;
   flex: 1 0 0;
   width: 1px;
-  height: 321px;
+  height: var(--ticker-height, 321px);
   overflow: hidden;
 }
 
@@ -14,6 +17,6 @@
   .viewport {
     flex: none;
     width: 100%;
-    height: 170px;
+    height: var(--ticker-height, 170px);
   }
 }
