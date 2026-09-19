@@ -21,8 +21,8 @@ export type HalftoneField = {
   clearZone: Ellipse
 }
 
-type Size = { width: number; height: number }
-type Dot = { x: number; y: number; radius: number; opacity: number }
+export type Size = { width: number; height: number }
+export type Dot = { x: number; y: number; radius: number; opacity: number }
 
 // Keep the finer desktop grid while still bounding the SVG on large screens.
 const MAX_CIRCLES = 6000
@@ -36,7 +36,8 @@ function smoothstep(start: number, end: number, value: number): number {
   return t * t * (3 - 2 * t)
 }
 
-function buildDots({ width, height }: Size, field: HalftoneField): Dot[] {
+/** Shared with ShimmerHalftone, so the animated variant keeps the exact same composition. */
+export function buildDots({ width, height }: Size, field: HalftoneField): Dot[] {
   if (!width || !height) return []
 
   let spacing = field.spacing

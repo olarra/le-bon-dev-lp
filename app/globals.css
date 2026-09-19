@@ -12,6 +12,16 @@
   --color-surface-offers: rgb(255, 252, 238);
 }
 
+/* Shared pale olive surfaces for the hero, floating navigation and utility
+   strip. Keep their colours together so adjustments stay in harmony. */
+:root {
+  --color-surface-hero: #f7f8f2;
+  --color-surface-hero-mid: #f1f3e7;
+  --color-surface-hero-olive: #e7ebd4;
+  --color-surface-navigation: #f9faf5;
+  --color-border-navigation: #d3dcc0;
+}
+
 html,
 body {
   box-sizing: border-box;

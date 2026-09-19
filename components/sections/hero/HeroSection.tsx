@@ -8,10 +8,11 @@ import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { Breakpoint } from "@/components/atoms/Breakpoint"
 import { HalftoneBackground } from "@/components/atoms/HalftoneBackground"
 import { ScrollReveal } from "@/components/atoms/ScrollReveal"
+import { ShimmerHalftone } from "@/components/atoms/ShimmerHalftone"
 import { Ticker } from "@/components/atoms/Ticker"
 import { TopBar } from "@/components/layout/TopBar"
 import styles from "./hero.module.css"
-import { HERO_HALFTONE } from "./hero.background"
+import { HERO_DOTS_ANIMATED, HERO_HALFTONE, HERO_SHIMMER, HERO_STATIC_DOT_COLOR } from "./hero.background"
 import type { Breakpoint as Bp } from "@/lib/breakpoints"
 import {
   CTA_HREF,
@@ -83,6 +84,9 @@ export function HeroSection() {
   // inline styles over the GSAP-driven magnetic transforms (title jumping,
   // going dead until a click). Nothing about scrolling re-renders now.
   const ribbonCoveredRef = useRef(false)
+  // Same idea for the animated dot grid: no point redrawing (and re-blurring)
+  // it every frame while the section is sliding over it.
+  const dotsPausedRef = useRef(false)
 
   // Rest offset of the heading block, for its position: sticky `top` in
   // pinned mode (hero.module.css): with `top` equal to where it already
@@ -177,6 +181,7 @@ export function HeroSection() {
       // don't restyle; 0 under reduced motion.
       const fraction = reducedMotion.matches ? 0 : 1 - Math.min(1, Math.max(0, edge / (stageRect.height || 1)))
       const cover = Math.round(Math.min(1, fraction / 0.7) * 50) / 50
+      dotsPausedRef.current = cover > 0
       if (cover !== lastCover) {
         lastCover = cover
         hero.style.setProperty("--hero-cover", String(cover))
@@ -273,7 +278,11 @@ export function HeroSection() {
           ribbon lives here so it gets covered along with the texture, while
           the text in .flow below is pushed instead. */}
       <div ref={stageRef} className={styles.stage}>
-        <HalftoneBackground color="var(--hero-dots)" {...HERO_HALFTONE} className={styles.dotGrid} />
+        {HERO_DOTS_ANIMATED ? (
+          <ShimmerHalftone {...HERO_HALFTONE} shimmer={HERO_SHIMMER} pausedRef={dotsPausedRef} className={styles.dotGrid} />
+        ) : (
+          <HalftoneBackground color={HERO_STATIC_DOT_COLOR} {...HERO_HALFTONE} className={styles.dotGrid} />
+        )}
 
         <ScrollReveal className={styles.tickerContainer}>
           {TICKER_BREAKPOINTS.map(([bp, configKey]) => (

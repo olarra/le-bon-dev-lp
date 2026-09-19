@@ -17,13 +17,31 @@
  * sticky positioning, synced to scroll by the browser itself; no per-scroll
  * JavaScript positions anything. */
 .hero {
-  --hero-cream: #f8f9e6;
-  --hero-olive-light: #e8ebcf;
-  --hero-olive: #d7ddb9;
-  --hero-dots: #919d56;
+  /* A close range of pale olives, shared with the navigation in globals.css. */
+  --hero-cream: var(--color-surface-hero);
+  --hero-olive-light: var(--color-surface-hero-mid);
+  --hero-olive: var(--color-surface-hero-olive);
   --hero-bracket-dark: #183c2d;
   --hero-bracket-light: #4f7751;
   --hero-marker: #c8e87c;
+  /* Dot grid colours - the single place to edit them, independent of the
+     spiral (--hero-spiral). One list: the FIRST stop is the resting grid
+     (the dots outside the wave), the LAST is the wave's crest, anything in
+     between is the gradient the wave passes through. Any CSS colours,
+     comma-separated, var() allowed; a single stop gives a one-colour grid
+     where only size and opacity pulse.
+     Rule of thumb: on this cream background every stop needs enough contrast
+     to stay visible, and lightness should move in ONE direction from the
+     first stop to the last. A palette whose only strong colour sits in the
+     middle makes the rest fade into the background, and the wave reads as
+     islands of dots in empty space.
+     (The static SVG grid, used only when HERO_DOTS_ANIMATED is off, takes its
+     one colour from HERO_STATIC_DOT_COLOR in hero.background.ts instead.) */
+  /* Muted olive → leaf green → forest: each stop darkens so the outward
+     crest stays legible against both the cream and the lower sage wash. */
+  --hero-dots-palette:#9dae11,  	#8d9c0f, 	 	#6d790b;
+  /* A softer sage keeps the rings behind the heading quieter than the wave. */
+  --hero-spiral: #8c9c70;
   /* Ribbon geometry, shared by the real ribbon in .stage and its ghost slot
      in .flow so the heading composition leaves room for it. Read by
      Ticker.module.css too. */
@@ -42,11 +60,12 @@
   z-index: 0;
   overflow: clip;
   background-color: var(--hero-cream);
+  /* Low-opacity side washes over one gradual blend keep the upper and
+     lower halves connected, without a separate white spotlight. */
   background-image:
-    radial-gradient(ellipse at 50% 0%, var(--hero-cream) 0%, rgb(248 249 230 / 0.94) 22%, rgb(248 249 230 / 0) 66%),
-    radial-gradient(ellipse at -14% 76%, rgb(215 221 185 / 0.9) 0%, rgb(215 221 185 / 0.4) 42%, rgb(215 221 185 / 0) 76%),
-    radial-gradient(ellipse at 112% 88%, var(--hero-olive) 0%, rgb(215 221 185 / 0.3) 45%, rgb(215 221 185 / 0) 78%),
-    linear-gradient(180deg, var(--hero-cream) 8%, var(--hero-olive-light) 64%, var(--hero-olive) 100%);
+    radial-gradient(ellipse at -14% 58%, color-mix(in srgb, var(--hero-olive) 22%, transparent) 0%, transparent 76%),
+    radial-gradient(ellipse at 112% 72%, color-mix(in srgb, var(--hero-olive) 18%, transparent) 0%, transparent 78%),
+    linear-gradient(180deg, var(--hero-cream) 0%, var(--hero-olive-light) 50%, var(--hero-olive) 100%);
 }
 
 /* Text layer. Transparent to the pointer except for its interactive parts,
@@ -161,9 +180,11 @@
   translate: -50% -50%;
   pointer-events: none;
   will-change: transform;
+  /* A faint central wash and soft rings keep the copy and CTA clear.
+     Shared by desktop and phone; colour stays independent of the dot grid. */
   background:
-    radial-gradient(circle at 50% 50%, rgba(145, 157, 86, 0.4), transparent 34%),
-    repeating-radial-gradient(circle at 50% 50%, rgba(145, 157, 86, 0.28) 0 1px, transparent 1px 7px);
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--hero-spiral) 18%, transparent), transparent 34%),
+    repeating-radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--hero-spiral) 16%, transparent) 0 1px, transparent 1px 7px);
   mask-image: radial-gradient(ellipse at center, black 5%, transparent 72%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 5%, transparent 72%);
 }
@@ -360,10 +381,9 @@
   }
   .stage {
     background-image:
-      radial-gradient(ellipse at 50% 0%, var(--hero-cream) 0%, rgb(248 249 230 / 0.96) 28%, rgb(248 249 230 / 0) 72%),
-      radial-gradient(ellipse at -30% 68%, rgb(215 221 185 / 0.7) 0%, rgb(215 221 185 / 0) 74%),
-      radial-gradient(ellipse at 120% 88%, rgb(215 221 185 / 0.8) 0%, rgb(215 221 185 / 0) 76%),
-      linear-gradient(180deg, var(--hero-cream) 10%, var(--hero-olive-light) 68%, var(--hero-olive) 100%);
+      radial-gradient(ellipse at -30% 58%, color-mix(in srgb, var(--hero-olive) 18%, transparent) 0%, transparent 74%),
+      radial-gradient(ellipse at 120% 72%, color-mix(in srgb, var(--hero-olive) 16%, transparent) 0%, transparent 76%),
+      linear-gradient(180deg, var(--hero-cream) 0%, var(--hero-olive-light) 50%, var(--hero-olive) 100%);
   }
   .content {
     padding-top: 126px;

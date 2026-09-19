@@ -1,4 +1,62 @@
 import type { HalftoneField } from "@/components/atoms/HalftoneBackground"
+import type { ShimmerSettings } from "@/components/atoms/ShimmerHalftone"
+
+/**
+ * Keep the designed dot composition still so the copy and CTA lead.
+ * The radial ripple remains available by switching this to true.
+ */
+export const HERO_DOTS_ANIMATED = false
+
+/**
+ * The static SVG grid's one colour, used only when HERO_DOTS_ANIMATED is
+ * false. The animated grid takes all its colours from --hero-dots-palette in
+ * hero.module.css instead (its first stop is the resting grid).
+ */
+export const HERO_STATIC_DOT_COLOR = "#9dae11"
+
+/**
+ * Tuning for the animated grid: a wave travels through the designed dot
+ * field, and each dot is coloured across a palette by the wave value at its
+ * position, swelling a little in the crests. Colours live in hero.module.css
+ * (.hero: --hero-dots-palette), not here.
+ */
+export const HERO_SHIMMER = {
+  // One ripple at a time, emitted from the heading toward every edge.
+  waveform: "radial",
+  radial: {
+    // Same seven-second rhythm on desktop and phone: both the travel and
+    // the band widths scale with the stage, not a fixed pixel wavelength.
+    duration: 7,
+    frontWidth: 0.1,
+    trailWidth: 0.34,
+    displacement: 2.2,
+  },
+  // Linear waveform only: spacing between crests and travel speed in px/s.
+  wavelength: 460,
+  speed: 75,
+  // linear only: 20deg = left to right with a slight downward tilt.
+  angle: 20,
+  // radial only: fractions of the stage; y 0.42 is about the heading's centre.
+  origin: { x: 0.5, y: 0.42 },
+  palette: "var(--hero-dots-palette)",
+  // Linear/noise only. The radial ripple has its own front and trail envelope.
+  baseShare: 0.6,
+  contrast: 1,
+  // A visible swell at the crest, settling back to the continuous base grid.
+  variance: 0.5,
+  opacityVariance: 0.15,
+  // The density map's opacities (max 0.5 desktop / 0.4 phone) were tuned for
+  // the soft static grid and washed the palette into pastel. Scale 2 lets
+  // full-intensity dots reach 100%; gamma 0.5 keeps mid-field dots near-
+  // opaque (intensity 0.25 → 50%), so colours stay saturated and the fade
+  // toward the clear zone is carried mostly by dot size.
+  opacityScale: 2,
+  opacityGamma: 0.5,
+  // noise waveform only.
+  gain: 1.6,
+  scale: 0.0035,
+  fps: 30,
+} as const satisfies ShimmerSettings
 
 /**
  * Main art-direction controls. Positions/spreads are relative to the hero;

@@ -33,12 +33,12 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  border: 1px solid #b7c493;
+  border: 1px solid var(--color-border-navigation);
   border-radius: 999px;
-  background: #fdfeeb;
+  background: var(--color-surface-navigation);
   box-shadow:
     0 2px 4px rgb(16 45 45 / 4%),
-    0 12px 28px rgb(16 45 45 / 7%),
+    0 12px 28px rgb(16 45 45 / 5%),
     inset 0 1px 0 rgb(255 255 255 / 70%);
 }
 
@@ -50,10 +50,10 @@
 
 .header[data-scrolled="true"] .envelope {
   inset: calc((100% - 54px) / 2) calc((100% - var(--navigation-width, 430px)) / 2);
-  border-color: rgb(183 196 147 / 65%);
+  border-color: color-mix(in srgb, var(--color-border-navigation) 80%, transparent);
   box-shadow:
     0 3px 7px rgb(16 37 28 / 5%),
-    0 12px 28px rgb(16 37 28 / 10%),
+    0 12px 28px rgb(16 37 28 / 8%),
     inset 0 1px 0 rgb(255 255 255 / 65%);
 }
 
@@ -62,10 +62,10 @@
    must not be eased: a transition here would make the pill trail behind the
    bar's native, scroll-synced push. */
 
-/* Keep the opaque cream fallback where backdrop blur is unavailable. */
+/* Keep the opaque navigation surface where backdrop blur is unavailable. */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .header[data-scrolled="true"] .envelope {
-    background-color: rgb(248 249 230 / 74%);
+    background-color: color-mix(in srgb, var(--color-surface-navigation) 82%, transparent);
     -webkit-backdrop-filter: blur(18px) saturate(125%);
     backdrop-filter: blur(18px) saturate(125%);
   }
@@ -126,7 +126,7 @@
 }
 
 .navigation a:hover {
-  background: #e8edce;
+  background: var(--color-surface-hero-olive);
 }
 
 .contact {
@@ -140,7 +140,7 @@
   border: 1px solid #102d2d;
   border-radius: 999px;
   background: #102d2d;
-  color: #f8f9e6;
+  color: var(--color-surface-navigation);
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
@@ -204,7 +204,7 @@
     border: 0;
     border-radius: 999px;
     background: #102d2d;
-    color: #f8f9e6;
+    color: var(--color-surface-navigation);
     font: inherit;
     font-weight: 500;
     cursor: pointer;
@@ -250,9 +250,9 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 16px;
-    border: 1px solid #b7c493;
+    border: 1px solid var(--color-border-navigation);
     border-radius: 28px;
-    background: #f8f9e6;
+    background: var(--color-surface-navigation);
     box-shadow: 0 12px 30px rgb(16 45 45 / 8%);
     pointer-events: none;
     visibility: hidden;

@@ -14,13 +14,14 @@
   font-size: var(--banner-font-size);
   font-weight: 400;
   line-height: 1.4;
-  color: #244638;
+  color: #18362a;
 }
 
 .surface {
   padding: 0;
-  border-bottom: 1px solid rgb(36 70 56 / 10%);
-  background: #edf0d9;
+  border-bottom: 1px solid rgb(24 54 42 / 14%);
+  /* Electric lime from the hero CTA accent and brand ribbon. */
+  background: #c8f53e;
 }
 
 .inner {
@@ -63,7 +64,7 @@
 
 .icon {
   flex: none;
-  color: #3b694d;
+  color: inherit;
 }
 
 .link {
@@ -80,12 +81,12 @@
 }
 
 .link:focus-visible {
-  outline: 2px solid #3b694d;
+  outline: 2px solid #18362a;
   outline-offset: 2px;
 }
 
 .response {
-  border-inline-start: 1px solid rgb(36 70 56 / 18%);
+  border-inline-start: 1px solid rgb(24 54 42 / 20%);
   padding-inline-start: 20px;
 }
 
