@@ -55,17 +55,29 @@
 
 /* Backdrop. In normal mode it simply fills the section. */
 .stage {
+  /* Separate background hues: leaf green below, pale olive above. */
+  --hero-glow-green: #a4cf5f;
+  --hero-glow-olive: #dce297;
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: clip;
-  background-color: var(--hero-cream);
-  /* Low-opacity side washes over one gradual blend keep the upper and
-     lower halves connected, without a separate white spotlight. */
+  background-color: #ffffff;
+  /* The lower green wave sits in front of a taller olive wave. The olive
+     stays visible above the green's rise, then both fade softly to white. */
   background-image:
-    radial-gradient(ellipse at -14% 58%, color-mix(in srgb, var(--hero-olive) 22%, transparent) 0%, transparent 76%),
-    radial-gradient(ellipse at 112% 72%, color-mix(in srgb, var(--hero-olive) 18%, transparent) 0%, transparent 78%),
-    linear-gradient(180deg, var(--hero-cream) 0%, var(--hero-olive-light) 50%, var(--hero-olive) 100%);
+    radial-gradient(ellipse 112% 50% at 50% 110%,
+      color-mix(in srgb, var(--hero-glow-green) 90%, transparent) 0%,
+      color-mix(in srgb, var(--hero-glow-green) 78%, transparent) 25%,
+      color-mix(in srgb, var(--hero-glow-green) 42%, transparent) 50%,
+      color-mix(in srgb, var(--hero-glow-green) 10%, transparent) 78%,
+      transparent 100%),
+    radial-gradient(ellipse 128% 72% at 50% 96%,
+      color-mix(in srgb, var(--hero-glow-olive) 75%, transparent) 0%,
+      color-mix(in srgb, var(--hero-glow-olive) 68%, transparent) 35%,
+      color-mix(in srgb, var(--hero-glow-olive) 48%, transparent) 55%,
+      color-mix(in srgb, var(--hero-glow-olive) 18%, transparent) 78%,
+      transparent 100%);
 }
 
 /* Text layer. Transparent to the pointer except for its interactive parts,
@@ -380,10 +392,20 @@
     --content-gap: 40px;
   }
   .stage {
+    /* Keep both colour bands wide, with the green lower on the phone. */
     background-image:
-      radial-gradient(ellipse at -30% 58%, color-mix(in srgb, var(--hero-olive) 18%, transparent) 0%, transparent 74%),
-      radial-gradient(ellipse at 120% 72%, color-mix(in srgb, var(--hero-olive) 16%, transparent) 0%, transparent 76%),
-      linear-gradient(180deg, var(--hero-cream) 0%, var(--hero-olive-light) 50%, var(--hero-olive) 100%);
+      radial-gradient(ellipse 145% 42% at 50% 110%,
+        color-mix(in srgb, var(--hero-glow-green) 90%, transparent) 0%,
+        color-mix(in srgb, var(--hero-glow-green) 78%, transparent) 25%,
+        color-mix(in srgb, var(--hero-glow-green) 42%, transparent) 50%,
+        color-mix(in srgb, var(--hero-glow-green) 10%, transparent) 78%,
+        transparent 100%),
+      radial-gradient(ellipse 175% 62% at 50% 100%,
+        color-mix(in srgb, var(--hero-glow-olive) 75%, transparent) 0%,
+        color-mix(in srgb, var(--hero-glow-olive) 68%, transparent) 35%,
+        color-mix(in srgb, var(--hero-glow-olive) 48%, transparent) 55%,
+        color-mix(in srgb, var(--hero-glow-olive) 18%, transparent) 78%,
+        transparent 100%);
   }
   .content {
     padding-top: 126px;
