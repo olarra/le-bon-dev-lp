@@ -67,7 +67,7 @@ export function SiteHeader() {
       }
 
       // The utility bar is position: sticky in a container that ends exactly
-      // where the next section begins (HeroSection.tsx .flow), so the
+      // where the next section begins (HeroSection.tsx .utilityRail), so the
       // incoming section's edge pushes it out natively at the moment of
       // entry - nothing here fades or moves it. The header only follows: its
       // extra offset equals the bar's still-visible height, so it steps up
