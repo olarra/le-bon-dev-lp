@@ -1,27 +1,35 @@
-import { SectionStop } from "@/components/atoms/SectionStop"
 import { SiteHeader } from "@/components/framer/SiteHeader"
 import { PageFrame } from "@/components/layout/PageFrame"
+import { SiteFooter } from "@/components/layout/SiteFooter"
 import { HeroSection } from "@/components/sections/hero/HeroSection"
-import { OffersSection } from "@/components/sections/offers/OffersSection"
+import { GuaranteesSection } from "@/components/sections/guarantees/GuaranteesSection"
+import { GuaranteesTimelineSection } from "@/components/sections/guarantees-timeline/GuaranteesTimelineSection"
+import { ShowcaseSection } from "@/components/sections/showcase/ShowcaseSection"
+import { ShowcaseContent } from "@/components/sections/showcase/ShowcaseContent"
+import { MethodSection } from "@/components/sections/method/MethodSection"
+import { StudioSection } from "@/components/sections/studio/StudioSection"
+import { ContactSection } from "@/components/sections/contact/ContactSection"
+import { ContactFormSection } from "@/components/sections/contact/ContactFormSection"
 
 export default function HomePage() {
   return (
     <>
       <SiteHeader />
-      <PageFrame>
+      <PageFrame footer={<SiteFooter />}>
         <HeroSection />
-        {/* Everything after the hero: slides over the pinned hero on scroll
-            (globals.css .page-body); HeroSection and SiteHeader measure its
-            top edge to drive the cover effect and the utility bar's exit. A
-            wheel scroll crossing its top stops there (SectionStop). */}
         <div id="page-body" className="page-body">
-          {/* Its two cards carry the nav's #sites-vitrines / #saas-mobile anchors. */}
-          <OffersSection />
-          {/* Empty anchor sections provide room to test the floating header. */}
-          <section id="le-studio" className="scroll-test-section" aria-label="Le studio" />
-          <section id="contact" className="scroll-test-section" aria-label="Contact" />
+          <GuaranteesTimelineSection />
+          {/* Keep the previous design available during the section migration. */}
+          <GuaranteesSection />
+          {/* The green surface opens behind both offers and project previews. */}
+          <ShowcaseSection>
+            <ShowcaseContent />
+          </ShowcaseSection>
+          <MethodSection />
+          <StudioSection />
+          <ContactSection />
+          <ContactFormSection />
         </div>
-        <SectionStop targetId="page-body" />
       </PageFrame>
     </>
   )

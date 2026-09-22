@@ -1,10 +1,5 @@
+import { CONTACT } from "@/lib/contact"
 import styles from "./TopBar.module.css"
-
-const CONTACT = {
-  whatsapp: "+33695064132",
-  whatsappHref: "https://wa.me/33695064132",
-  email: "hello@lebondev.fr",
-}
 
 function MailIcon() {
   return (

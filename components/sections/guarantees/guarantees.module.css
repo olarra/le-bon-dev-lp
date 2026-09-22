@@ -1,0 +1,414 @@
+.section {
+  --guarantees-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --guarantees-panel: #151c16;
+  --guarantees-green: #75b65d;
+  --guarantees-yellow-green: #c1d65a;
+  --guarantees-olive: #92994f;
+  --panel-gap: 18px;
+  --junction-top: 64px;
+  --junction-height: 64px;
+  --illustration-width: 220px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 184px 24px 104px;
+  background: var(--color-surface-guarantees, #0c120e);
+  color: #f5f6ee;
+  font-family: "Outfit", sans-serif;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+.header {
+  display: grid;
+  justify-items: center;
+  gap: 28px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 9px 17px;
+  border: 1px solid rgb(200 245 62 / 28%);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgb(200 245 62 / 9%), rgb(200 245 62 / 3%)),
+    var(--guarantees-panel);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%);
+  color: var(--guarantees-lime);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  max-width: 1100px;
+  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-size: clamp(36px, 4.2vw, 60px);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  word-spacing: -0.1em;
+  text-wrap: balance;
+}
+
+.titleAccent {
+  display: inline-block;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: var(--guarantees-lime);
+  font-style: normal;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
+/* Solid lime remains the fallback if clipping text to a gradient is unavailable. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .titleAccent {
+    background-image: linear-gradient(100deg,
+      var(--guarantees-lime) 0%,
+      var(--guarantees-yellow-green) 44%,
+      var(--guarantees-green) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.subtitle {
+  margin: 0;
+  color: #bdc6b9;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.panels {
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--panel-gap);
+  row-gap: 16px;
+}
+
+.panel {
+  --panel-border: var(--guarantees-green);
+  --next-panel-border: var(--guarantees-yellow-green);
+  position: relative;
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  min-width: 0;
+  padding: 33px 29px 25px;
+  border-radius: 24px;
+  background: var(--guarantees-panel);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+}
+
+.panel[data-illustration="follow-up"] {
+  --panel-border: var(--guarantees-yellow-green);
+  --next-panel-border: var(--guarantees-olive);
+}
+
+.panel[data-illustration="handover"] {
+  --panel-border: var(--guarantees-olive);
+}
+
+/* Leaf green, yellow green and olive carry the color across the linked panels. */
+.panel::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 70% at 50% 110%, color-mix(in srgb, var(--panel-border) 12%, transparent), transparent 100%);
+}
+
+/* The outline is independent of the surface and text. Its inner sides have
+   exact openings for the bridges, so no straight border ends show through. */
+.panel::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Static green dots emerge beneath the copy and strengthen toward the foot
+   of each card. The texture stays behind the transparent illustrations. */
+.panelTexture {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--panel-border) 48%, transparent) 0.9px, transparent 1.4px);
+  background-size: 20px 20px;
+  background-position: center bottom;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 32%, rgb(0 0 0 / 14%) 48%, rgb(0 0 0 / 55%) 72%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 32%, rgb(0 0 0 / 14%) 48%, rgb(0 0 0 / 55%) 72%, #000 100%);
+}
+
+.panelTitle {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  align-self: start;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+.description {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  align-self: start;
+  max-width: 34ch;
+  color: #c3cbbf;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* Smaller, equal image tracks keep the three objects aligned below the copy. */
+.illustration {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 208px;
+  margin-top: 8px;
+  pointer-events: none;
+}
+
+.imageFrame {
+  position: relative;
+  width: min(78%, var(--illustration-width));
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+}
+
+/* Frame only the transparent padding. The untouched PNGs retain their
+   original proportions; their visible objects now share the same height. */
+.image {
+  position: absolute;
+  display: block;
+  left: var(--image-left);
+  top: var(--image-top);
+  width: var(--image-width);
+  height: var(--image-height);
+  max-width: none;
+  object-fit: contain;
+}
+
+/* Without CSS masks the fallback is three complete rounded rectangles. */
+.junction {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  top: var(--junction-top);
+  left: calc(100% - 0.5px);
+  width: calc(var(--panel-gap) + 1px);
+  height: var(--junction-height);
+  overflow: visible;
+  color: var(--panel-border);
+  pointer-events: none;
+}
+
+@supports (mask-image: linear-gradient(#000, #000)) {
+  @media (min-width: 810px) {
+    .panel::after {
+      mask-image:
+        linear-gradient(#000, #000),
+        var(--left-edge-mask, linear-gradient(#000, #000)),
+        var(--right-edge-mask, linear-gradient(#000, #000));
+      mask-size: calc(100% - 4px) 100%, 2px 100%, 2px 100%;
+      mask-position: center, left, right;
+      mask-repeat: no-repeat;
+    }
+
+    .panel:not(:first-child) {
+      --left-edge-mask: linear-gradient(to bottom,
+        #000 0 var(--junction-top),
+        transparent var(--junction-top) calc(var(--junction-top) + var(--junction-height)),
+        #000 calc(var(--junction-top) + var(--junction-height)) 100%);
+    }
+
+    .panel:not(:last-child) {
+      --right-edge-mask: linear-gradient(to bottom,
+        #000 0 var(--junction-top),
+        transparent var(--junction-top) calc(var(--junction-top) + var(--junction-height)),
+        #000 calc(var(--junction-top) + var(--junction-height)) 100%);
+    }
+
+    .junction {
+      display: block;
+    }
+  }
+}
+
+.junctionFill {
+  fill: var(--guarantees-panel);
+}
+
+.junctionEdge {
+  fill: none;
+  stroke-width: 1;
+}
+
+.junctionStart {
+  stop-color: var(--panel-border);
+}
+
+.junctionEnd {
+  stop-color: var(--next-panel-border);
+}
+
+/* Subgrid shares title/copy heights across all three panels, including
+   wrapped titles on tablets. Older engines retain equal-height cards. */
+@supports not (grid-template-rows: subgrid) {
+  .panel {
+    grid-row: auto;
+    grid-template-rows: auto 1fr auto;
+    gap: 16px;
+  }
+}
+
+@media (min-width: 810px) and (max-width: 1199.98px) {
+  .section {
+    --panel-gap: 14px;
+    --illustration-width: 190px;
+    padding-block: 160px 80px;
+  }
+
+  .panel {
+    padding: 27px 21px 21px;
+  }
+
+  .panelTitle {
+    font-size: 23px;
+  }
+
+  .description {
+    font-size: 16px;
+  }
+
+  .illustration {
+    height: 176px;
+  }
+}
+
+@media (max-width: 809.98px) {
+  .section {
+    --illustration-width: 200px;
+    padding: 160px 20px 64px;
+  }
+
+  .inner {
+    max-width: 560px;
+  }
+
+  .header {
+    gap: 22px;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 8px 15px;
+  }
+
+  .title {
+    font-size: clamp(32px, 6vw, 42px);
+    line-height: 1.12;
+    word-spacing: -0.08em;
+  }
+
+  .subtitle {
+    max-width: 29ch;
+    font-size: 18px;
+  }
+
+  .panels {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .panel {
+    grid-row: auto;
+    grid-template-rows: auto auto auto;
+    gap: 14px;
+    padding: 29px 25px 21px;
+    border-radius: 22px;
+  }
+
+  .panelTitle {
+    font-size: 26px;
+  }
+
+  .panelTexture {
+    background-size: 18px 18px;
+  }
+
+  .description {
+    max-width: none;
+    font-size: 17px;
+  }
+
+  .illustration {
+    height: 192px;
+    margin-top: 4px;
+  }
+
+  .junction {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .panelTexture {
+    display: none;
+  }
+
+  .titleAccent {
+    background: none;
+    color: CanvasText;
+  }
+
+  .panel::after {
+    border-color: CanvasText;
+    mask-image: none;
+  }
+
+  .eyebrow {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .junction {
+    display: none;
+  }
+}

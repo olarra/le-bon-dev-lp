@@ -32,7 +32,7 @@ export const SUBTITLE_INTRO =
   "Une idée à concrétiser ou un produit à reprendre : on vous accompagne de la conception à la mise en ligne."
 
 export const CTA_LABEL = "Parlons de votre projet"
-export const CTA_HREF = "#"
+export const CTA_HREF = "#contact"
 
 /**
  * Closing statement, set apart from the intro paragraph by the CTA button

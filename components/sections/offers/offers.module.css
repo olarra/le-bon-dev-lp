@@ -1,7 +1,5 @@
 /* "Les offres": two offer cards under a centred, marker-underlined title.
-   The section background is the colour the hero's wave divider is filled
-   with (globals.css --color-surface-offers), so the hand-off has no seam;
-   a faint dot grid textures it. Pale cards keep the mockups prominent. */
+   A plain cream surface and pale cards keep the mockups prominent. */
 .section {
   --offers-ink: #10251c;
   --offers-lime: #c8f53e;
@@ -17,9 +15,6 @@
      94px down (24px offset + 70px), so the eyebrow starts ~66px below it. */
   padding: 160px 24px 140px;
   background-color: var(--color-surface-offers, #fffcee);
-  background-image: radial-gradient(circle, rgb(145 157 86 / 0.26) 1.1px, transparent 1.7px);
-  background-size: 24px 24px;
-  background-position: 12px 12px;
   color: var(--offers-ink);
   font-family: "Outfit", sans-serif;
 }

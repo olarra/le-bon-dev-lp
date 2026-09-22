@@ -2,10 +2,11 @@ import type { ReactNode } from "react"
 import { Inter, Playfair_Display } from "next/font/google"
 import "@/framer/styles.css"
 import "@/components/framer/framer-styles.css"
+import "lenis/dist/lenis.css"
 import "./globals.css"
 import { Providers } from "./providers"
 
-export const metadata = { title: "Agenius - Creative Agency Portfolio Website" }
+export const metadata = { title: "Le bon dev — Studio de développement web et mobile" }
 
 // Only for the ported French Pixel Studio header (logo wordmark + TopBar);
 // this project's own sections use the self-hosted Oswald in framer/styles.css.
@@ -26,7 +27,7 @@ const playfairDisplay = Playfair_Display({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfairDisplay.variable}`}>
+    <html lang="fr" className={`${inter.variable} ${playfairDisplay.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

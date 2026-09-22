@@ -1,0 +1,125 @@
+"use client"
+
+import Image from "next/image"
+import { useEffect, useRef, useState, type CSSProperties } from "react"
+import { BrandBracket } from "@/components/atoms/BrandBracket"
+import { INTEGRATION_ROWS, STUDIO_INTEGRATIONS } from "./integrations.content"
+import styles from "./studio-ecosystem.module.css"
+
+/** Local port of Conicorn's Intergration Marquee and Circle Button.
+ * Preserves its three alternating tickers, inset tiles and luminous hub,
+ * with the studio's palette, French copy and local decorative assets. */
+export function StudioEcosystem() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const [inView, setInView] = useState(false)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setInView(entry.isIntersecting)
+    }, { rootMargin: "80px 0px" })
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <section
+      className={styles.ecosystem}
+      ref={sectionRef}
+      aria-labelledby="studio-ecosystem-title"
+      data-in-view={inView}
+      data-paused={paused}
+    >
+      <header className={styles.header}>
+        <p className={styles.eyebrow}>Les intégrations</p>
+        <h3 className={styles.title} id="studio-ecosystem-title">Un écosystème connecté.</h3>
+      </header>
+
+      <div className={styles.stage}>
+        <div className={styles.marquee}>
+          {INTEGRATION_ROWS.map((row, index) => {
+            const items = [
+              ...STUDIO_INTEGRATIONS.slice(row.offset),
+              ...STUDIO_INTEGRATIONS.slice(0, row.offset),
+            ]
+
+            return (
+              <div className={styles.row} key={row.offset} aria-hidden={index > 0 ? true : undefined}>
+                <div
+                  className={styles.track}
+                  data-direction={row.direction}
+                  style={{
+                    "--ticker-duration": `${items.length * 244 / row.speed}s`,
+                    "--ticker-mobile-duration": `${items.length * 184 / (row.speed * 0.7)}s`,
+                  } as CSSProperties}
+                >
+                  {[false, true].map((duplicate) => (
+                    <ul
+                      className={styles.group}
+                      key={String(duplicate)}
+                      role="list"
+                      aria-label={index === 0 && !duplicate ? "Les outils et intégrations" : undefined}
+                      aria-hidden={duplicate ? true : undefined}
+                      data-duplicate={duplicate}
+                    >
+                      {items.map((item) => (
+                        <li className={styles.tile} key={item.id}>
+                          <span>{item.name}</span>
+                          <Image
+                            className={styles.icon}
+                            src={`/images/integrations/${item.id}.png`}
+                            alt=""
+                            width={40}
+                            height={40}
+                            unoptimized
+                            draggable={false}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className={styles.hub}>
+          <a className={styles.hubLink} href="#contact" aria-label="Parlons de vos outils et de votre projet">
+            <span className={styles.hubMark} aria-hidden="true">
+              <BrandBracket side="open" className={styles.bracket} />
+              <span className={styles.slash} />
+              <BrandBracket side="close" className={styles.bracket} />
+            </span>
+            <span className={styles.hubLabel}>
+              Parlons-en
+              <svg className={styles.arrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+                <path d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <footer className={styles.footer}>
+        <p className={styles.description}>
+          Vos outils, vos données, vos processus : des connexions sur mesure pour simplifier le quotidien et accompagner votre activité.
+        </p>
+        <button
+          className={styles.motionToggle}
+          type="button"
+          onClick={() => setPaused((current) => !current)}
+          aria-label={paused ? "Reprendre le défilement des intégrations" : "Mettre en pause le défilement des intégrations"}
+        >
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+            {paused ? <path d="m6 3 11 7-11 7V3Z" /> : <path d="M5 3h3v14H5zm7 0h3v14h-3z" />}
+          </svg>
+          {paused ? "Reprendre" : "Mettre en pause"}
+        </button>
+      </footer>
+    </section>
+  )
+}

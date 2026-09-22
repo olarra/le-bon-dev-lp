@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { BrandLogo } from "@/components/atoms/BrandLogo"
 import styles from "./SiteHeader.module.css"
 
 const NAVIGATION = [
@@ -24,15 +25,12 @@ export function SiteHeader() {
 
     const topBar = document.getElementById("hero-topbar")
     const hero = document.getElementById("statistics")
-    // What slides over the hero in its pinned mode (see app/page.tsx). Its
-    // top edge is the hero's visible bottom whether or not the hero is
-    // pinned, so it's the right thing to measure the utility bar's exit by;
-    // a pinned hero's own bottom would sit at the viewport bottom forever.
-    const pageBody = document.getElementById("page-body")
+    const themedSections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"))
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
     let topBarHeight = 0
     let scrollFrame = 0
     let wasScrolled = false
+    let previousSurface = ""
 
     // Measure the actual links, including after the local font loads.
     const measureNavigation = () => {
@@ -43,20 +41,23 @@ export function SiteHeader() {
       topBarHeight = topBar?.getBoundingClientRect().height ?? 0
     }
     const updateScroll = () => {
-      // Where the hero visibly ends right now: the top of what slides over
-      // it in pinned mode, its own bottom edge otherwise. null on pages
-      // without a hero.
-      const heroVisibleBottom = pageBody
-        ? pageBody.getBoundingClientRect().top
-        : hero
-          ? hero.getBoundingClientRect().bottom
-          : null
+      const heroVisibleBottom = hero?.getBoundingClientRect().bottom ?? null
 
-      // The pill only shrinks once the hero has fully left - i.e. the slide-
-      // over is complete - not on the first pixels of scroll, so the hero
-      // stays framed by the full-size nav for the whole transition. 48px of
-      // hysteresis keeps it from flickering at the edge. Pages without a
-      // hero fall back to a plain scroll-distance threshold.
+      // Follow the section actually beneath the fixed navigation, including
+      // the return to the light offers surface at the end of the guarantees.
+      const headerRect = header.getBoundingClientRect()
+      const sampleY = headerRect.top + headerRect.height / 2
+      const surface = themedSections.find((section) => {
+        const rect = section.getBoundingClientRect()
+        return rect.top <= sampleY && rect.bottom > sampleY
+      })?.dataset.headerTheme ?? "light"
+      if (surface !== previousSurface) {
+        previousSurface = surface
+        header.dataset.surface = surface
+      }
+
+      // Retain the full-size navigation until the hero leaves the viewport.
+      // A small hysteresis keeps it steady when reversing at that boundary.
       const y = window.scrollY
       const nextScrolled = heroVisibleBottom === null
         ? (wasScrolled ? y >= 32 : y > 80)
@@ -66,16 +67,10 @@ export function SiteHeader() {
         setScrolled(nextScrolled)
       }
 
-      // The utility bar is position: sticky in a container that ends exactly
-      // where the next section begins (HeroSection.tsx .utilityRail), so the
-      // incoming section's edge pushes it out natively at the moment of
-      // entry - nothing here fades or moves it. The header only follows: its
-      // extra offset equals the bar's still-visible height, so it steps up
-      // in lockstep as the bar is pushed over its own height, and is back at
-      // the base offset once the bar is gone. CSS variables avoid a render
-      // per pixel.
-      const visibleBar = topBar && heroVisibleBottom !== null
-        ? Math.min(topBarHeight, Math.max(0, heroVisibleBottom))
+      // The utility strip now scrolls with the hero. Follow its actual edge
+      // so the fixed navigation moves up as soon as that strip leaves.
+      const visibleBar = topBar
+        ? Math.min(topBarHeight, Math.max(0, topBar.getBoundingClientRect().bottom))
         : 0
       header.style.setProperty("--topbar-offset", `${visibleBar}px`)
       if (topBar) {
@@ -104,6 +99,7 @@ export function SiteHeader() {
     observer.observe(navigation)
     if (topBar) observer.observe(topBar)
     if (hero) observer.observe(hero)
+    themedSections.forEach((section) => observer.observe(section))
 
     const readyFrame = requestAnimationFrame(() => {
       measureTopBar()
@@ -122,6 +118,7 @@ export function SiteHeader() {
       window.removeEventListener("resize", measureLayout)
       window.removeEventListener("pageshow", measureLayout)
       reducedMotion.removeEventListener("change", scheduleUpdate)
+      delete header.dataset.surface
     }
   }, [])
 
@@ -180,8 +177,8 @@ export function SiteHeader() {
       }}
     >
       <div className={styles.envelope} aria-hidden="true" />
-      <a className={styles.logo} href="#" aria-label="Le bon dev — accueil" onClick={closeMenu}>
-        <img src="/logo-le-bon-dev.svg" alt="Le bon dev" width="2988" height="482" />
+      <a className={styles.logo} href="#statistics" aria-label="Le bon dev — accueil" onClick={closeMenu}>
+        <BrandLogo placement="header" />
       </a>
       <button
         ref={menuButtonRef}

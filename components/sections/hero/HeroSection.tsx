@@ -44,15 +44,6 @@ const TICKER_BREAKPOINTS: readonly [Bp, keyof typeof TICKER_CONFIG][] = [
   ["phone", "phone"],
 ]
 
-// Time constant for the zoom to follow scrolling with a short, soft tail.
-const ZOOM_CATCH_UP_MS = 150
-
-/** A reversible curve mapping scroll position to the target exit progress. */
-function exitProgress(cover: number, start: number, end: number): number {
-  const t = Math.min(1, Math.max(0, (cover - start) / (end - start)))
-  return t * t * (3 - 2 * t)
-}
-
 /**
  * "Section - Brands and Statistics": the studio pitch (eyebrow, headline,
  * two-paragraph copy, CTA), a curved wave ticker of brand logos, and four
@@ -60,149 +51,50 @@ function exitProgress(cover: number, start: number, end: number): number {
  */
 export function HeroSection() {
   const heroRef = useRef<HTMLElement>(null)
-  const stageRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const headingExitRef = useRef<HTMLDivElement>(null)
-  const artworkRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
   const spiralRef = useRef<HTMLDivElement>(null)
   // A ref, not state, on purpose: toggling state here re-rendered the whole
   // hero on scroll, and each re-render made Framer's RichText re-apply its
   // inline styles over the GSAP-driven magnetic transforms (title jumping,
   // going dead until a click). Nothing about scrolling re-renders now.
-  const ribbonCoveredRef = useRef(false)
-  // Optional animated dots can rest while the hero recedes under the next section.
+  const ribbonPausedRef = useRef(false)
+  // Rest the decorative animation once the hero has scrolled out of view.
   const dotsPausedRef = useRef(false)
-  const exitingRef = useRef(false)
+  const heroOffscreenRef = useRef(false)
 
-  // Both visual layers stay pinned for the full slide-over. Only opacity
-  // and scale change, on wrappers separate from ScrollReveal's entrance.
-  // One rAF writer works in Firefox as well as browsers with scroll timelines.
+  // The hero scrolls normally. Only observe visibility to pause its existing
+  // artwork, and measure the utility strip to retain the approved spacing.
   useLayoutEffect(() => {
     const hero = heroRef.current
-    const stage = stageRef.current
-    const content = contentRef.current
-    const headingExit = headingExitRef.current
-    const artwork = artworkRef.current
-    if (!hero || !stage || !content || !headingExit || !artwork) return
-    const pageBody = document.getElementById("page-body")
+    if (!hero) return
     const topBar = document.getElementById("hero-topbar")
-    const ribbon = stage.getElementsByClassName(styles.tickerContainer)[0] ?? null
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const pinned = window.matchMedia("(min-height: 700px)")
-    let frame = 0
-    let previousExit = -1
-    let previousArtworkExit = -1
-    let headingShrink = 0
-    let artworkShrink = 0
-    let headingZoom = 0
-    let artworkZoom = 0
-    let zoomInitialized = false
-    let previousFrameTime = 0
-
-    const update = (now = performance.now()) => {
-      frame = 0
-      const stageRect = stage.getBoundingClientRect()
-      const edge = pageBody ? pageBody.getBoundingClientRect().top : stageRect.bottom
-      const cover = pinned.matches
-        ? 1 - Math.min(1, Math.max(0, (edge - stageRect.top) / (stageRect.height || 1)))
-        : 0
-      // Keep the composition visible while the next section rises; finish
-      // fading only as that section approaches the top of the viewport.
-      const exit = reducedMotion.matches ? 0 : exitProgress(cover, 0.12, 0.98)
-      const artworkExit = reducedMotion.matches ? 0 : exitProgress(cover, 0.08, 1)
-      const offscreen = stageRect.bottom <= 0 || stageRect.top >= window.innerHeight
-      const ribbonCovered = ribbon ? ribbon.getBoundingClientRect().top >= edge : edge <= 0
-      // Use layout offsets, unaffected by the fade/scale, for full occlusion.
-      const headingCovered = pinned.matches && edge <= stageRect.top + content.offsetTop + headingExit.offsetTop
-
-      ribbonCoveredRef.current = offscreen || ribbonCovered || artworkExit >= 0.99
-      dotsPausedRef.current = offscreen || cover > 0
-      exitingRef.current = cover > 0
-      const headingInert = headingCovered || exit >= 0.99
-      const artworkInert = offscreen || ribbonCovered || artworkExit >= 0.99
-      if (headingExit.inert !== headingInert) headingExit.inert = headingInert
-      if (artwork.inert !== artworkInert) artwork.inert = artworkInert
-
-      // Opacity follows the scroll exactly. Scale catches up over time, so
-      // it settles softly after a stop or direction change at any refresh rate.
-      // Restore the current position immediately on mount or when hidden.
-      const elapsed = Math.min(64, Math.max(0, now - previousFrameTime))
-      previousFrameTime = now
-      const snapZoom = !zoomInitialized || reducedMotion.matches || !pinned.matches || offscreen || document.hidden
-      const blend = snapZoom ? 1 : 1 - Math.exp(-elapsed / ZOOM_CATCH_UP_MS)
-      headingZoom += (exit - headingZoom) * blend
-      artworkZoom += (artworkExit - artworkZoom) * blend
-      if (Math.abs(exit - headingZoom) < 0.001) headingZoom = exit
-      if (Math.abs(artworkExit - artworkZoom) < 0.001) artworkZoom = artworkExit
-      zoomInitialized = true
-
-      if (exit !== previousExit) {
-        previousExit = exit
-        // Direct compositor properties avoid propagating an inherited
-        // per-frame CSS variable through thousands of static SVG dots.
-        headingExit.style.opacity = String(1 - exit)
-      }
-      if (artworkExit !== previousArtworkExit) {
-        previousArtworkExit = artworkExit
-        artwork.style.opacity = String(1 - artworkExit)
-      }
-      headingExit.style.transform = headingZoom ? `scale(${1 - headingShrink * headingZoom})` : "none"
-      artwork.style.transform = artworkZoom ? `scale(${1 - artworkShrink * artworkZoom})` : "none"
-
-      // Continue only for the catch-up; no idle animation loop.
-      if (headingZoom !== exit || artworkZoom !== artworkExit) frame = requestAnimationFrame(update)
-    }
-    const schedule = () => {
-      if (!frame) {
-        previousFrameTime = performance.now()
-        frame = requestAnimationFrame(update)
-      }
-    }
-
-    // The utility strip keeps its original one-viewport sticky rail. A
-    // measured spacer preserves the text layout without pinning the strip
-    // inside the longer-lived text layer.
+    const ribbon = hero.getElementsByClassName(styles.tickerContainer)[0]
     const measure = () => {
       if (topBar) hero.style.setProperty("--hero-topbar-height", `${topBar.offsetHeight}px`)
-      const computed = getComputedStyle(hero)
-      headingShrink = Number.parseFloat(computed.getPropertyValue("--hero-exit-shrink")) || 0
-      artworkShrink = Number.parseFloat(computed.getPropertyValue("--hero-artwork-shrink")) || 0
-      previousExit = -1
-      previousArtworkExit = -1
     }
-    const onResize = () => {
-      measure()
-      schedule()
-    }
-    const resize = new ResizeObserver(onResize)
+    const resize = new ResizeObserver(measure)
     if (topBar) resize.observe(topBar)
-    resize.observe(stage)
-    resize.observe(content)
-    resize.observe(headingExit)
     measure()
-    update()
-    window.addEventListener("scroll", schedule, { passive: true })
-    window.addEventListener("resize", onResize)
-    window.addEventListener("pageshow", schedule)
-    pinned.addEventListener("change", schedule)
-    reducedMotion.addEventListener("change", schedule)
+
+    const visibility = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.target === hero) {
+          dotsPausedRef.current = !entry.isIntersecting
+          heroOffscreenRef.current = !entry.isIntersecting
+        }
+        if (entry.target === ribbon) ribbonPausedRef.current = !entry.isIntersecting
+      })
+    })
+    visibility.observe(hero)
+    if (ribbon) visibility.observe(ribbon)
+
     return () => {
       resize.disconnect()
-      cancelAnimationFrame(frame)
-      window.removeEventListener("scroll", schedule)
-      window.removeEventListener("resize", onResize)
-      window.removeEventListener("pageshow", schedule)
-      pinned.removeEventListener("change", schedule)
-      reducedMotion.removeEventListener("change", schedule)
+      visibility.disconnect()
       hero.style.removeProperty("--hero-topbar-height")
-      headingExit.style.removeProperty("opacity")
-      headingExit.style.removeProperty("transform")
-      artwork.style.removeProperty("opacity")
-      artwork.style.removeProperty("transform")
-      headingExit.inert = false
-      artwork.inert = false
-      exitingRef.current = false
+      dotsPausedRef.current = false
+      ribbonPausedRef.current = false
+      heroOffscreenRef.current = false
     }
   }, [])
 
@@ -230,7 +122,7 @@ export function HeroSection() {
     if (titleLines.length === 0) return
 
     const drift = (clientX: number, clientY: number) => {
-      if (reducedMotion.matches || exitingRef.current) return
+      if (reducedMotion.matches || heroOffscreenRef.current) return
       const x = (clientX / window.innerWidth - 0.5) * 20
       const y = (clientY / window.innerHeight - 0.5) * 20
       gsap.to(spiral, { x: x * -1, y: y * -1, duration: 2, ease: "power2.out" })
@@ -281,9 +173,9 @@ export function HeroSection() {
       <div className={styles.utilityRail}>
         <TopBar />
       </div>
-      {/* The gradient stays full-bleed while the artwork recedes in place. */}
-      <div ref={stageRef} className={styles.stage}>
-        <div ref={artworkRef} className={styles.artwork}>
+      {/* The existing gradient and artwork scroll together with the hero. */}
+      <div className={styles.stage}>
+        <div className={styles.artwork}>
           {HERO_DOTS_ANIMATED ? (
             <ShimmerHalftone {...HERO_HALFTONE} shimmer={HERO_SHIMMER} pausedRef={dotsPausedRef} className={styles.dotGrid} />
           ) : (
@@ -302,7 +194,7 @@ export function HeroSection() {
                   itemGap={WAVE_CARD_GAP}
                   speedPercentPerSecond={TICKER_SPEED_PERCENT_PER_SECOND}
                   direction={TICKER_DIRECTION}
-                  pausedRef={ribbonCoveredRef}
+                  pausedRef={ribbonPausedRef}
                   children={tickerChildren}
                 />
               </Breakpoint>
@@ -313,10 +205,10 @@ export function HeroSection() {
 
       <div className={styles.flow}>
         <div className={styles.utilitySpacer} aria-hidden="true" />
-        <div ref={contentRef} className={styles.content}>
+        <div className={styles.content}>
           <div className={styles.spacerTop} aria-hidden="true" />
 
-          <div ref={headingExitRef} className={styles.headingExit}>
+          <div className={styles.headingFrame}>
             <ScrollReveal className={styles.headingContainer}>
               {/* display:contents: a ref boundary around the reveal's children
                   without becoming a flex item itself, so .headingAndLabel /

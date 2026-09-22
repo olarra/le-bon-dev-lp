@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none">
+  <defs>
+    <linearGradient id="handover-fill" x1="240" y1="75" x2="350" y2="550" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#CCE5C7"/>
+      <stop offset="1" stop-color="#DDEFD1"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#handover-fill)" d="M114 219C119 132 178 75 263 79C359 83 411 140 467 212C523 284 584 354 557 425C530 496 435 548 339 550C242 552 128 527 71 477C14 427 52 349 87 299C102 277 112 246 114 219Z"/>
+</svg>

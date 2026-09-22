@@ -1,0 +1,52 @@
+/** Shared brand geometry; lettering inherits color, the b/d keep their lime. */
+export function BrandLogo({ placement }: { placement: "header" | "footer" }) {
+  // Each placement owns stable SVG IDs on both the server and the client.
+  const bShadow = `brand-${placement}-b-shadow`
+  const dShadow = `brand-${placement}-d-shadow`
+
+  return (
+    <svg aria-hidden="true" focusable="false" width="2988" height="482" viewBox="0 0 2988 482" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M840.78 5.51702e-06C859.558 6.68946e-06 874.78 15.2223 874.78 34V466.235H752.42C733.643 466.235 718.42 451.013 718.42 432.235V34C718.42 15.2223 733.643 -1.17244e-06 752.42 0L840.78 5.51702e-06Z" fill="#9CDA07"/>
+    <path d="M903.657 153.828C905.008 153.664 906.384 153.579 907.779 153.579L996.139 153.578C1005.59 153.578 1014.14 157.438 1020.3 163.664C1026.53 169.826 1030.39 178.375 1030.39 187.828V310.187H1030.14V432.302C1030.14 451.079 1014.92 466.302 996.139 466.302L874.349 466.301V153.828H903.657Z" fill="#9CDA07"/>
+    <g filter={`url(#${bShadow})`}>
+    <path d="M752.194 155.925C733.417 155.925 718.195 171.147 718.194 189.925V312.285L718.195 312.284L718.196 434.149C718.196 452.926 733.418 468.149 752.196 468.149L996.918 468.148C1015.7 468.148 1030.92 452.926 1030.92 434.149V345.789C1030.92 327.011 1015.7 311.788 996.918 311.788H874.612V189.925C874.612 171.148 859.39 155.926 840.612 155.926L752.194 155.925Z" fill="#A2C772"/>
+    <path d="M752.194 158.925C735.074 158.926 721.195 172.804 721.194 189.925V312.283L721.195 312.284L721.196 434.148C721.196 451.269 735.075 465.149 752.196 465.149H996.918C1014.04 465.148 1027.92 451.27 1027.92 434.149V345.789C1027.92 328.668 1014.04 314.788 996.918 314.788H874.612L871.612 311.789V189.926C871.612 172.805 857.733 158.926 840.612 158.926L752.194 158.925Z" fill="#BFF800" stroke="#B1E407" strokeWidth="6" strokeLinejoin="bevel"/>
+    </g>
+    <path fillRule="evenodd" clipRule="evenodd" d="M2600.78 206.215V337.357H2404.18V370.143H2600.78V468.5H2338.64L2273.11 402.929V206.215L2338.64 140.643H2535.25L2600.78 206.215ZM2404.18 271.786H2469.71V239H2404.18V271.786Z" fill="currentColor"/>
+    <path d="M2790.68 370.143H2856.21V140.643H2987.28V370.143L2888.98 468.5H2757.91L2659.61 370.143V140.643H2790.68V370.143Z" fill="currentColor"/>
+    <path d="M131.071 370.143H163.838V468.5H65.5354L0 402.929V9.5H131.071V370.143Z" fill="currentColor"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M524.283 206.214V337.357H327.677V370.143H524.283V468.5H262.142L196.606 402.929V304.571V206.214L262.142 140.643H458.748L524.283 206.214ZM327.677 271.786H393.212V239H327.677V271.786Z" fill="currentColor"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M524.283 206.214V337.357H327.677V370.143H524.283V468.5H262.142L196.606 402.929V304.571V206.214L262.142 140.643H458.748L524.283 206.214ZM327.677 271.786H393.212V239H327.677V271.786Z" fill="currentColor"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M1382.24 206.215V402.929L1316.71 468.5H1120.1L1054.57 402.929V206.215L1120.1 140.643H1316.71L1382.24 206.215ZM1185.64 370.143H1251.17V239H1185.64V370.143Z" fill="currentColor"/>
+    <path d="M1734.46 206.215V468.5H1603.39V239H1537.85V468.5H1406.78V206.215L1472.32 140.643H1668.92L1734.46 206.215Z" fill="currentColor"/>
+    <path d="M2110.14 5.51702e-06C2091.36 6.68946e-06 2076.14 15.2223 2076.14 34V466.235H2198.5C2217.28 466.235 2232.5 451.013 2232.5 432.235V34C2232.5 15.2223 2217.28 -1.17244e-06 2198.5 0L2110.14 5.51702e-06Z" fill="#9CDA07"/>
+    <path d="M2047.26 153.828C2045.91 153.664 2044.54 153.579 2043.14 153.579L1954.78 153.578C1945.33 153.578 1936.78 157.438 1930.62 163.664C1924.39 169.826 1920.53 178.375 1920.53 187.828V310.187H1920.78V432.302C1920.78 451.079 1936 466.302 1954.78 466.302L2076.57 466.301V153.828H2047.26Z" fill="#9CDA07"/>
+    <g filter={`url(#${dShadow})`}>
+    <path d="M2198.73 155.925C2217.5 155.925 2232.73 171.147 2232.73 189.925V312.285L2232.73 312.284L2232.72 434.149C2232.72 452.926 2217.5 468.149 2198.72 468.149L1954 468.148C1935.22 468.148 1920 452.926 1920 434.149V345.789C1920 327.011 1935.22 311.788 1954 311.788H2076.31V189.925C2076.31 171.148 2091.53 155.926 2110.31 155.926L2198.73 155.925Z" fill="#A2C772"/>
+    <path d="M2198.73 158.925C2215.85 158.926 2229.73 172.804 2229.73 189.925V312.283L2229.73 312.284L2229.72 434.148C2229.72 451.269 2215.85 465.149 2198.72 465.149H1954C1936.88 465.148 1923 451.27 1923 434.149V345.789C1923 328.668 1936.88 314.788 1954 314.788H2076.31L2079.31 311.789V189.926C2079.31 172.805 2093.19 158.926 2110.31 158.926L2198.73 158.925Z" fill="#BFF800" stroke="#B1E407" strokeWidth="6" strokeLinejoin="bevel"/>
+    </g>
+    <defs>
+    <filter id={bShadow} x="716.194" y="142.925" width="338.726" height="338.224" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+    <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+    <feOffset dx="11"/>
+    <feGaussianBlur stdDeviation="6.5"/>
+    <feComposite in2="hardAlpha" operator="out"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_100_152"/>
+    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_100_152" result="shape"/>
+    </filter>
+    <filter id={dShadow} x="1918" y="142.925" width="338.726" height="338.224" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+    <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+    <feOffset dx="11"/>
+    <feGaussianBlur stdDeviation="6.5"/>
+    <feComposite in2="hardAlpha" operator="out"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"/>
+    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_100_152"/>
+    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_100_152" result="shape"/>
+    </filter>
+    </defs>
+    </svg>
+  )
+}

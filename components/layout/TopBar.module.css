@@ -1,12 +1,7 @@
-/* Sticky to the top of the viewport for as long as the hero's text layer is
-   in view; that layer ends exactly where the next section begins, so the
-   incoming section pushes the bar out natively at the moment of entry. No
-   fade or shift of its own: the floating navbar (SiteHeader.tsx) simply
-   follows the bar's still-visible height. */
+/* Scrolls away with the hero; the floating header follows its visible height. */
 .bar {
   --banner-font-size: 13px;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 41;
   flex: none;
   width: 100%;

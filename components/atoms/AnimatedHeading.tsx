@@ -1,6 +1,6 @@
 "use client"
 
-import type { CSSProperties } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import { RichText } from "unframer"
 
 export type TextAppearEffect = {
@@ -28,6 +28,9 @@ export type TextAppearEffect = {
 
 type Props = {
   text: string
+  /** Optional inline formatting, such as a highlighted phrase or a line break. */
+  children?: ReactNode
+  id?: string
   effect: TextAppearEffect
   as?: "h1" | "h2" | "h3" | "p" | "span"
   /** Class applied to the text element (typography). */
@@ -44,6 +47,8 @@ type Props = {
  */
 export function AnimatedHeading({
   text,
+  children,
+  id,
   effect,
   as: Tag = "h1",
   textClassName,
@@ -61,8 +66,8 @@ export function AnimatedHeading({
       withExternalLayout
     >
       <>
-        <Tag className={textClassName} style={style}>
-          {text}
+        <Tag id={id} className={textClassName} style={style}>
+          {children ?? text}
         </Tag>
       </>
     </RichText>

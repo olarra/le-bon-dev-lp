@@ -1,0 +1,483 @@
+.showcase {
+  --showcase-ink: #10251c;
+  --showcase-muted: #435a35;
+  --showcase-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --showcase-inset: max(24px, calc((100% - 1280px) / 2));
+  --showcase-radius: 36px;
+  --showcase-grid-scale: 1.34;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  background: var(--color-surface-guarantees, #0c120e);
+  color: var(--showcase-ink);
+  font-family: "Outfit", sans-serif;
+}
+
+.showcase,
+.showcase *,
+.showcase *::before,
+.showcase *::after {
+  box-sizing: border-box;
+}
+
+/* Only the decorative surface changes width. The content keeps its measure,
+   so the opening never resizes type or pushes following sections around. */
+.surface {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-color: #c9e9a0;
+  background-image:
+    radial-gradient(ellipse 100% 48% at 14% 0%, var(--showcase-lime) 0%, rgb(200 245 62 / 0) 76%),
+    radial-gradient(ellipse 90% 55% at 100% 46%, rgb(205 234 155 / 85%) 0%, rgb(205 234 155 / 0) 78%),
+    linear-gradient(155deg, #d7f397 0%, #c6e69d 48%, #b7d5a2 100%);
+  clip-path: inset(0 var(--showcase-inset) 0 var(--showcase-inset) round var(--showcase-radius));
+}
+
+.surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgb(42 72 29 / 34%) 1.1px, transparent 1.6px);
+  background-size: 18px 18px;
+  background-position: center top;
+  -webkit-mask-image: linear-gradient(120deg, #000 0%, rgb(0 0 0 / 55%) 24%, rgb(0 0 0 / 12%) 45%, rgb(0 0 0 / 65%) 76%, #000 100%);
+  mask-image: linear-gradient(120deg, #000 0%, rgb(0 0 0 / 55%) 24%, rgb(0 0 0 / 12%) 45%, rgb(0 0 0 / 65%) 76%, #000 100%);
+  /* Scale the texture itself so dot size and spacing grow together from
+     the top centre. The surface clips its edges throughout the opening. */
+  transform-origin: 50% 0;
+  transform: scale(1);
+  opacity: 0.72;
+}
+
+.showcase[data-ready="true"] .surface {
+  transition: clip-path 820ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.showcase[data-ready="true"] .surface::after {
+  transition:
+    transform 820ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 820ms ease;
+}
+
+.showcase[data-expanded="true"] .surface {
+  clip-path: inset(0 0 0 0 round 0);
+}
+
+.showcase[data-expanded="true"] .surface::after {
+  transform: scale(var(--showcase-grid-scale));
+  opacity: 0.62;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 112px);
+  max-width: 1168px;
+  margin-inline: auto;
+  padding-block: 160px 104px;
+}
+
+.sectionHeader {
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  margin-bottom: 44px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 8px 15px;
+  border: 1px solid rgb(16 37 28 / 20%);
+  border-radius: 999px;
+  background: rgb(249 250 245 / 24%);
+  color: #2f4725;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 1000px;
+  margin: 0;
+  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-size: clamp(36px, 4.2vw, 60px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  word-spacing: -0.1em;
+  text-wrap: balance;
+}
+
+/* Conicorn's shared pricing frame: 24px inset, 80px outer corners and 56px
+   inner corners. The content remains the site's two service offers. */
+.offers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+  row-gap: 36px;
+  padding: 24px;
+  border-radius: 80px;
+  background: #eef1e7;
+}
+
+.offerCard {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  min-width: 0;
+  padding: 48px;
+  border-radius: 56px;
+}
+
+.offerCard[data-offer="saas-mobile"] {
+  background: #fcfdf8;
+}
+
+.offerIntro {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgb(16 37 28 / 12%);
+}
+
+.offerTopline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.offerIcon {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #2a4734;
+  box-shadow:
+    inset 0 0 7px rgb(249 250 245 / 80%),
+    inset 0 -1.5px 1.2px #10251c;
+}
+
+.offerIcon::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f9faf5;
+}
+
+.offerCard[data-offer="saas-mobile"] .offerIcon {
+  background: radial-gradient(circle at 50% 48%,
+    #5e843f 0%,
+    #a3ce58 24%,
+    var(--showcase-lime) 48%,
+    #e5f2cb 80%,
+    #f9faf5 100%);
+  box-shadow:
+    inset 0 1px 2px rgb(255 255 255 / 65%),
+    inset 0 -1.5px 1.2px rgb(78 108 48 / 30%);
+}
+
+.offerCard[data-offer="saas-mobile"] .offerIcon::after {
+  content: none;
+}
+
+.offerBadge {
+  padding: 7px 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background:
+    linear-gradient(#fcfdf8, #fcfdf8) padding-box,
+    linear-gradient(110deg, #96b56e, #d3ed9c 55%, #81975a) border-box;
+  color: var(--showcase-muted);
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.offerHeading {
+  display: grid;
+  gap: 10px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: clamp(25px, 2.2vw, 30px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+
+.description {
+  max-width: 40ch;
+  margin: 0;
+  color: var(--showcase-muted);
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+.offerFeatures {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding-bottom: 28px;
+}
+
+.featuresTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.features {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--showcase-muted);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.featureCheck {
+  flex: none;
+  margin-top: 3px;
+  color: #52703b;
+}
+
+.offerLink {
+  display: flex;
+  align-self: end;
+  width: 100%;
+  min-width: 0;
+  padding: 2px;
+  border-radius: 999px;
+  background: linear-gradient(105deg, #82a960 0%, #d4f79c 28%, #e7efc7 52%, #b1cf7a 76%, #7b9855 100%);
+  color: #f9faf5;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+}
+
+.offerLinkInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 22px;
+  border-radius: inherit;
+  background: #0d1a12;
+  box-shadow: inset 0 0 16px rgb(245 249 234 / 36%);
+  transition: background-color 240ms ease, box-shadow 240ms ease;
+}
+
+.offerLink svg {
+  flex: none;
+  color: var(--showcase-lime);
+  transition: transform 300ms ease;
+}
+
+.offerLink:hover .offerLinkInner,
+.offerLink:focus-visible .offerLinkInner {
+  background: #24412c;
+  box-shadow: inset 0 0 16px rgb(245 249 234 / 45%);
+}
+
+.offerLink:focus-visible {
+  outline: 2px solid var(--showcase-ink);
+  outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .offerLink:hover svg {
+    transform: rotate(-45deg);
+  }
+}
+
+.offerLink:focus-visible svg {
+  transform: rotate(-45deg);
+}
+
+/* Shared rows align the separators and buttons when descriptions wrap. */
+@supports not (grid-template-rows: subgrid) {
+  .offerCard {
+    grid-row: auto;
+    grid-template-rows: auto 1fr auto;
+    gap: 36px;
+  }
+}
+
+.projectsSection {
+  margin-top: 88px;
+  padding-top: 72px;
+  border-top: 1px solid rgb(51 82 32 / 18%);
+}
+
+@media (min-width: 810px) and (max-width: 1199.98px) {
+  .offers {
+    column-gap: 16px;
+    row-gap: 28px;
+    padding: 20px;
+    border-radius: 60px;
+  }
+
+  .offerCard {
+    padding: 28px;
+    border-radius: 40px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+}
+
+@media (max-width: 809.98px) {
+  .showcase {
+    --showcase-inset: 16px;
+    --showcase-radius: 26px;
+    --showcase-grid-scale: 1.22;
+  }
+
+  .content {
+    width: calc(100% - 64px);
+    max-width: 560px;
+    padding-block: 136px 72px;
+  }
+
+  .sectionHeader {
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+
+  .title {
+    font-size: clamp(32px, 6vw, 42px);
+    line-height: 1.12;
+    word-spacing: -0.08em;
+  }
+
+  .offers {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+    border-radius: 40px;
+  }
+
+  .offerCard {
+    grid-row: auto;
+    grid-template-rows: auto auto auto;
+    gap: 28px;
+    padding: 28px 20px;
+    border-radius: 28px;
+  }
+
+  .offerIntro {
+    gap: 22px;
+    padding-bottom: 28px;
+  }
+
+  .offerTopline {
+    gap: 10px;
+  }
+
+  .offerIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  .offerBadge {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .cardTitle {
+    font-size: 26px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  .features {
+    font-size: 16px;
+  }
+
+  .offerFeatures {
+    padding-bottom: 4px;
+  }
+
+  .offerLink {
+    font-size: 15px;
+  }
+
+  .offerLinkInner {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+
+  .projectsSection {
+    margin-top: 64px;
+    padding-top: 56px;
+  }
+
+  .surface::after {
+    background-size: 16px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase[data-ready="true"] .surface,
+  .showcase[data-ready="true"] .surface::after,
+  .offerLinkInner,
+  .offerLink svg {
+    transition: none;
+  }
+
+  .showcase .offerLink svg {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .surface {
+    background: Canvas;
+  }
+
+  .surface::after {
+    display: none;
+  }
+
+  .offerCard,
+  .offerLink {
+    border: 1px solid CanvasText;
+  }
+}

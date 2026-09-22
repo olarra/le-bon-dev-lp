@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none">
+  <defs>
+    <linearGradient id="budget-fill" x1="420" y1="80" x2="130" y2="530" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D0E8C8"/>
+      <stop offset="1" stop-color="#E9F3BE"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#budget-fill)" d="M78 282C72 179 130 131 229 106C321 83 423 42 483 104C525 147 537 218 557 282C579 353 558 413 482 450C401 490 287 534 185 537C107 540 43 513 37 458C31 403 84 356 78 282Z"/>
+</svg>

@@ -1,6 +1,13 @@
 .header {
   --header-base-offset: 24px;
   --header-height: 70px;
+  --header-logo-ink: #1b4040;
+  --header-action-bg: #102d2d;
+  --header-action-ink: var(--color-surface-navigation);
+  --header-action-border: #102d2d;
+  --header-action-arrow: #cefa3b;
+  --header-action-hover: #1b4040;
+  --header-color-transition: color 0s, background-color 0s, border-color 0s;
   position: fixed;
   inset: calc(var(--header-base-offset) + var(--topbar-offset, 44px)) 0 auto;
   z-index: 40;
@@ -20,6 +27,20 @@
   font-size: 16px;
   line-height: 1.3;
   pointer-events: none;
+}
+
+.header[data-ready="true"] {
+  --header-color-transition: color 360ms ease, background-color 360ms ease, border-color 360ms ease;
+}
+
+/* Recolor only once the full navigation pill releases the logo and CTA. */
+.header[data-scrolled="true"][data-surface="dark"] {
+  --header-logo-ink: #f9faf5;
+  --header-action-bg: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --header-action-ink: #102d2d;
+  --header-action-border: var(--header-action-bg);
+  --header-action-arrow: var(--header-action-ink);
+  --header-action-hover: #d5f873;
 }
 
 .header *,
@@ -85,16 +106,17 @@
   min-width: 0;
   max-width: 100%;
   min-height: 48px;
-  color: inherit;
+  color: var(--header-logo-ink);
   font-size: 30px;
   font-weight: 700;
   letter-spacing: -1.2px;
   text-decoration: none;
   white-space: nowrap;
   border-radius: 8px;
+  transition: var(--header-color-transition);
 }
 
-.logo img {
+.logo svg {
   display: block;
   width: 200px;
   height: auto;
@@ -137,22 +159,35 @@
   gap: 14px;
   min-height: 52px;
   padding: 12px 22px;
-  border: 1px solid #102d2d;
+  border: 1px solid var(--header-action-border);
   border-radius: 999px;
-  background: #102d2d;
-  color: var(--color-surface-navigation);
+  background: var(--header-action-bg);
+  color: var(--header-action-ink);
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
+  transition: var(--header-color-transition);
 }
 
 .contact svg {
   flex: none;
-  color: #cefa3b;
+  color: var(--header-action-arrow);
+  transform-origin: center;
+  transition: var(--header-color-transition), transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact:hover svg {
+    transform: rotate(-45deg);
+  }
+}
+
+.contact:focus-visible svg {
+  transform: rotate(-45deg);
 }
 
 .contact:hover {
-  background: #1b4040;
+  background: var(--header-action-hover);
 }
 
 .header a:focus-visible,
@@ -164,6 +199,11 @@
 
 .menuButton {
   display: none;
+}
+
+.header[data-scrolled="true"][data-surface="dark"] a:focus-visible,
+.header[data-scrolled="true"][data-surface="dark"] .menuButton:focus-visible {
+  outline-color: #f9faf5;
 }
 
 @media (min-width: 1100px) {
@@ -189,7 +229,7 @@
     font-size: 26px;
   }
 
-  .logo img {
+  .logo svg {
     width: 170px;
     max-width: 100%;
   }
@@ -203,11 +243,12 @@
     padding: 10px 18px;
     border: 0;
     border-radius: 999px;
-    background: #102d2d;
-    color: var(--color-surface-navigation);
+    background: var(--header-action-bg);
+    color: var(--header-action-ink);
     font: inherit;
     font-weight: 500;
     cursor: pointer;
+    transition: var(--header-color-transition);
   }
 
   .menuIcon {
@@ -220,9 +261,9 @@
     width: 18px;
     height: 2px;
     border-radius: 2px;
-    background: #cefa3b;
+    background: var(--header-action-arrow);
     /* Hamburger <-> X morphs instead of jumping. */
-    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1), background-color 360ms ease;
   }
 
   .header[data-menu-open="true"] .menuIcon span:first-child {
@@ -261,13 +302,32 @@
     transform-origin: top center;
   }
 
+  /* On phones the envelope stays full width, so it also becomes dark to
+     keep the white wordmark readable. The open menu uses the same surface. */
+  .header[data-scrolled="true"][data-surface="dark"] .envelope {
+    background-color: color-mix(in srgb, var(--color-surface-guarantees) 94%, transparent);
+    border-color: #455839;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 16%), inset 0 1px 0 rgb(255 255 255 / 5%);
+  }
+
+  .header[data-scrolled="true"][data-surface="dark"] .menuPanel {
+    background: #121b14;
+    border-color: #455839;
+    color: #f9faf5;
+  }
+
+  .header[data-scrolled="true"][data-surface="dark"] .navigation a:hover {
+    background: #263820;
+  }
+
   /* Closing: quick and eased-in, so it gets out of the way. */
   .header[data-ready="true"] .menuPanel {
     transition:
       max-height 200ms ease,
       opacity 180ms cubic-bezier(0.4, 0, 1, 1),
       transform 200ms cubic-bezier(0.4, 0, 1, 1),
-      visibility 0s linear 200ms;
+      visibility 0s linear 200ms,
+      var(--header-color-transition);
   }
 
   .header[data-menu-open="true"] .menuPanel {
@@ -283,7 +343,8 @@
       max-height 200ms ease,
       opacity 240ms cubic-bezier(0.2, 0.7, 0.2, 1),
       transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
-      visibility 0s;
+      visibility 0s,
+      var(--header-color-transition);
   }
 
   /* The links and CTA follow the panel in with a short stagger; on close
@@ -292,14 +353,14 @@
   .menuPanel .contact {
     opacity: 0;
     transform: translateY(-6px);
-    transition: opacity 140ms ease-in, transform 140ms ease-in;
+    transition: opacity 140ms ease-in, transform 140ms ease-in, var(--header-color-transition);
   }
 
   .header[data-menu-open="true"] .menuPanel .navigation a,
   .header[data-menu-open="true"] .menuPanel .contact {
     opacity: 1;
     transform: none;
-    transition: opacity 260ms cubic-bezier(0.2, 0.7, 0.2, 1), transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: opacity 260ms cubic-bezier(0.2, 0.7, 0.2, 1), transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1), var(--header-color-transition);
     transition-delay: 40ms;
   }
 
@@ -334,10 +395,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .header .contact svg {
+    transform: none;
+  }
+
   .header[data-ready="true"],
   .header[data-ready="true"] .envelope,
   .header[data-ready="true"] .menuPanel,
   .header[data-ready="true"][data-menu-open="true"] .menuPanel,
+  .header .logo,
+  .header .contact svg,
+  .header .menuButton,
   .header .menuIcon span,
   .header .menuPanel .navigation a,
   .header .menuPanel .contact,
