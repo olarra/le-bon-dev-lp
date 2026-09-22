@@ -213,6 +213,12 @@
 }
 
 @media (min-width: 810px) {
+  .section {
+    /* At the section stop, leave breathing room below the fixed navigation
+       (94px from the viewport top on desktop, 84px on narrower screens). */
+    padding-top: 132px;
+  }
+
   .inner {
     width: calc(100% - 80px);
   }

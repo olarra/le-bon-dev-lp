@@ -1,0 +1,20 @@
+/* Raster layers retain the reference material. These rules only compose them. */
+.lbd-oi { position: relative; display: inline-block; flex: none; vertical-align: middle; isolation: isolate; overflow: visible; pointer-events: auto; }
+.lbd-oi *, .lbd-oi *::before, .lbd-oi *::after { box-sizing: border-box; }
+.lbd-oi__part { position: absolute; inset: 0; display: block; transform-origin: 50% 50%; }
+.lbd-oi__asset { position: absolute; display: block; max-width: none !important; user-select: none; pointer-events: none; }
+.lbd-oi__browser-placement { position: absolute; left: 8%; top: 15%; width: 74%; height: 67.73%; transform: rotate(-4deg); filter: drop-shadow(0 3px 2px #1b30251b); }
+.lbd-oi__cursor-placement { position: absolute; left: 57%; top: 53%; width: 32%; height: 37.05%; filter: drop-shadow(0 2px 1px #34531a35); }
+.lbd-oi__cursor-placement .lbd-oi__part { transform-origin: 16% 12%; }
+.lbd-oi__grid { position: absolute; inset: 11%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8%; transform: rotate(2deg); }
+.lbd-oi__tile { position: relative; min-width: 0; filter: drop-shadow(0 3px 2px #21382725); }
+/* Optical bounds of the supplied 1254px PNGs, measured at alpha >= 240.
+   The 384px WebP copies preserve the full canvas and these proportional margins. */
+.lbd-oi__asset--browser-base { width: 136.304%; height: 148.931%; left: -18.152%; top: -24.347%; }
+.lbd-oi__asset--cursor { width: 141.216%; height: 121.984%; left: -21.171%; top: -12.646%; }
+.lbd-oi__asset--tile-lime { width: 131.447%; height: 133.831%; left: -15.723%; top: -16.862%; }
+.lbd-oi__asset--tile-ivory { width: 133.546%; height: 136.900%; left: -16.720%; top: -18.231%; }
+.lbd-oi__asset--tile-forest { width: 134.261%; height: 137.802%; left: -17.024%; top: -17.692%; }
+@media (prefers-reduced-motion: reduce) {
+  .lbd-oi__part { animation: none !important; transition: none !important; }
+}

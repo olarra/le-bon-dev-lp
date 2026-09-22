@@ -1,475 +1,806 @@
-/* "Les offres": two offer cards under a centred, marker-underlined title.
-   A plain cream surface and pale cards keep the mockups prominent. */
+/* Opaque sage and ivory faces, with a thin molded edge. The two plane
+   wrappers belong to scroll motion; hover only changes their surface light. */
 .section {
   --offers-ink: #10251c;
-  --offers-lime: #c8f53e;
-  --offers-note: #6d8059;
-  --offers-card: #f5f8e7;
-  --offers-card-border: #e5ebd3;
-  --offers-plate: #c8e681;
-  --offers-title-size: 72px;
+  --offers-muted: #52624e;
+  --offers-sage: #e8eddb;
+  --offers-ivory: #fcfcf3;
+  --offers-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --offers-edge: 4px;
+  --offers-radius: 80px;
+  --offers-inner-radius: 56px;
   position: relative;
+  isolation: isolate;
   width: 100%;
-  /* Top padding clears the floating header when this section lands at the
-     top of the viewport after sliding over the hero: the header's pill ends
-     94px down (24px offset + 70px), so the eyebrow starts ~66px below it. */
-  padding: 160px 24px 140px;
-  background-color: var(--color-surface-offers, #fffcee);
+  padding: 144px 56px 148px;
+  overflow: visible;
+  background: #0c120e;
   color: var(--offers-ink);
   font-family: "Outfit", sans-serif;
 }
 
-.inner {
-  display: grid;
-  gap: 40px;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+.section,
+.section *,
+.section *::before,
+.section *::after {
+  box-sizing: border-box;
 }
 
-/* ---- Section header ---- */
+.light {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+}
+
+.light::before {
+  position: absolute;
+  inset: -80px -8%;
+  background:
+    radial-gradient(ellipse 64% 54% at 40% 55%, rgb(180 195 148 / 10%), transparent 80%),
+    radial-gradient(ellipse 40% 46% at 86% 76%, rgb(151 174 129 / 5%), transparent 80%);
+  content: "";
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  max-width: 1168px;
+  margin-inline: auto;
+}
+
 .header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 26px;
-  margin-bottom: 8px;
+  position: relative;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  margin-bottom: 56px;
   text-align: center;
 }
 
-/* Line + label + line eyebrow, in the olive the reference uses. */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
   margin: 0;
-  color: var(--color-primary-dark, #8aa61f);
-  font-size: 14px;
+  padding: 8px 15px;
+  border: 1px solid rgb(232 237 219 / 22%);
+  border-radius: 999px;
+  background: rgb(232 237 219 / 5%);
+  color: var(--offers-lime);
+  font-size: 13px;
   font-weight: 600;
+  line-height: 1.4;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.eyebrowLine {
-  display: block;
-  width: 46px;
-  height: 1.5px;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-/* Title: two inline AnimatedHeading halves laid out as one line (wrapping
-   between the halves on narrow screens), in the hero's Morna Bold. The
-   container carries the same font so the gap between halves scales with it. */
 .title {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  column-gap: 0.26em;
+  max-width: 1000px;
   margin: 0;
+  color: var(--offers-ivory);
   font-family: "Morna Bold", "Outfit", sans-serif;
-  font-size: var(--offers-title-size);
-  line-height: 1;
+  font-size: clamp(36px, 4.2vw, 60px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  word-spacing: -0.1em;
+  text-wrap: balance;
 }
 
-.titlePart {
-  /* unframer's base stylesheet sets [data-framer-component-type]
-     { position: absolute } on RichText's wrapper; same fix as the hero's
-     .titleWrapper, but inline here so the two halves sit side by side. */
-  position: relative !important;
-  display: inline-block;
-  width: auto;
-}
-
-.titleText {
-  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
-  --framer-font-size: var(--offers-title-size);
-  --framer-font-style: normal;
-  --framer-font-weight: 700;
-  --framer-letter-spacing: -0.01em;
-  --framer-line-height: 100%;
-  --framer-text-color: var(--offers-ink);
-  display: inline-block;
-  font-family: var(--framer-font-family);
-  font-size: var(--framer-font-size);
-  font-style: var(--framer-font-style);
-  font-weight: var(--framer-font-weight);
-  letter-spacing: var(--framer-letter-spacing);
-  line-height: var(--framer-line-height);
-  color: var(--framer-text-color);
-  white-space: nowrap;
-}
-
-/* The underlined run ("prend forme."). */
-.titleMark {
+.entry,
+.surfacePlane {
   position: relative;
-  display: inline-block;
 }
 
-.titleStroke {
+.surface {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto auto auto 1fr auto;
+  column-gap: 12px;
+  row-gap: 24px;
+  padding: 32px;
+  border-radius: var(--offers-radius);
+  background: var(--offers-sage);
+  box-shadow:
+    0 32px 60px -30px rgb(0 0 0 / 60%),
+    0 7px 14px -9px rgb(0 0 0 / 60%),
+    inset 0 1px 0 rgb(255 255 244 / 80%),
+    inset 0 -3px 2px rgb(95 120 79 / 18%);
+}
+
+/* The mask exposes only a 4px rim: neither panel's centre is glass. */
+.surface::before,
+.ivory::before {
   position: absolute;
-  left: -2%;
-  bottom: -0.12em;
-  width: 104%;
-  height: 0.26em;
-  overflow: visible;
+  z-index: 1;
+  inset: 0;
+  padding: var(--offers-edge);
+  border-radius: inherit;
+  background: linear-gradient(140deg,
+    rgb(255 255 246 / 96%) 0%,
+    rgb(240 246 218 / 72%) 22%,
+    rgb(162 185 139 / 36%) 48%,
+    rgb(244 247 228 / 76%) 73%,
+    rgb(105 133 91 / 48%) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  content: "";
   pointer-events: none;
 }
 
-.titleStroke path {
-  fill: none;
-  stroke: var(--offers-lime);
-  stroke-width: 9;
-  stroke-linecap: round;
+.surface::after,
+.ivory::after {
+  position: absolute;
+  z-index: 1;
+  inset: var(--offers-edge);
+  border: 1px solid rgb(255 255 248 / 30%);
+  border-radius: calc(var(--offers-radius) - var(--offers-edge));
+  box-shadow:
+    inset 2px 2px 4px rgb(255 255 245 / 32%),
+    inset -2px -3px 4px rgb(110 130 90 / 8%);
+  opacity: 0.65;
+  content: "";
+  pointer-events: none;
+  transition: opacity 260ms ease;
 }
 
-/* ---- Cards ---- */
-.card {
+.offer {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.5fr);
-  align-items: center;
-  gap: 40px;
-  padding: 76px 44px 96px;
-  border: 1px solid var(--offers-card-border);
-  border-radius: 24px;
-  background: var(--offers-card);
+  grid-row: 1 / span 5;
+  grid-template-rows: subgrid;
+  min-width: 0;
+  padding: 36px;
+  border-radius: var(--offers-inner-radius);
 }
 
-.card[data-figure="left"] {
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.88fr);
+.website {
+  grid-column: 1;
 }
 
-.card[data-figure="left"] .copy {
-  order: 2;
+/* Share five tracks; each closing group keeps aftercare, price and CTA
+   together without forcing matching gaps inside the two offers. */
+.ivoryPlane {
+  position: relative;
+  /* Keep the nested panel and its shadow above the support's resin edge. */
+  z-index: 2;
+  display: grid;
+  grid-column: 2;
+  grid-row: 1 / span 5;
+  grid-template-rows: subgrid;
+  min-width: 0;
+  transform-origin: 50% 80%;
 }
 
-.card[data-figure="left"] .figure {
-  order: 1;
+.ivory {
+  isolation: isolate;
+  background: linear-gradient(125deg, #f9f9ef, #edf1e4);
+  box-shadow:
+    0 12px 22px -17px rgb(73 89 57 / 30%),
+    0 3px 5px -3px rgb(73 89 57 / 16%),
+    inset 0 1px 0 #fffffa,
+    inset 0 -2px 2px rgb(162 181 140 / 12%),
+    0 var(--offer-shadow-y, 12px) var(--offer-shadow-blur, 22px) var(--offer-shadow-spread, -17px) rgb(31 47 24 / var(--offer-shadow-alpha, 0));
 }
 
-.copy {
+.ivory::before {
+  background: linear-gradient(140deg,
+    #fffffc 0%,
+    rgb(255 255 250 / 95%) 25%,
+    rgb(182 199 158 / 35%) 55%,
+    rgb(255 255 246 / 85%) 78%,
+    rgb(143 165 115 / 40%) 100%);
+}
+
+.ivory::after {
+  border-radius: calc(var(--offers-inner-radius) - var(--offers-edge));
+}
+
+.ivory > :not(.landingSheen):not(.landingRim) {
+  position: relative;
+  z-index: 3;
+}
+
+.landingSheen {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Version 02 “Reflet de résine” from deux-shimmers-resine.html. */
+.sheenReflection,
+.rimReflection {
+  position: absolute;
+  left: 0;
+  top: -25%;
+  height: 150%;
+  width: 100%;
+  transform: translateX(-130%) skewX(-16deg);
+  opacity: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.sheenReflection {
+  background: linear-gradient(90deg,
+    transparent 20%,
+    rgba(71, 100, 53, .045) 35%,
+    rgba(255, 255, 244, .12) 44%,
+    rgba(255, 255, 250, .40) 51%,
+    rgba(255, 255, 245, .12) 58%,
+    transparent 75%);
+}
+
+.landingRim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px;
+  pointer-events: none;
+  z-index: 4;
+  overflow: hidden;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+}
+
+.rimReflection {
+  background: linear-gradient(90deg,
+    transparent 20%, #e8f5c8bb 43%, #fff 50%, #fffbd3aa 58%, transparent 78%);
+}
+
+.surface:focus-within::after,
+.ivory:focus-within::after {
+  opacity: 1;
+}
+
+.offerTopline {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
+  justify-content: space-between;
+  gap: 16px;
   min-width: 0;
 }
 
-/* `< Site vitrine >`: the brand's chevron brackets around a monospace label. */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+.offerTopline > :first-child {
+  flex: none;
 }
 
-.tagBracket {
-  display: block;
-  flex: none;
-  width: 16px;
-  height: 22px;
+.offerBadge {
+  position: relative;
+  max-width: 100%;
+  margin-top: 4px;
+  padding: 7px 11px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgb(248 251 238 / 90%), rgb(222 234 205 / 65%));
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 246 / 85%),
+    inset 0 -2px 2px rgb(99 130 73 / 12%),
+    0 2px 4px -3px rgb(55 83 39 / 25%);
+  color: var(--offers-muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.offerBadge::before {
+  position: absolute;
+  inset: -1px;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg,
+    rgb(246 255 215 / 98%) 0%,
+    rgb(191 242 58 / 95%) 24%,
+    rgb(23 65 39 / 88%) 50%,
+    rgb(207 250 103 / 95%) 74%,
+    rgb(24 73 43 / 92%) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  content: "";
+  pointer-events: none;
 }
 
 .offerHeading {
   display: grid;
-  gap: 12px;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgb(16 37 28 / 12%);
 }
 
 .cardTitle {
   margin: 0;
-  white-space: pre-line;
-  font-size: 44px;
-  font-weight: 800;
+  font-size: clamp(26px, 2.3vw, 32px);
+  font-weight: 600;
+  line-height: 1.18;
   letter-spacing: -0.025em;
-  line-height: 1.04;
 }
 
-.lead {
+.promise {
+  min-width: 0;
   margin: 0;
-  max-width: 35ch;
+  color: var(--offers-ink);
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+.offerAudience,
+.offerFeatures,
+.offerAftercare {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.offerFeatures {
+  padding-bottom: 12px;
+}
+
+.offerAftercare {
+  padding-bottom: 0;
+}
+
+.featuresTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.audience,
+.aftercare,
+.features {
+  margin: 0;
+  color: var(--offers-muted);
+  font-size: 17px;
   line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 .features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px 14px;
-  margin: 0;
+  display: grid;
+  gap: 12px;
   padding: 0;
   list-style: none;
-  color: #627467;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: 0.015em;
+}
+
+.audience strong {
+  color: var(--offers-ink);
+  font-weight: 600;
 }
 
 .features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.featureCheck {
+  flex: none;
+  margin-top: 3px;
+  color: #60784c;
+}
+
+.offerClosing {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.website .offerClosing {
+  gap: 44px;
+}
+
+.offerFooter {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  margin-top: auto;
+}
+
+.price {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #cfd8be;
+  border-radius: 16px;
+  background: #f0f3e6;
+}
+
+.priceLabel {
+  margin: 0 0 8px;
+  color: var(--offers-muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.priceSummary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 0;
+}
+
+.priceAmount {
+  color: var(--offers-ink);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
-.features li + li::before {
-  content: "·";
-  margin-right: 14px;
+.priceDetail {
+  min-width: 0;
+  color: var(--offers-muted);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
-/* Same forest pill as the hero CTA (hero.module.css .ctaButton), kept local
-   so the section stays self-contained; lime arrow like the hero's. */
-.cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin-top: 8px;
-  padding: 17px 32px;
+.offerLink {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-self: end;
+  width: 100%;
+  min-width: 0;
+  padding: 3px;
   border-radius: 999px;
-  background-color: var(--offers-ink);
-  color: #ffffff;
-  font-size: 17px;
-  font-weight: 600;
+  background: linear-gradient(135deg, #d4dec0, #9dab8b 44%, #dce4cd 74%, #82936e);
+  box-shadow: 0 5px 8px -5px rgb(26 42 24 / 28%);
+  color: var(--offers-ivory);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
   text-decoration: none;
-  outline-offset: 4px;
-  transition: background-color 0.3s ease;
+  outline-offset: 5px;
+  transition: box-shadow 240ms ease;
 }
 
-.cta:hover,
-.cta:focus-visible {
-  background-color: #1f4433;
+.offerLink::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #f2f5e7, #b4c59a 55%, #e2e9d6);
+  opacity: 0;
+  content: "";
+  transition: opacity 240ms ease;
 }
 
-.cta:focus-visible {
-  outline: 2px solid #ffffff;
+.offerLinkInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 14px 18px;
+  border-radius: inherit;
+  background: #172d22;
+  box-shadow:
+    inset 0 1px 2px rgb(247 250 235 / 25%),
+    inset 0 -2px 3px rgb(0 0 0 / 23%);
+  transition: background-color 240ms ease, box-shadow 240ms ease;
 }
 
-.ctaArrow {
+.offerLinkInner > span {
+  min-width: 0;
+}
+
+.offerLink svg {
   flex: none;
   color: var(--offers-lime);
-  transition: transform 0.3s ease;
 }
 
-.ctaArrowDiagonal {
-  transform: rotate(-45deg);
+.offerLink:focus-visible {
+  outline: 2px solid var(--offers-ink);
 }
 
-.cta:hover .ctaArrow,
-.cta:focus-visible .ctaArrow {
-  transform: translateX(3px);
+.offerLink:focus-visible::before,
+.offerLink:hover::before {
+  opacity: 1;
 }
 
-.cta:hover .ctaArrowDiagonal,
-.cta:focus-visible .ctaArrowDiagonal {
-  transform: rotate(-45deg) translateX(3px);
+.offerLink:focus-visible .offerLinkInner,
+.offerLink:hover .offerLinkInner {
+  background: #254331;
+  box-shadow:
+    inset 0 1px 3px rgb(247 250 235 / 35%),
+    inset 0 -2px 3px rgb(0 0 0 / 18%);
 }
 
-/* The source PNGs include transparent margins. Size the figure around the
-   visible device so scaling and annotation anchors follow the actual mockup. */
-.figure {
-  position: relative;
-  min-width: 0;
-  width: 100%;
-  aspect-ratio: var(--figure-ratio);
+.offerLink:active .offerLinkInner {
+  background: #13251c;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 26%);
 }
 
-.plate,
-.shot {
-  position: absolute;
-  width: var(--image-width);
-  height: var(--image-height);
-  left: var(--image-left);
-  top: var(--image-top);
+@media (hover: hover) and (pointer: fine) {
+  .surface:hover::after,
+  .ivory:hover::after {
+    opacity: 1;
+  }
+
+  .offerLink:hover {
+    box-shadow: 0 7px 12px -6px rgb(26 42 24 / 35%);
+  }
 }
 
-.plate {
-  z-index: 0;
-  background: var(--offers-plate);
-  opacity: 0.35;
-  -webkit-mask: var(--plate-mask) center / 100% 100% no-repeat;
-  mask: var(--plate-mask) center / 100% 100% no-repeat;
-  transform: translate(12px, 10px);
-  pointer-events: none;
+/* The fallback keeps equal-height offers and bottom-aligned CTAs. */
+@supports not (grid-template-rows: subgrid) {
+  .surface {
+    grid-template-rows: auto;
+  }
+
+  .offer,
+  .ivoryPlane {
+    grid-row: auto;
+    grid-template-rows: auto auto auto 1fr auto;
+    row-gap: 24px;
+  }
+
+  .ivoryPlane > .offer {
+    grid-row: 1 / -1;
+  }
 }
 
-.figure[data-shift="left"] .plate {
-  opacity: 0.26;
-  transform: translate(-8px, 8px);
-}
-
-.shot {
-  z-index: 1;
-  display: block;
-  max-width: none;
-}
-
-/* Annotations are attached to the visible figure. Only the writing rotates;
-   arrow endpoints stay aligned with the devices as the card scales. */
-.note {
-  position: absolute;
-  z-index: 2;
-  font-family: "Caveat", "Outfit", cursive;
-  font-size: 25px;
-  font-weight: 500;
-  line-height: 1.05;
-  text-align: center;
-  color: var(--offers-note);
-  pointer-events: none;
-}
-
-.noteText {
-  display: block;
-  transform: rotate(-3deg);
-}
-
-.noteArrow {
-  position: absolute;
-  overflow: visible;
-  color: var(--offers-note);
-}
-
-.noteTopRight {
-  top: -66px;
-  right: 0;
-  width: 260px;
-}
-
-.noteTopRight .noteArrow {
-  top: 0;
-  right: calc(100% + 8px);
-  width: 90px;
-  height: 90px;
-}
-
-.noteBottomLeft {
-  bottom: -64px;
-  left: -370px;
-  width: 240px;
-}
-
-.noteBottomLeft .noteArrow {
-  bottom: 14px;
-  left: calc(100% + 10px);
-  width: 160px;
-  height: 96px;
-}
-
-.noteBottomCenter {
-  bottom: -72px;
-  left: 38%;
-  width: 270px;
-}
-
-.noteBottomCenter .noteArrow {
-  top: -22px;
-  right: calc(100% + 6px);
-  width: 110px;
-  height: 48px;
-}
-
-.noteBottomRight {
-  bottom: -72px;
-  left: calc(100% + 90px);
-  width: 220px;
-}
-
-.noteBottomRight .noteArrow {
-  bottom: 22px;
-  right: calc(100% + 6px);
-  width: 160px;
-  height: 60px;
-}
-
-/* ---- Tablet ---- */
-@media (max-width: 1199.98px) {
+@media (min-width: 810px) and (max-width: 1199.98px) {
   .section {
-    --offers-title-size: 58px;
+    --offers-radius: 72px;
+    --offers-inner-radius: 52px;
+    padding: 132px 40px 132px;
   }
 
-  .card {
-    gap: 36px;
-    padding: 44px;
+  .surface {
+    column-gap: 8px;
+    row-gap: 24px;
+    padding: 28px;
   }
 
-  .offerHeading {
-  display: grid;
-  gap: 12px;
-}
-
-.cardTitle {
-    font-size: 36px;
+  .offer {
+    padding: 30px 26px;
   }
 
-  .lead {
-    font-size: 19px;
+  .offerTopline {
+    gap: 12px;
   }
 
-  /* The notes need the desktop card's spare room around the illustration. */
-  .note {
-    display: none;
-  }
-}
-
-/* Stack the cards before the copy or illustration becomes cramped. */
-@media (max-width: 1023.98px) {
-  .section {
-    --offers-title-size: 42px;
-    /* Clears the mobile header when the section lands at the top (12px
-       offset + 72px pill ≈ 84px once the utility bar is pushed out). */
-    padding: 136px 16px 96px;
-  }
-
-  .inner {
-    gap: 24px;
-  }
-
-  .card,
-  .card[data-figure="left"] {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-    padding: 28px 22px 30px;
-    border-radius: 24px;
-  }
-
-  /* Copy first, illustration second, whichever side it takes on desktop. */
-  .card[data-figure="left"] .copy {
-    order: 1;
-  }
-
-  .card[data-figure="left"] .figure {
-    order: 2;
-  }
-
-  .offerHeading {
-  display: grid;
-  gap: 12px;
-}
-
-.cardTitle {
-    font-size: 32px;
-  }
-
-  .lead {
-    font-size: 18px;
+  .offerBadge {
+    padding: 7px 9px;
+    font-size: 12px;
   }
 
   .features {
-    font-size: 13px;
+    gap: 10px;
   }
 
-  .cta {
-    padding: 15px 26px;
+  .audience,
+  .aftercare,
+  .features {
     font-size: 16px;
   }
 
-  .plate,
-  .figure[data-shift="left"] .plate {
-    transform: translate(6px, 6px);
+  .offerLinkInner {
+    gap: 10px;
+    padding-inline: 12px;
+  }
+}
+
+@media (max-width: 809.98px) {
+  .landingSheen,
+  .landingRim {
+    display: none;
+  }
+
+  .section {
+    --offers-radius: 44px;
+    --offers-inner-radius: 32px;
+    --offers-edge: 3px;
+    padding: 104px 16px 92px;
+  }
+
+  .inner {
+    max-width: 560px;
+  }
+
+  .header {
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .eyebrow {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .title {
+    font-size: clamp(36px, 6vw, 42px);
+    line-height: 1.12;
+    word-spacing: -0.08em;
+  }
+
+  .surface {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .offer {
+    grid-column: 1;
+    grid-row: auto;
+    grid-template-rows: auto auto auto auto auto;
+    gap: 22px;
+    padding: 28px 22px;
+  }
+
+  .ivoryPlane {
+    grid-column: 1;
+    grid-row: auto;
+    grid-template-rows: auto;
+  }
+
+  .ivoryPlane > .offer {
+    grid-row: auto;
+  }
+
+  .offerTopline {
+    gap: 12px;
+  }
+
+  .offerBadge {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+
+  .offerHeading {
+    padding-bottom: 22px;
+  }
+
+  .cardTitle {
+    font-size: 28px;
+  }
+
+  .audience,
+  .aftercare,
+  .features {
+    font-size: 16px;
+  }
+
+  .offerFeatures {
+    padding-bottom: 4px;
+  }
+
+  .offerLink {
+    font-size: 15px;
+  }
+
+  .offerLinkInner {
+    gap: 10px;
+    padding: 14px 12px;
+  }
+}
+
+@media (max-width: 374.98px) {
+  .offer {
+    padding-inline: 16px;
+  }
+
+  .cardTitle {
+    font-size: 26px;
+  }
+
+  .offerBadge {
+    max-width: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landingSheen,
+  .landingRim {
+    display: none;
+  }
+
+  .surface::after,
+  .ivory::after,
+  .offerLink,
+  .offerLink::before,
+  .offerLinkInner {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .offerBadge::before {
+    display: none;
+  }
+
+  .light,
+  .landingSheen,
+  .landingRim,
+  .surface::before,
+  .surface::after,
+  .ivory::before,
+  .ivory::after,
+  .offerLink::before {
+    display: none;
+  }
+
+  .section,
+  .surface,
+  .ivory {
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+  }
+
+  .surface,
+  .ivory,
+  .offerLink,
+  .eyebrow,
+  .offerBadge,
+  .price {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+
+  .offerHeading {
+    border-color: CanvasText;
+  }
+
+  .title,
+  .eyebrow,
+  .offerBadge,
+  .promise,
+  .priceLabel,
+  .priceAmount,
+  .priceDetail,
+  .audience,
+  .audience strong,
+  .aftercare,
+  .features,
+  .featureCheck {
+    color: CanvasText;
+  }
+
+  .offerLinkInner {
+    background: ButtonFace;
+    color: ButtonText;
+    box-shadow: none;
+  }
+
+  .offerLink svg {
+    color: ButtonText;
+  }
+
+  .offerLink:focus-visible {
+    outline-color: Highlight;
   }
 }

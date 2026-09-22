@@ -1,148 +1,142 @@
-import Image from "next/image"
-import type { CSSProperties } from "react"
-import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
-import { ScrollReveal } from "@/components/atoms/ScrollReveal"
-import { SECTION_TITLE_EFFECT } from "@/components/sections/hero/hero.content"
-import { BracketIcon } from "./BracketIcon"
-import { HandArrow } from "./HandArrow"
+"use client"
+
+import { useLayoutEffect, useRef, useState } from "react"
+import { OfferIcon, type OfferIconHandle } from "@/components/offer-icons"
+import { OFFERS, type Offer } from "./offers.content"
+import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
 import styles from "./offers.module.css"
-import { OFFERS, OFFERS_EYEBROW, OFFERS_TITLE, type NotePlacement, type Offer } from "./offers.content"
 
-const NOTE_CLASS: Record<NotePlacement, string> = {
-  topRight: styles.noteTopRight,
-  bottomLeft: styles.noteBottomLeft,
-  bottomCenter: styles.noteBottomCenter,
-  bottomRight: styles.noteBottomRight,
-}
-
-// Same reveal as the hero headline. The second half starts its per-character
-// stagger where the first half's ends, so the two halves read as one line.
-const TITLE_SECOND_HALF_EFFECT = {
-  ...SECTION_TITLE_EFFECT,
-  startDelay: SECTION_TITLE_EFFECT.startDelay + OFFERS_TITLE.plain.length * SECTION_TITLE_EFFECT.transition.delay,
-}
-
-/**
- * "Les offres": line-eyebrow + marker-underlined Morna title, then one card
- * per offer (copy on one side, cut-out illustration over its own lime
- * silhouette on the other, hand-written margin notes with drawn arrows
- * around it). Each card is also the anchor the header nav links to.
- */
 export function OffersSection() {
-  return (
-    <section className={styles.section} id="offres" aria-labelledby="offres-title">
-      <div className={styles.inner}>
-        <ScrollReveal className={styles.header} distance={60}>
-          <p className={styles.eyebrow}>
-            <span className={styles.eyebrowLine} aria-hidden="true" />
-            {OFFERS_EYEBROW}
-            <span className={styles.eyebrowLine} aria-hidden="true" />
-          </p>
-          {/* Two inline RichText halves rather than one heading, so the marker
-              can sit under "prend forme." alone. RichText's wrapper is a div,
-              which can't live inside an h2, hence the ARIA heading wrapper. */}
-          <div className={styles.title} id="offres-title" role="heading" aria-level={2}>
-            <AnimatedHeading
-              as="span"
-              text={OFFERS_TITLE.plain}
-              effect={SECTION_TITLE_EFFECT}
-              className={styles.titlePart}
-              textClassName={styles.titleText}
-            />
-            <span className={styles.titleMark}>
-              <AnimatedHeading
-                as="span"
-                text={OFFERS_TITLE.marked}
-                effect={TITLE_SECOND_HALF_EFFECT}
-                className={styles.titlePart}
-                textClassName={styles.titleText}
-              />
-              <svg className={styles.titleStroke} viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                <path d="M6 17 C 110 6, 260 3, 394 11" />
-              </svg>
-            </span>
-          </div>
-        </ScrollReveal>
+  const sectionRef = useRef<HTMLElement>(null)
+  const [iconPhase, setIconPhase] = useState<OfferIconPhase>("paused")
 
-        {OFFERS.map((offer) => (
-          <ScrollReveal key={offer.id} distance={80}>
-            <OfferCard offer={offer} />
-          </ScrollReveal>
-        ))}
+  useLayoutEffect(() => {
+    if (!sectionRef.current) return
+    return mountOffersReveal(sectionRef.current, setIconPhase)
+  }, [])
+
+  return (
+    <section ref={sectionRef} className={styles.section} id="offres" aria-labelledby="offres-title" data-header-theme="dark">
+      <div className={styles.light} data-offers-light aria-hidden="true" />
+      <div className={styles.inner}>
+        <header className={styles.header}>
+          <p className={styles.eyebrow}>Les offres</p>
+          <h2 className={styles.title} id="offres-title">Votre projet prend forme.</h2>
+        </header>
+
+        <div className={styles.entry} data-offers-entry>
+          <div className={styles.surfacePlane} data-offers-surface>
+            <div className={styles.surface} data-offers-support>
+              <OfferCard offer={OFFERS[0]} phase={iconPhase} />
+              <div className={styles.ivoryPlane} data-offers-ivory>
+                <OfferCard offer={OFFERS[1]} phase={iconPhase} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
 }
 
-function OfferCard({ offer }: { offer: Offer }) {
-  const arrowClass = offer.cta.arrow === "diagonal" ? `${styles.ctaArrow} ${styles.ctaArrowDiagonal}` : styles.ctaArrow
-  const { frame } = offer.image
-  const figureStyle = {
-    "--plate-mask": `url("${offer.plate.mask}")`,
-    "--figure-ratio": `${frame.width} / ${frame.height}`,
-    "--image-width": `${(offer.image.width / frame.width) * 100}%`,
-    "--image-height": `${(offer.image.height / frame.height) * 100}%`,
-    "--image-left": `${(-frame.x / frame.width) * 100}%`,
-    "--image-top": `${(-frame.y / frame.height) * 100}%`,
-  } as CSSProperties
+function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
+  const iconRef = useRef<OfferIconHandle>(null)
+  const play = () => { void iconRef.current?.play() }
 
   return (
-    <article className={styles.card} id={offer.id} data-figure={offer.figureSide}>
-      <div className={styles.copy}>
-        <p className={styles.tag}>
-          <BracketIcon side="open" className={styles.tagBracket} />
-          {offer.tag}
-          <BracketIcon side="close" className={styles.tagBracket} />
-        </p>
-        <div className={styles.offerHeading}>
-          <h3 className={styles.cardTitle}>{offer.title}</h3>
-          <ul className={styles.features}>
-            {offer.features.map((feature) => (
-              <li key={feature}>{feature}</li>
-            ))}
-          </ul>
-        </div>
-        <p className={styles.lead}>{offer.lead}</p>
-        <a className={styles.cta} href={offer.cta.href}>
-          {offer.cta.label}
-          <svg
-            className={arrowClass}
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M5 12h14" />
-            <path d="m13 6 6 6-6 6" />
-          </svg>
-        </a>
-      </div>
-
-      {/* Frame the visible device rather than the source's transparent margins.
-          Notes and backing silhouettes now stay attached to the illustration. */}
-      <div className={styles.figure} style={figureStyle} data-shift={offer.plate.shift}>
-        <div className={styles.plate} aria-hidden="true" />
-        <Image
-          className={styles.shot}
-          src={offer.image.src}
-          alt={offer.image.alt}
-          width={offer.image.width}
-          height={offer.image.height}
-          sizes="(max-width: 1023px) 100vw, (max-width: 1199px) 60vw, 840px"
+    <article
+      className={`${styles.offer} ${offer.kind === "website" ? styles.website : styles.ivory}`}
+      id={offer.id}
+      aria-labelledby={`${offer.id}-title`}
+      data-offers-card={offer.kind === "applications" ? "" : undefined}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") play()
+      }}
+    >
+      {offer.kind === "applications" && (
+        <>
+          <span className={styles.landingSheen} aria-hidden="true">
+            <span className={styles.sheenReflection} data-offers-sheen />
+          </span>
+          <span className={styles.landingRim} aria-hidden="true">
+            <span className={styles.rimReflection} data-offers-rim-sheen />
+          </span>
+        </>
+      )}
+      <div className={styles.offerTopline}>
+        <OfferIcon
+          ref={iconRef}
+          kind={offer.kind}
+          size={88}
+          disabled={phase === "paused"}
+          playOnView={phase !== "paused"}
+          playOnHover={false}
         />
-
-        {offer.notes.map((note) => (
-          <div key={note.placement} className={`${styles.note} ${NOTE_CLASS[note.placement]}`} aria-hidden="true">
-            <span className={styles.noteText}>{note.text}</span>
-            <HandArrow className={styles.noteArrow} shape={note.arrow} />
-          </div>
-        ))}
+        {offer.detail && <span className={styles.offerBadge}>{offer.detail}</span>}
+      </div>
+      <div className={styles.offerHeading}>
+        <h3 className={styles.cardTitle} id={`${offer.id}-title`}>{offer.title}</h3>
+        <p className={styles.promise}>{offer.promise}</p>
+      </div>
+      <div className={styles.offerAudience}>
+        <p className={styles.audience}><strong>Pour vous si</strong> {offer.audience}</p>
+      </div>
+      <div className={styles.offerFeatures}>
+        <h4 className={styles.featuresTitle}>Ce qui est compris</h4>
+        <FeatureList items={offer.features} />
+      </div>
+      <div className={styles.offerClosing}>
+        <div className={styles.offerAftercare}>
+          <h4 className={styles.featuresTitle}>{offer.aftercare.title}</h4>
+          <p className={styles.aftercare}>{offer.aftercare.description}</p>
+        </div>
+        <div className={styles.offerFooter}>
+          {offer.price && (
+            <div className={styles.price}>
+              <p className={styles.priceLabel}>À partir de</p>
+              <p className={styles.priceSummary}>
+                <strong className={styles.priceAmount}>{offer.price.amount}</strong>
+                <span className={styles.priceDetail}>— {offer.price.detail}</span>
+              </p>
+            </div>
+          )}
+          <a className={styles.offerLink} href={offer.href} onFocus={play}>
+            <span className={styles.offerLinkInner}>
+              <span>{offer.cta}</span>
+              <Arrow />
+            </span>
+          </a>
+        </div>
       </div>
     </article>
+  )
+}
+
+function FeatureList({ items }: { items: readonly string[] }) {
+  return (
+    <ul className={styles.features}>
+      {items.map((item) => (
+        <li key={item}>
+          <Check />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function Check() {
+  return (
+    <svg className={styles.featureCheck} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="m5 12 4 4L19 6" />
+    </svg>
+  )
+}
+
+function Arrow() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M4 12h15m-6-6 6 6-6 6" />
+    </svg>
   )
 }
