@@ -119,7 +119,10 @@ function fixture(t: TestContext, failure?: "fragment" | "texture" | "unavailable
     abortController, images: FakeImage.instances, observers: FakeObserver.instances,
     get unavailable() { return unavailable; },
     loadImages() { FakeImage.instances.forEach((image) => image.onload?.()); },
-    loseContext() { lost = true; canvas.dispatchEvent(new Event("webglcontextlost", { cancelable: true })); },
+    loseContext(dispatch = true) {
+      lost = true;
+      if (dispatch) canvas.dispatchEvent(new Event("webglcontextlost", { cancelable: true }));
+    },
   };
 }
 
@@ -166,6 +169,8 @@ test("render preserves POC scales, alpha and orientation, and redraws on resize/
   const renderer = await f.promise;
   renderer.render(0, 0);
   renderer.render(1, 1);
+  const drawCount = () => f.calls.filter(([name]) => name === "drawArrays").length;
+  assert.equal(drawCount(), 2);
   const uniformCalls = f.calls.filter(([name]) => name === "uniform1f");
   assert.ok(uniformCalls.some(([, key, value]) => key === "uScaleFrom" && value === 0.98));
   assert.ok(uniformCalls.some(([, key, value]) => key === "uScaleFrom" && value === 0.88));
@@ -176,10 +181,12 @@ test("render preserves POC scales, alpha and orientation, and redraws on resize/
   f.canvas.clientWidth = 400;
   f.observers[0].callback();
   assert.equal(f.canvas.width, 400);
+  assert.equal(drawCount(), 3, "Resizing redraws even when the illustration is unchanged");
   f.ownerWindow.devicePixelRatio = 3;
   f.resolutionQueries[0].dispatchEvent(new Event("change"));
   assert.equal(f.canvas.width, 800, "Resolution stays capped at the POC's 2x DPR");
   assert.equal(f.canvas.height, 800);
+  assert.equal(drawCount(), 4, "DPR changes redraw at the new pixel size");
 
   renderer.dispose();
   renderer.dispose();
@@ -189,6 +196,35 @@ test("render preserves POC scales, alpha and orientation, and redraws on resize/
   f.resolutionQueries.at(-1)?.dispatchEvent(new Event("change"));
   renderer.render(0, 0.5);
   assert.equal(f.calls.length, callCount);
+  assert.deepEqual(f.deleted, f.allocated);
+  assert.ok(f.observers[0].disconnected);
+});
+
+test("stable reading plateaus skip duplicate draws without suppressing changed visual inputs", async (t) => {
+  const f = fixture(t);
+  f.loadImages();
+  const renderer = await f.promise;
+  const drawCount = () => f.calls.filter(([name]) => name === "drawArrays").length;
+  renderer.render(0, 0);
+  for (let index = 0; index < 20; index++) renderer.render(0, 0);
+  f.observers[0].callback();
+  f.ownerWindow.dispatchEvent(new Event("resize"));
+  assert.equal(drawCount(), 1, "Repeated scroll/resize notifications at identical state do no GPU work");
+  renderer.render(0, 0.4);
+  renderer.render(1, 0.4);
+  renderer.render(1, 0.4, 0.5);
+  assert.equal(drawCount(), 4, "Progress, texture pair and strength each invalidate the previous frame");
+  renderer.dispose();
+});
+
+test("a duplicate render still detects context loss before its event is dispatched", async (t) => {
+  const f = fixture(t);
+  f.loadImages();
+  const renderer = await f.promise;
+  renderer.render(0, 0);
+  f.loseContext(false);
+  renderer.render(0, 0);
+  assert.equal(f.unavailable, 1);
   assert.deepEqual(f.deleted, f.allocated);
   assert.ok(f.observers[0].disconnected);
 });

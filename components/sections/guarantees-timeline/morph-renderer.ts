@@ -249,6 +249,7 @@ export async function createRenderer(
       scaleFrom: uniform("uScaleFrom"),
       scaleTo: uniform("uScaleTo"),
     };
+    let lastDraw: [0 | 1, number, number, number] | undefined;
 
     render = (pair, progress, strength = 1) => {
       current = [pair, progress, strength];
@@ -260,7 +261,12 @@ export async function createRenderer(
       }
       const ratio = Math.min(ownerWindow?.devicePixelRatio || 1, 2);
       const size = Math.max(1, Math.round(canvas.clientWidth * ratio));
-      if (canvas.width !== size || canvas.height !== size) {
+      const resized = canvas.width !== size || canvas.height !== size;
+      // Reading plateaus need no GPU work. A resize invalidates the drawing
+      // buffer even when the same illustration/progress is still selected.
+      if (!resized && lastDraw?.[0] === pair && lastDraw[1] === progress
+        && lastDraw[2] === strength && lastDraw[3] === size) return;
+      if (resized) {
         canvas.width = size;
         canvas.height = size;
       }
@@ -279,6 +285,7 @@ export async function createRenderer(
       context.clearColor(0, 0, 0, 0);
       context.clear(context.COLOR_BUFFER_BIT);
       context.drawArrays(context.TRIANGLES, 0, 6);
+      lastDraw = [pair, progress, strength, size];
     };
 
     if (typeof ResizeObserver !== "undefined") {

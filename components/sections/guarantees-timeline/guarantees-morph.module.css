@@ -40,3 +40,142 @@
 .fill {
   transform: scaleY(0);
 }
+
+/* The mobile scene and cards share the document scroll and the morph
+   controller. Desktop continues to use the existing two-column layout. */
+@media (max-width: 809.98px) {
+  .track[data-mobile-stack="true"] {
+    --mobile-art-size: 140px;
+    --mobile-sticky-top: 96px;
+    --mobile-heading-gap: 20px;
+    --mobile-art-top: calc(var(--mobile-sticky-top) + var(--mobile-heading-height, 0px) + var(--mobile-heading-gap));
+    --mobile-card-top: calc(var(--mobile-art-top) + var(--mobile-art-size) + 24px);
+    --mobile-stack-gap: 16px;
+    --mobile-step-space: clamp(300px, 52svh, 440px);
+    --mobile-slot-size: max(var(--mobile-step-space), calc(var(--mobile-card-height, 0px) + 32px));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: 480px;
+    margin-inline: auto;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-body] {
+    display: contents;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-heading] {
+    grid-area: 1 / 1;
+    position: relative;
+    z-index: 5;
+    min-height: 0;
+    padding-bottom: calc(var(--mobile-heading-gap) + var(--mobile-art-size) + 24px + 2 * var(--mobile-stack-gap) + var(--mobile-card-height, 0px));
+    pointer-events: none;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-heading] > div {
+    position: sticky;
+    top: var(--mobile-sticky-top);
+    background: var(--timeline-paper);
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-title-slot] {
+    display: block;
+    flex-shrink: 0;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-title-slot] > div {
+    margin-top: 0;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-heading] p,
+  .track[data-mobile-stack="true"] [data-guarantee-title-slot] {
+    pointer-events: auto;
+  }
+
+  .track[data-mobile-stack="true"][data-mobile-heading="compact"] [data-guarantee-heading] > div {
+    position: relative;
+    top: auto;
+    height: 100%;
+    background: none;
+  }
+
+  .track[data-mobile-stack="true"][data-mobile-heading="compact"] [data-guarantee-title-slot] {
+    position: sticky;
+    top: var(--mobile-sticky-top);
+    z-index: 1;
+    background: var(--timeline-paper);
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-visual] {
+    position: relative;
+    grid-area: 1 / 1;
+    z-index: 4;
+    display: block;
+    min-height: 0;
+    margin-top: calc(var(--mobile-intro-height, 0px) + var(--mobile-heading-gap));
+    /* End the visual's sticky travel with the last card's travel. */
+    padding-bottom: calc(var(--mobile-card-height, 0px) + 2 * var(--mobile-stack-gap) + 24px);
+    pointer-events: none;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-sticky] {
+    position: sticky;
+    top: var(--mobile-art-top);
+    display: grid;
+    place-items: center;
+    background: var(--timeline-paper);
+  }
+
+  .track[data-mobile-stack="true"] .scene {
+    position: relative;
+    width: var(--mobile-art-size);
+    aspect-ratio: 1;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-cards] {
+    grid-area: 1 / 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--mobile-slot-size) - var(--mobile-card-height, 0px));
+    margin-top: calc(var(--mobile-intro-height, 0px) + var(--mobile-heading-gap) + var(--mobile-art-size) + 24px);
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-step] {
+    position: sticky;
+    top: calc(var(--mobile-card-top) + var(--card-index) * var(--mobile-stack-gap));
+    z-index: calc(1 + var(--card-index));
+    /* Equal bottom limits preserve the exposed layers as the whole stack
+       leaves. Scroll spacing belongs to the list gap, never the sticky box. */
+    min-height: calc(var(--mobile-card-height, 0px) + (2 - var(--card-index)) * var(--mobile-stack-gap));
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-card] {
+    box-sizing: border-box;
+    min-height: var(--mobile-card-height, 0px);
+    padding: 20px;
+    border: 1px solid rgb(65 97 49 / 9%);
+    border-radius: 24px;
+    background: #e3ecd5;
+    box-shadow: 0 2px 3px rgb(31 63 28 / 4%), 0 10px 24px rgb(31 63 28 / 7%);
+    transform-origin: center top;
+  }
+
+  .track[data-mobile-stack="true"] [data-kind="followup"] [data-guarantee-card] {
+    background: #edf4c9;
+  }
+
+  .track[data-mobile-stack="true"] [data-kind="handover"] [data-guarantee-card] {
+    background: #e0ebdc;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-mobile-art] {
+    display: none;
+  }
+}

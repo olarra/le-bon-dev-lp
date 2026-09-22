@@ -5,6 +5,28 @@ import { GuaranteesTimeline } from "./GuaranteesTimeline"
 import styles from "./guarantees-timeline.module.css"
 
 export function GuaranteesTimelineSection() {
+  const heading = (
+    <header className={styles.heading} data-guarantee-heading>
+      <ScrollReveal className={styles.headingContent}>
+        <p className={styles.eyebrow}>Nos garanties</p>
+        <div className={styles.titleSlot} data-guarantee-title-slot>
+          <AnimatedHeading
+            as="h2"
+            id="garanties-timeline-title"
+            text="Un cadre clair, du début à la fin."
+            effect={SECTION_TITLE_EFFECT}
+            className={styles.titleWrapper}
+            textClassName={styles.title}
+          >
+            Un <span className={styles.highlight}>cadre clair</span>,
+            <br />du début à la fin.
+          </AnimatedHeading>
+        </div>
+        <p className={styles.subtitle}>Trois principes, valables pour chaque projet.</p>
+      </ScrollReveal>
+    </header>
+  )
+
   return (
     <section
       id="garanties-timeline"
@@ -13,24 +35,7 @@ export function GuaranteesTimelineSection() {
       data-header-theme="light"
     >
       <div className={styles.inner}>
-        <header className={styles.heading}>
-          <ScrollReveal className={styles.headingContent}>
-            <p className={styles.eyebrow}>Nos garanties</p>
-            <AnimatedHeading
-              as="h2"
-              id="garanties-timeline-title"
-              text="Un cadre clair, du début à la fin."
-              effect={SECTION_TITLE_EFFECT}
-              className={styles.titleWrapper}
-              textClassName={styles.title}
-            >
-              Un <span className={styles.highlight}>cadre clair</span>,
-              <br />du début à la fin.
-            </AnimatedHeading>
-            <p className={styles.subtitle}>Trois principes, valables pour chaque projet.</p>
-          </ScrollReveal>
-        </header>
-        <GuaranteesTimeline />
+        <GuaranteesTimeline heading={heading} />
       </div>
 
       <svg className={styles.corner} viewBox="0 0 440 240" fill="none" aria-hidden="true" focusable="false">

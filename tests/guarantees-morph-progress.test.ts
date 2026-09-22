@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { test } from "node:test"
 
 const progressURL = new URL("../components/sections/guarantees-timeline/morph-progress.ts", import.meta.url)
-const { getMorphState } = await import(progressURL.href) as typeof import(
+const { getMorphState, getStackMorphState } = await import(progressURL.href) as typeof import(
   "../components/sections/guarantees-timeline/morph-progress"
 )
 
@@ -46,4 +46,20 @@ test("reduced motion only selects complete shapes and illustrations", () => {
   assert.equal(getMorphState(-1).progress, 0)
   assert.equal(getMorphState(2).progress, 1)
   assert.equal(getMorphState(Number.NaN).progress, 0)
+})
+
+test("mobile artwork settles as each new description reaches the stack", () => {
+  assert.equal(getStackMorphState(0.25).blend, 0)
+  assert.equal(getStackMorphState(0.375).blend, 0.5)
+  assert.deepEqual(getStackMorphState(0.5), { progress: 0.5, pair: 1, active: 1, blend: 0 })
+  assert.equal(getStackMorphState(0.75).blend, 0)
+  assert.equal(getStackMorphState(0.875).blend, 0.5)
+  assert.deepEqual(getStackMorphState(1), { progress: 1, pair: 1, active: 2, blend: 1 })
+})
+
+test("mobile transitions return to the same shape when scrolling backwards", () => {
+  const positions = [0, 0.375, 0.5, 0.875, 1, 0.875, 0.5, 0.375, 0]
+  const states = positions.map((value) => getStackMorphState(value))
+  assert.deepEqual(states[1], states[7])
+  assert.deepEqual(states[3], states[5])
 })
