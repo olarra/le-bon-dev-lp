@@ -144,6 +144,15 @@
     margin-top: calc(var(--mobile-intro-height, 0px) + var(--mobile-heading-gap) + var(--mobile-art-size) + 24px);
   }
 
+  .track[data-mobile-stack="true"] [data-guarantee-cards]::after {
+    /* Give the completed stack a reading interval before its sticky release.
+       Cancel the extra flex gap so this doesn't add an oversized empty tail. */
+    content: "";
+    flex: 0 0 calc(var(--mobile-slot-size) / 2);
+    margin-top: calc(var(--mobile-card-height, 0px) - var(--mobile-slot-size));
+    pointer-events: none;
+  }
+
   .track[data-mobile-stack="true"] [data-guarantee-step] {
     position: sticky;
     top: calc(var(--mobile-card-top) + var(--card-index) * var(--mobile-stack-gap));
