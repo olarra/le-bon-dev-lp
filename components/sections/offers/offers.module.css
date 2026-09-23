@@ -76,7 +76,20 @@
   text-transform: uppercase;
 }
 
+.titleWrapper {
+  /* Keep the shared Framer text wrapper in the header's normal flow. */
+  position: relative !important;
+  width: 100%;
+  max-width: 1000px;
+}
+
 .title {
+  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
+  --framer-font-size: clamp(36px, 4.2vw, 60px);
+  --framer-font-weight: 700;
+  --framer-letter-spacing: -0.01em;
+  --framer-line-height: 1.08;
+  --framer-text-color: var(--offers-ivory);
   max-width: 1000px;
   margin: 0;
   color: var(--offers-ivory);
@@ -613,11 +626,6 @@
 }
 
 @media (max-width: 809.98px) {
-  .landingSheen,
-  .landingRim {
-    display: none;
-  }
-
   .section {
     --offers-radius: 44px;
     --offers-inner-radius: 32px;
@@ -640,6 +648,8 @@
   }
 
   .title {
+    --framer-font-size: clamp(36px, 6vw, 42px);
+    --framer-line-height: 1.12;
     font-size: clamp(36px, 6vw, 42px);
     line-height: 1.12;
     word-spacing: -0.08em;
@@ -722,6 +732,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .titleWrapper,
+  .titleWrapper * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
   .landingSheen,
   .landingRim {
     display: none;

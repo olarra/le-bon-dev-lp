@@ -7,7 +7,7 @@ export const OFFERS_REVEAL = {
   perspective: 1400,
   originY: 0.8,
   startViewport: 0.9,
-  endViewport: 0.35,
+  endCardProgress: 0.95,
   scrub: 0.25,
   shadow: { y: 36, blur: 58, spread: -10, alpha: 0.22 },
   settle: 1.5,

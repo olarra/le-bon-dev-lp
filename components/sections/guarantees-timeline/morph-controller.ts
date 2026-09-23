@@ -196,6 +196,20 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     trigger: list,
     start: () => mobileStack ? `top ${cardTop}px` : `top+=${steps[0].offsetHeight / 2} ${anchor()}`,
     end: () => mobileStack ? `+=${stackDistance}` : `bottom-=${steps[steps.length - 1].offsetHeight / 2} ${anchor()}`,
+    snap: {
+      snapTo: (value: number, self?: ScrollTrigger) => {
+        if (!mobileStack || reduced.matches || !self) return value
+        const nearest = gsap.utils.snap([0, 0.5, 1], value)
+        // Settle only near a reading position, in the direction of travel.
+        // Touch/wheel input remains native; no gesture is intercepted.
+        return Math.abs(nearest - value) <= 0.1 && (nearest - value) * self.direction >= 0 ? nearest : value
+      },
+      inertia: false,
+      directional: false,
+      delay: 0.18,
+      duration: { min: 0.18, max: 0.3 },
+      ease: "power2.out",
+    },
     onUpdate: (self) => schedule(self.progress),
     onRefresh: (self) => schedule(self.progress),
   })

@@ -3,7 +3,6 @@ import { SiteHeader } from "@/components/framer/SiteHeader"
 import { PageFrame } from "@/components/layout/PageFrame"
 import { SiteFooter } from "@/components/layout/SiteFooter"
 import { HeroSection } from "@/components/sections/hero/HeroSection"
-import { GuaranteesSection } from "@/components/sections/guarantees/GuaranteesSection"
 import { GuaranteesTimelineSection } from "@/components/sections/guarantees-timeline/GuaranteesTimelineSection"
 import { OffersSection } from "@/components/sections/offers/OffersSection"
 import { ShowcaseSection } from "@/components/sections/showcase/ShowcaseSection"
@@ -24,8 +23,6 @@ export default function HomePage() {
         <div id="page-body" className="page-body">
           <GuaranteesTimelineSection />
           <OffersSection />
-          {/* Keep the previous design available during the section migration. */}
-          <GuaranteesSection />
           {/* The green surface remains behind the project previews. */}
           <ShowcaseSection>
             <ShowcaseContent />

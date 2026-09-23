@@ -1,7 +1,9 @@
 "use client"
 
 import { useLayoutEffect, useRef, useState } from "react"
+import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { OfferIcon, type OfferIconHandle } from "@/components/offer-icons"
+import { SECTION_TITLE_EFFECT } from "../hero/hero.content"
 import { OFFERS, type Offer } from "./offers.content"
 import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
 import styles from "./offers.module.css"
@@ -21,15 +23,22 @@ export function OffersSection() {
       <div className={styles.inner}>
         <header className={styles.header}>
           <p className={styles.eyebrow}>Les offres</p>
-          <h2 className={styles.title} id="offres-title">Votre projet prend forme.</h2>
+          <AnimatedHeading
+            as="h2"
+            id="offres-title"
+            text="Votre projet prend forme."
+            effect={SECTION_TITLE_EFFECT}
+            className={styles.titleWrapper}
+            textClassName={styles.title}
+          />
         </header>
 
         <div className={styles.entry} data-offers-entry>
           <div className={styles.surfacePlane} data-offers-surface>
             <div className={styles.surface} data-offers-support>
-              <OfferCard offer={OFFERS[0]} phase={iconPhase} />
+              <OfferCard offer={OFFERS[0]} phase={iconPhase === "mobile-pending" ? "viewport" : iconPhase} />
               <div className={styles.ivoryPlane} data-offers-ivory>
-                <OfferCard offer={OFFERS[1]} phase={iconPhase} />
+                <OfferCard offer={OFFERS[1]} phase={iconPhase === "mobile-pending" ? "paused" : iconPhase} />
               </div>
             </div>
           </div>
@@ -41,7 +50,12 @@ export function OffersSection() {
 
 function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
   const iconRef = useRef<OfferIconHandle>(null)
+  const touch = useRef<{
+    id: number; x: number; y: number; time: number; scrollY: number
+  } | null>(null)
   const play = () => { void iconRef.current?.play() }
+  const isInteractive = (target: EventTarget) => target instanceof Element
+    && !!target.closest("a, button, input, select, textarea, [role='button'], [contenteditable]")
 
   return (
     <article
@@ -52,6 +66,30 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
       onPointerEnter={(event) => {
         if (event.pointerType === "mouse") play()
       }}
+      onPointerDown={(event) => {
+        touch.current = null
+        if (event.pointerType !== "touch" || !event.isPrimary || isInteractive(event.target)) return
+        touch.current = {
+          id: event.pointerId, x: event.clientX, y: event.clientY,
+          time: event.timeStamp, scrollY: window.scrollY,
+        }
+      }}
+      onPointerMove={(event) => {
+        const start = touch.current
+        if (start && event.pointerId === start.id
+          && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10) touch.current = null
+      }}
+      onPointerUp={(event) => {
+        const start = touch.current
+        touch.current = null
+        if (!start || event.pointerId !== start.id || isInteractive(event.target)) return
+        if (event.timeStamp - start.time > 500
+          || Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10
+          || Math.abs(window.scrollY - start.scrollY) > 4) return
+        play()
+      }}
+      onPointerCancel={() => { touch.current = null }}
+      onLostPointerCapture={() => { touch.current = null }}
     >
       {offer.kind === "applications" && (
         <>
@@ -100,7 +138,14 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
               </p>
             </div>
           )}
-          <a className={styles.offerLink} href={offer.href} onFocus={play}>
+          <a
+            className={styles.offerLink}
+            href={offer.href}
+            data-offers-sheen-replay={offer.kind === "applications" ? "" : undefined}
+            onPointerEnter={(event) => { if (event.pointerType === "mouse") play() }}
+            onFocus={play}
+            onClick={play}
+          >
             <span className={styles.offerLinkInner}>
               <span>{offer.cta}</span>
               <Arrow />
