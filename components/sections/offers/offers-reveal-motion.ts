@@ -6,15 +6,23 @@ export const OFFERS_REVEAL = {
   scale: 1.025,
   perspective: 1400,
   originY: 0.8,
-  startViewport: 0.9,
+  startViewport: 0.65,
   endCardProgress: 0.95,
-  scrub: 0.25,
+  minScrollDistance: 160,
+  scrub: 0.9,
   shadow: { y: 36, blur: 58, spread: -10, alpha: 0.22 },
   settle: 1.5,
   headingClearance: 24,
   sheenDuration: 1.45,
   sheenStart: 0.999,
 } as const
+
+/** Keep the later start while preserving a usable range on tall viewports. */
+export function getOfferRevealBounds(viewportHeight: number, cardHeight: number, cardOffset: number) {
+  const end = viewportHeight - cardOffset - cardHeight * OFFERS_REVEAL.endCardProgress
+  const start = Math.max(viewportHeight * OFFERS_REVEAL.startViewport, end + OFFERS_REVEAL.minScrollDistance)
+  return { start, end }
+}
 
 /** Bound every projected corner through the descent, not just translateY.
  * Perspective's origin is aligned with the card's transform origin by the

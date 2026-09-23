@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { test } from "node:test"
 
 const motionURL = new URL("../components/sections/offers/offers-reveal-motion.ts", import.meta.url)
-const { OFFERS_REVEAL, fitOfferPoseDistance, createOfferSheenGate } = await import(motionURL.href) as typeof import(
+const { OFFERS_REVEAL, fitOfferPoseDistance, createOfferSheenGate, getOfferRevealBounds } = await import(motionURL.href) as typeof import(
   "../components/sections/offers/offers-reveal-motion"
 )
 
@@ -68,6 +68,19 @@ function projectedCorners(width: number, height: number, distance: number, lift:
     return { x: originX + result[0] / result[3], y: originY + result[1] / result[3] }
   })
 }
+
+test("desktop reveal holds its tilted pose until 65% viewport height and keeps the late landing", () => {
+  const { start, end } = getOfferRevealBounds(900, 1200, 32)
+  assert.equal(start, 585)
+  assert.equal(end + 32 + 1200 * 0.95, 900, "95% of the resting card has entered at landing")
+  assert.ok(end < start, "Scrolling down must reach the start before the end")
+})
+
+test("a short card on a tall viewport retains enough scroll distance to reveal smoothly", () => {
+  const { start, end } = getOfferRevealBounds(1440, 440, 32)
+  assert.ok(start - end >= 160)
+  assert.equal(end + 32 + 440 * 0.95, 1440, "The landing point is preserved")
+})
 
 test("projected corners respect the heading clearance throughout short, tall and narrow card descents", () => {
   const scenarios = [

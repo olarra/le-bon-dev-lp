@@ -30,9 +30,10 @@ is separate from its resin surface and hover interactions.
 | `rotationX` / `rotationZ` | 7° / −2° | Initial ivory tilt |
 | `scale` | 1.025 | Initial ivory scale |
 | `perspective` / `originY` | 1400 px / 0.8 | Perspective and transform origin at 50% 80% |
-| `startViewport` | 0.9 | Container top reaches 90% of viewport height |
+| `startViewport` | 0.65 | Container top reaches 65% of viewport height; the initial tilt holds until then |
 | `endCardProgress` | 0.95 | Land when 95% of the ivory card has entered from the viewport bottom |
-| `scrub` | 0.25 s | GSAP's short scroll catch-up |
+| `minScrollDistance` | 160 px | Minimum reveal range for short cards on tall viewports |
+| `scrub` | 0.9 s | Smooth catch-up after fast scroll gestures |
 | `shadow` | 36 px / 58 px / −10 px / 0.22 | Lift shadow offset, blur, spread and alpha |
 | `settle` | 1.5 px | Brief landing compression before returning to exactly zero |
 | `headingClearance` | 24 px | Minimum space between the projected card and heading |
@@ -43,9 +44,15 @@ The stable outer wrapper triggers the sequence. The endpoint uses the ivory
 card's actual height and its resting offset inside the support: 5% of its height
 remains below the viewport when the pose finishes and the shimmer begins. It is
 recalculated on resize, including when the card is taller than the viewport.
-The desktop pose runs once. Once landed, the card stays straight and seated
-when scrolling back up, including after a breakpoint change. Reverse scrolling
-does not replay the pose or reflection.
+The desktop pose follows scroll in both directions: it straightens on descent
+and lifts back into its original tilt when scrolling up through the same range.
+The pose and lift shadow use `sine.inOut` to soften acceleration. GSAP's 0.9 s
+scrub lets the pose catch up smoothly after a fast gesture, including past the
+end of the scroll range; the shimmer waits for the actual animated landing.
+The later start keeps the tilted pose visible before the descent begins. For
+short cards on tall viewports, the start moves earlier only as needed to retain
+160 px of motion. Refresh and breakpoint changes restore the current scroll pose.
+Scrolling upward does not trigger a second reflection.
 At completion, translation and rotations are zero, scale is one and the extra
 lift shadow becomes transparent, restoring the original static surface shadow.
 Card and content opacity never animate.

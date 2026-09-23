@@ -1,6 +1,6 @@
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { OFFERS_REVEAL, createOfferSheenGate, fitOfferPoseDistance } from "./offers-reveal-motion"
+import { OFFERS_REVEAL, createOfferSheenGate, fitOfferPoseDistance, getOfferRevealBounds } from "./offers-reveal-motion"
 import { mountMobileOfferReveal } from "./offers-mobile-reveal"
 import { animateOfferSheen, bindOfferSheenReplay } from "./offers-sheen"
 
@@ -12,7 +12,6 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
   const media = gsap.matchMedia()
   const shouldPlaySheen = createOfferSheenGate()
   let disposed = false
-  let desktopLanded = false
   let lastPhase: OfferIconPhase | undefined
   const notify = (phase: OfferIconPhase) => {
     if (disposed || lastPhase === phase) return
@@ -47,6 +46,7 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
     let refreshFrame = 0
     let sheenAnimations: Animation[] = []
     let distance: number = config.distance
+    let startPosition = 0
     let endPosition = 0
 
     notify("paused")
@@ -64,7 +64,9 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
       const cardOffset = normalTop - entry.getBoundingClientRect().top
       // Land when 95% of the card has crossed the viewport's bottom edge.
       // The remaining 5% stays below the screen, even for cards taller than it.
-      endPosition = window.innerHeight - cardOffset - plane.offsetHeight * config.endCardProgress
+      const bounds = getOfferRevealBounds(window.innerHeight, plane.offsetHeight, cardOffset)
+      startPosition = bounds.start
+      endPosition = bounds.end
       const clearance = normalTop - heading.getBoundingClientRect().bottom - config.headingClearance
       distance = fitOfferPoseDistance(plane.offsetWidth, plane.offsetHeight, clearance)
       support.style.perspectiveOrigin = `${plane.offsetLeft + plane.offsetWidth / 2}px ${plane.offsetTop + plane.offsetHeight * config.originY}px`
@@ -87,7 +89,6 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
     const syncLanding = (progress: number) => {
       if (!active || refreshing) return
       const settled = progress >= config.sheenStart
-      if (progress === 1) desktopLanded = true
       notify(settled ? "settled" : "paused")
       if (!settled && sheenAnimations.length) clearSheen()
       if (shouldPlaySheen(progress)) playSheen()
@@ -102,7 +103,7 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
         rotation: config.rotationZ, scale: config.scale,
       }, {
         y: 0, rotationX: 0, rotation: 0, scale: 1,
-        duration: 0.88, ease: "power2.inOut",
+        duration: 0.88, ease: "sine.inOut",
       }, 0)
       .fromTo(card, {
         "--offer-shadow-y": `${config.shadow.y}px`,
@@ -112,7 +113,7 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
       }, {
         "--offer-shadow-y": "12px", "--offer-shadow-blur": "22px",
         "--offer-shadow-spread": "-17px", "--offer-shadow-alpha": 0,
-        duration: 0.88, ease: "power2.inOut",
+        duration: 0.88, ease: "sine.inOut",
       }, 0)
       .to(plane, { y: config.settle, duration: 0.045, ease: "sine.out" }, 0.88)
       .to(plane, { y: 0, duration: 0.075, ease: "sine.inOut" }, 0.925)
@@ -120,29 +121,25 @@ export function mountOffersReveal(section: HTMLElement, onIconPhase: (phase: Off
     const trigger = ScrollTrigger.create({
       trigger: entry,
       animation: timeline,
-      start: `top ${config.startViewport * 100}%`,
+      start: () => `top ${startPosition}px`,
       end: () => `top ${endPosition}px`,
       scrub: config.scrub,
-      // Finish the first descent, then detach scroll control from the pose.
-      once: true,
       invalidateOnRefresh: true,
       onRefreshInit: () => { refreshing = true; measure() },
       onRefresh: (self) => {
-        // A reload below the section or a breakpoint change lands immediately
-        // at the correct pose instead of replaying the descent from the top.
-        const progress = desktopLanded ? 1 : self.progress
+        // Restore the pose at the current scroll position in either direction.
+        const progress = self.progress
         timeline.progress(progress, true)
         refreshing = false
         syncLanding(progress)
       },
     })
-    const initialProgress = desktopLanded ? 1 : trigger.progress
+    const initialProgress = trigger.progress
     timeline.progress(initialProgress, true)
     syncLanding(initialProgress)
-    if (desktopLanded) trigger.kill(false, true)
 
     const unbindSheenReplay = bindOfferSheenReplay(card, () => {
-      if (desktopLanded) playSheen()
+      if (timeline.progress() >= config.sheenStart) playSheen()
     })
 
     const refresh = () => {
