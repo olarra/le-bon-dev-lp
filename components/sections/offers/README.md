@@ -107,9 +107,14 @@ The GSAP media context, local trigger, scrub tween, landing reflection, resize
 observer, listeners and queued refresh are cleaned up on unmount. Late font
 readiness is ignored after teardown. Guarantees' timeline is not modified.
 
-The page's existing `SectionStop` includes `offres` alongside `garanties-timeline`.
-It catches the current downward wheel gesture at the section entrance and resumes
-on the next gesture; touch, keyboard and reduced-motion input remain native.
+The page's `SectionTransitions` includes all main sections. On desktop, a wheel
+gesture at a section's final reading screen triggers a one-second Lenis arrival
+at the next section; upward navigation returns to the previous section's final
+reading screen. Long sections keep their internal scroll and existing timelines.
+Guarantees and Offers share one continuous reading range: crossing between them
+in either direction remains natural, without an arrival animation or a stop.
+Touch, keyboard and reduced-motion input remain native. `SECTION_TRANSITION` in
+`section-transition-controller.ts` exposes duration and gesture timing.
 
 Surface colours, corner radii and the 3–4 px molded rim are CSS variables at the
 top of `offers.module.css`. The faces stay opaque; masked gradients and inset

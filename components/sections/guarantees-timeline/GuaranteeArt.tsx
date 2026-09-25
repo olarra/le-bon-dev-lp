@@ -13,7 +13,7 @@ export function GuaranteeArt({ step }: { step: GuaranteeStep }) {
         alt=""
         width={1254}
         height={1254}
-        sizes="(max-width: 809px) 280px, (max-width: 1200px) 40vw, 440px"
+        sizes="(max-width: 809px) 210px, (max-width: 1200px) 40vw, 440px"
         draggable={false}
       />
     </div>

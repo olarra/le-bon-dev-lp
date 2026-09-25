@@ -1,4 +1,4 @@
-import { SectionStop } from "@/components/atoms/SectionStop"
+import { SectionTransitions } from "@/components/atoms/SectionTransitions"
 import { SiteHeader } from "@/components/framer/SiteHeader"
 import { PageFrame } from "@/components/layout/PageFrame"
 import { SiteFooter } from "@/components/layout/SiteFooter"
@@ -12,7 +12,10 @@ import { StudioSection } from "@/components/sections/studio/StudioSection"
 import { ContactSection } from "@/components/sections/contact/ContactSection"
 import { ContactFormSection } from "@/components/sections/contact/ContactFormSection"
 
-const SECTION_STOP_TARGETS = ["garanties-timeline", "offres"] as const
+const SECTION_TARGETS = [
+  "statistics", ["garanties-timeline", "offres"], "offers-showcase",
+  "la-methode", "le-studio", "estimation", "contact",
+] as const
 
 export default function HomePage() {
   return (
@@ -32,7 +35,7 @@ export default function HomePage() {
           <ContactSection />
           <ContactFormSection />
         </div>
-        <SectionStop targetIds={SECTION_STOP_TARGETS} />
+        <SectionTransitions targetIds={SECTION_TARGETS} />
       </PageFrame>
     </>
   )

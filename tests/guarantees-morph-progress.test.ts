@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { test } from "node:test"
 
 const progressURL = new URL("../components/sections/guarantees-timeline/morph-progress.ts", import.meta.url)
-const { getMorphState, getStackMorphState } = await import(progressURL.href) as typeof import(
+const { getMorphState, getStackMorphState, MOBILE_STACK_TRANSITIONS } = await import(progressURL.href) as typeof import(
   "../components/sections/guarantees-timeline/morph-progress"
 )
 
@@ -48,18 +48,60 @@ test("reduced motion only selects complete shapes and illustrations", () => {
   assert.equal(getMorphState(Number.NaN).progress, 0)
 })
 
-test("mobile artwork settles as each new description reaches the stack", () => {
-  assert.equal(getStackMorphState(0.25).blend, 0)
-  assert.equal(getStackMorphState(0.375).blend, 0.5)
-  assert.deepEqual(getStackMorphState(0.5), { progress: 0.5, pair: 1, active: 1, blend: 0 })
-  assert.equal(getStackMorphState(0.75).blend, 0)
-  assert.equal(getStackMorphState(0.875).blend, 0.5)
-  assert.deepEqual(getStackMorphState(1), { progress: 1, pair: 1, active: 2, blend: 1 })
+test("mobile cards and artwork are stationary on all three reading plateaus", () => {
+  for (const progress of [0, 0.05, 0.10]) {
+    assert.deepEqual(getStackMorphState(progress), { progress, pair: 0, active: 0, blend: 0, arrivals: [0, 0] })
+  }
+  for (const progress of [0.44, 0.47, 0.49, 0.5, 0.53, 0.56]) {
+    const state = getStackMorphState(progress)
+    assert.equal(state.active, 1)
+    assert.equal(state.pair + state.blend, 1)
+    assert.deepEqual(state.arrivals, [1, 0])
+  }
+  for (const progress of [0.90, 0.95, 1]) {
+    assert.deepEqual(getStackMorphState(progress), { progress, pair: 1, active: 2, blend: 1, arrivals: [1, 1] })
+  }
 })
 
-test("mobile transitions return to the same shape when scrolling backwards", () => {
-  const positions = [0, 0.375, 0.5, 0.875, 1, 0.875, 0.5, 0.375, 0]
-  const states = positions.map((value) => getStackMorphState(value))
-  assert.deepEqual(states[1], states[7])
-  assert.deepEqual(states[3], states[5])
+test("mobile morphing waits until a card approaches, then finishes with its arrival", () => {
+  MOBILE_STACK_TRANSITIONS.forEach(({ start, end }, pair) => {
+    const duration = end - start
+    const early = getStackMorphState(start + duration * 0.4)
+    assert.ok(early.arrivals[pair] > 0)
+    assert.equal(early.blend, 0)
+    assert.equal(early.active, pair)
+
+    const halfway = getStackMorphState(start + duration * 0.775)
+    assert.ok(Math.abs(halfway.blend - 0.5) < 1e-12)
+    assert.ok(halfway.arrivals[pair] > halfway.blend)
+    assert.equal(getStackMorphState(start + duration * 0.75).active, pair)
+    assert.equal(getStackMorphState(start + duration * 0.8).active, pair + 1)
+
+    const landed = getStackMorphState(end)
+    assert.equal(landed.arrivals[pair], 1)
+    assert.equal(landed.pair + landed.blend, pair + 1)
+    assert.equal(landed.active, pair + 1)
+  })
+})
+
+test("mobile reverse scrolling and jumps restore identical cards and artwork", () => {
+  const positions = [0, 0.1, 0.26, 0.36, 0.44, 0.5, 0.56, 0.7, 0.9, 1]
+  const forward = new Map(positions.map((value) => [value, getStackMorphState(value)]))
+  for (const progress of [...positions].reverse().concat([0.7, 0, 1, 0.26, 0.5])) {
+    assert.deepEqual(getStackMorphState(progress), forward.get(progress))
+  }
+})
+
+test("mobile progress is bounded and reduced motion selects complete artwork", () => {
+  for (const value of [-1, Number.NaN, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY]) {
+    assert.deepEqual(getStackMorphState(value), getStackMorphState(0))
+  }
+  assert.deepEqual(getStackMorphState(2), getStackMorphState(1))
+
+  for (let step = 0; step <= 100; step++) {
+    const state = getStackMorphState(step / 100, true)
+    assert.ok(state.blend === 0 || state.blend === 1)
+    assert.equal(state.active, state.pair + state.blend)
+    for (const arrival of state.arrivals) assert.ok(arrival >= 0 && arrival <= 1)
+  }
 })

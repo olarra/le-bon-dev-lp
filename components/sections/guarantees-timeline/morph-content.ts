@@ -7,4 +7,7 @@ export const MORPH_BLOBS = [
 ] as const;
 export const MORPH_PALETTES = [['#d0e8c8','#e9f3be'],['#eff8cd','#e1f2b2'],['#cce5c7','#ddefd1']] as const;
 
+// Distinct lime, eucalyptus and soft forest-green backdrops for the mobile cards.
+export const MOBILE_MORPH_PALETTES = [['#b9dc62','#d2e68c'],['#7fbeb8','#afd8cf'],['#95b39a','#b8cfa9']] as const;
+
 export const ILLUSTRATION_SCALES = [0.98, 0.88, 0.90] as const

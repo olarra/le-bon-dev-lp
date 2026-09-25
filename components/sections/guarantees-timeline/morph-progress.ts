@@ -14,7 +14,25 @@ export function getMorphState(value: number, reducedMotion = false) {
   return stateForWindows(value, reducedMotion, [0.18, 0.64], 0.20)
 }
 
-/** On mobile, each morph finishes as the incoming card reaches its stack. */
+/** Three reading plateaus with enough scroll distance for unhurried arrivals. */
+export const MOBILE_STACK_TRANSITIONS = [
+  { start: 0.10, end: 0.44 },
+  { start: 0.56, end: 0.90 },
+] as const
+
+function smoothstep(value: number) {
+  const t = Math.max(0, Math.min(1, value))
+  return t * t * (3 - 2 * t)
+}
+
+/** Keep the old artwork through the beginning of an arrival, then morph with it. */
 export function getStackMorphState(value: number, reducedMotion = false) {
-  return stateForWindows(value, reducedMotion, [0.25, 0.75], 0.25)
+  const progress = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0
+  const localProgress = MOBILE_STACK_TRANSITIONS.map(({ start, end }) => (progress - start) / (end - start))
+  const arrivals = localProgress.map((value) => Math.max(0, Math.min(1, value))) as [number, number]
+  const pair: MorphPair = progress < 0.5 ? 0 : 1
+  const blend = smoothstep((localProgress[pair] - 0.55) / 0.45)
+  const next = blend >= 0.5 ? 1 : 0
+
+  return { progress, pair, active: pair + next, blend: reducedMotion ? next : blend, arrivals }
 }

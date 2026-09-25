@@ -6,68 +6,85 @@ const { fitMobileStack, MOBILE_STACK_SPACING } = await import(layoutURL.href) as
   "../components/sections/guarantees-timeline/mobile-stack-layout"
 )
 
-const naturalContent = { introHeight: 198, titleHeight: 78, cardHeight: 248, cardCount: 3 }
+const naturalContent = { viewportWidth: 390, contentHeight: 180, cardCount: 3 }
 
-test("a tall viewport retains the chip, title and subtitle above readable artwork", () => {
-  const result = fitMobileStack({ ...naturalContent, viewportHeight: 900 })
-  assert.ok(result)
-  assert.equal(result.mode, "full")
-  assert.equal(result.headingHeight, naturalContent.introHeight)
-  assert.ok(result.artSize >= 140)
+test("portrait phones retain a complete card with artwork inside and leave the heading in normal flow", () => {
+  for (const [viewportWidth, viewportHeight] of [[320, 568], [375, 667], [390, 844], [430, 932]]) {
+    const result = fitMobileStack({ ...naturalContent, viewportWidth, viewportHeight })
+    assert.ok(result)
+    assert.ok(result.artSize >= 110 && result.artSize <= 210)
+    if (viewportHeight >= 667) assert.ok(result.artSize >= 195)
+    assert.equal(result.padding, 20)
+    assert.equal(result.artGap, 8)
+    assert.equal(result.stickyTop, 96)
+    assert.ok(result.stickyTop + result.sceneHeight + MOBILE_STACK_SPACING.bottom <= viewportHeight)
+  }
 })
 
-test("a shorter viewport retains the complete title while allowing secondary heading text to scroll away", () => {
-  const result = fitMobileStack({ ...naturalContent, viewportHeight: 720 })
-  assert.ok(result)
-  assert.equal(result.mode, "compact")
-  assert.equal(result.headingHeight, naturalContent.titleHeight)
-  assert.ok(result.artSize >= 140)
+test("artwork and spacing adapt before any natural text height is sacrificed", () => {
+  const smallerArtwork = fitMobileStack({ ...naturalContent, viewportHeight: 600, contentHeight: 256 })
+  assert.ok(smallerArtwork)
+  assert.equal(smallerArtwork.artSize, 114)
+  assert.equal(smallerArtwork.padding, 20)
+
+  const compact = fitMobileStack({ ...naturalContent, viewportWidth: 320, viewportHeight: 568, contentHeight: 235 })
+  assert.ok(compact)
+  assert.equal(compact.artSize, 111)
+  assert.equal(compact.padding, 16)
+  assert.equal(compact.artGap, 8)
+  assert.equal(compact.cardHeight - 2 * (compact.padding + 1) - compact.artSize - compact.artGap, 235)
 })
 
-test("insufficient height and enlarged text fall back instead of shrinking or clipping copy", () => {
-  assert.equal(fitMobileStack({ ...naturalContent, viewportHeight: 640 }), null)
-  const enlarged = Object.freeze({ ...naturalContent, viewportHeight: 844, titleHeight: 156, cardHeight: 520 })
+test("the measured header offset is reserved, including when it differs from the default", () => {
+  const result = fitMobileStack({ ...naturalContent, viewportHeight: 667, top: 128 })
+  assert.ok(result)
+  assert.equal(result.stickyTop, 128)
+  assert.ok(result.stickyTop + result.sceneHeight + 16 <= 667)
+  assert.ok(fitMobileStack({ ...naturalContent, viewportHeight: 667, top: 0 }))
+})
+
+test("landscape, square viewports and enlarged text that cannot fit use ordinary flow", () => {
+  assert.equal(fitMobileStack({ ...naturalContent, viewportWidth: 844, viewportHeight: 390 }), null)
+  assert.equal(fitMobileStack({ ...naturalContent, viewportWidth: 640, viewportHeight: 640 }), null)
+  const enlarged = Object.freeze({ ...naturalContent, viewportHeight: 844, contentHeight: 600 })
   assert.equal(fitMobileStack(enlarged), null)
-  assert.equal(enlarged.titleHeight, 156)
-  assert.equal(enlarged.cardHeight, 520)
+  assert.equal(enlarged.contentHeight, 600)
 })
 
-test("every accepted composition fits its title, artwork, three card layers and safe spacing", () => {
-  const spacing = MOBILE_STACK_SPACING
+test("accepted layouts always contain all text, the stacked edges, shadows and safe bottom spacing", () => {
   let accepted = 0
   let fallback = 0
-  for (const viewportHeight of [640, 667, 720, 740, 780, 812, 844, 896, 932]) {
-    for (const introHeight of [160, 210, 260]) {
-      for (const titleHeight of [70, 90, 110]) {
-        for (const cardHeight of [180, 240, 300, 390, 520]) {
-          const measurements = { viewportHeight, introHeight, titleHeight, cardHeight, cardCount: 3 }
-          const result = fitMobileStack(measurements)
-          const surroundingHeight = spacing.top + spacing.headingToArt + spacing.artToCard
-            + 2 * spacing.layer + cardHeight + spacing.bottom
-          if (!result) {
-            fallback++
-            assert.ok(surroundingHeight + titleHeight + 140 > viewportHeight,
-              `ordinary flow should only be necessary when the readable compact composition cannot fit: ${JSON.stringify(measurements)}`)
-            continue
-          }
-          accepted++
-          assert.ok(result.artSize >= 140 && result.artSize <= 240)
-          assert.equal(result.headingHeight, result.mode === "full" ? introHeight : titleHeight)
-          assert.ok(surroundingHeight + result.headingHeight + result.artSize <= viewportHeight,
-            `the complete foreground card must remain inside the viewport: ${JSON.stringify(measurements)}`)
+  for (const viewportHeight of [480, 568, 640, 667, 740, 812, 844, 932]) {
+    for (const viewportWidth of [320, 375, 430]) {
+      for (const contentHeight of [180, 212.7, 245, 300, 390, 520, 600]) {
+        const result = fitMobileStack({ viewportHeight, viewportWidth, contentHeight, cardCount: 3 })
+        if (!result) {
+          fallback++
+          // Even the smallest allowed illustration and gaps cannot fit.
+          assert.ok(96 + 16 + 2 * 24 + 2 * 10 + 2 * 17 + 110 + 8 + Math.ceil(contentHeight) > viewportHeight)
+          continue
         }
+        accepted++
+        assert.ok(result.artSize >= 110 && result.artSize <= 210)
+        const contentRoom = result.cardHeight - 2 * (result.padding + 1) - result.artSize - result.artGap
+        assert.ok(contentRoom >= contentHeight)
+        assert.equal(result.sceneHeight - result.cardHeight, 2 * result.shadowSpace + 2 * result.layerGap)
+        assert.ok(result.stickyTop + result.sceneHeight + 16 <= viewportHeight)
       }
     }
   }
   assert.ok(accepted > 0 && fallback > 0)
 })
 
-test("invalid measurements fail safely instead of producing unusable sticky offsets", () => {
-  const valid = { ...naturalContent, viewportHeight: 900 }
+test("invalid measurements fail safely", () => {
+  const valid = { ...naturalContent, viewportHeight: 844 }
   for (const key of Object.keys(valid) as Array<keyof typeof valid>) {
     for (const value of [0, -1, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
       assert.equal(fitMobileStack({ ...valid, [key]: value }), null, `${key}=${value}`)
     }
+  }
+  for (const top of [-1, Number.NaN, Number.POSITIVE_INFINITY]) {
+    assert.equal(fitMobileStack({ ...valid, top }), null)
   }
   assert.equal(fitMobileStack({ ...valid, cardCount: 1.5 }), null)
 })

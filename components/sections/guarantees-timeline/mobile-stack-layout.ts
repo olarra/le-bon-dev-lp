@@ -1,32 +1,52 @@
 export const MOBILE_STACK_SPACING = {
   top: 96,
-  headingToArt: 20,
-  artToCard: 24,
-  layer: 16,
-  bottom: 24,
+  layerGap: 10,
+  shadowSpace: 24,
+  bottom: 16,
+  border: 1,
+  minArtSize: 110,
+  maxArtSize: 210,
 } as const
 
 type Measurements = {
   viewportHeight: number
-  introHeight: number
-  titleHeight: number
-  cardHeight: number
+  viewportWidth: number
+  contentHeight: number
   cardCount: number
+  top?: number
 }
 
-/** Keep readable text at its natural size; spend only the remaining height
- * on artwork. If even the compact composition cannot fit, use normal flow. */
+/** Fit one complete card below the header. Copy keeps its measured natural
+ * height; if smaller artwork and spacing are insufficient, use normal flow. */
 export function fitMobileStack(measurements: Measurements) {
-  const { viewportHeight, introHeight, titleHeight, cardHeight, cardCount } = measurements
-  if (!Number.isInteger(cardCount) || !Object.values(measurements).every((value) => Number.isFinite(value) && value > 0)) return null
-  const { top, headingToArt, artToCard, layer, bottom } = MOBILE_STACK_SPACING
-  const reserved = top + headingToArt + artToCard + layer * (cardCount - 1) + cardHeight + bottom
-  const preferredArt = Math.min(240, viewportHeight * 0.27)
+  const { viewportHeight, viewportWidth, contentHeight, cardCount, top = MOBILE_STACK_SPACING.top } = measurements
+  if (!Number.isInteger(cardCount)
+    || ![viewportHeight, viewportWidth, contentHeight, cardCount].every(value => Number.isFinite(value) && value > 0)
+    || !Number.isFinite(top) || top < 0
+    || viewportWidth >= viewportHeight) return null
 
-  for (const mode of ["full", "compact"] as const) {
-    const headingHeight = mode === "full" ? introHeight : titleHeight
-    const artSize = Math.floor(Math.min(preferredArt, viewportHeight - reserved - headingHeight))
-    if (artSize >= 140) return { mode, headingHeight, artSize }
+  const { layerGap, shadowSpace, bottom, border, minArtSize, maxArtSize } = MOBILE_STACK_SPACING
+  const layersHeight = layerGap * (cardCount - 1)
+  const availableCardHeight = viewportHeight - top - bottom - 2 * shadowSpace - layersHeight
+  const naturalContentHeight = Math.ceil(contentHeight)
+  const preferredArtSize = Math.min(maxArtSize, Math.max(160, Math.round(viewportWidth * 0.52)))
+
+  for (const { padding, artGap } of [{ padding: 20, artGap: 8 }, { padding: 16, artGap: 8 }]) {
+    const fixedCardHeight = 2 * (padding + border) + artGap + naturalContentHeight
+    const artSize = Math.floor(Math.min(preferredArtSize, availableCardHeight - fixedCardHeight))
+    if (artSize < minArtSize) continue
+
+    const cardHeight = fixedCardHeight + artSize
+    return {
+      artSize,
+      padding,
+      artGap,
+      cardHeight,
+      sceneHeight: cardHeight + 2 * shadowSpace + layersHeight,
+      stickyTop: top,
+      layerGap,
+      shadowSpace,
+    }
   }
   return null
 }

@@ -11,10 +11,12 @@ export function ScrollReveal({
   className,
   children,
   distance = 170,
+  delay = 0,
 }: {
   className?: string
   children: ReactNode
   distance?: number
+  delay?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
@@ -43,6 +45,7 @@ export function ScrollReveal({
         opacity: visible ? 1 : 0.001,
         transform: visible ? "translateY(0px)" : `translateY(${distance}px)`,
         transition: "opacity 0.6s ease, transform 0.6s ease",
+        transitionDelay: `${delay}s`,
       }}
     >
       {children}

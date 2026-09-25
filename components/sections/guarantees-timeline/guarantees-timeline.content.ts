@@ -1,3 +1,21 @@
+/** Entrance timing in seconds; independent of the scroll-driven morph. */
+export const GUARANTEE_ENTRANCE = {
+  badgeDelay: 0.08,
+  titleDelay: 0.2,
+  titleDuration: 0.9,
+  titleStagger: 0.018,
+  introDelay: 0.32,
+  artDelay: 0,
+  copyDelay: 0.1,
+  copyStagger: 0.08,
+  start: "top 92%",
+  duration: 0.55,
+  artScale: 0.76,
+  artFadeDuration: 0.18,
+  artDistance: 20,
+  copyDistance: 24,
+} as const
+
 export const GUARANTEE_STEPS = [
   {
     kind: "budget",

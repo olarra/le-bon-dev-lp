@@ -106,9 +106,13 @@
   transform: rotate(-0.5deg);
 }
 
+.subtitleReveal {
+  width: 100%;
+}
+
 .subtitle {
   max-width: 640px;
-  margin: 20px 0 0;
+  margin: 20px auto 0;
   color: #586d50;
   font-size: clamp(20px, 1.7vw, 24px);
   font-weight: 400;
@@ -229,6 +233,10 @@
     margin-top: clamp(56px, 5vw, 72px);
   }
 
+  .timeline [data-guarantee-step] + [data-guarantee-step] {
+    margin-top: 24px;
+  }
+
   .description {
     font-size: clamp(19px, 1.6vw, 22px);
   }
@@ -236,7 +244,27 @@
 
 @media (max-width: 809.98px) {
   .section:has([data-mobile-stack="true"]) {
-    padding-bottom: 40px;
+    padding-bottom: 24px;
+    overflow: visible;
+  }
+
+  .art[data-kind="budget"] {
+    --blob-start: #b9dc62;
+    --blob-end: #d2e68c;
+  }
+
+  .art[data-kind="followup"] {
+    --blob-start: #7fbeb8;
+    --blob-end: #afd8cf;
+  }
+
+  .art[data-kind="handover"] {
+    --blob-start: #95b39a;
+    --blob-end: #b8cfa9;
+  }
+
+  .art .blob {
+    transform: scale(1.06);
   }
 
   .timeline {
@@ -278,6 +306,7 @@
   /* The shared heading components use inline reveal transforms. Keep their
      typography, but expose this section's heading without motion. */
   .headingContent,
+  .headingContent > div,
   .titleWrapper,
   .titleWrapper * {
     opacity: 1 !important;
