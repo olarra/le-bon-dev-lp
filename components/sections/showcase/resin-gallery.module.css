@@ -1,0 +1,184 @@
+.stage {
+  /* Original PNG: 1536 × 1024. Display window: (140, 52, 1256, 932).
+     Only empty margins are cropped; the original pixels stay unchanged.
+     Gallery bounds (187, 94)–(1349, 750) underlap the inside of the bezel. */
+  --resin-ratio: 1256 / 932;
+  --resin-perspective: 1200px;
+  --resin-origin: 50% 60%;
+  --resin-screen-inset: calc(100% * 42 / 932) calc(100% * 47 / 1256) calc(100% * 234 / 932);
+  --resin-image-width: calc(100% * 1536 / 1256);
+  --resin-image-height: calc(100% * 1024 / 932);
+  --resin-image-left: calc(-100% * 140 / 1256);
+  --resin-image-top: calc(-100% * 52 / 932);
+  --resin-image: url("/images/realisations/french-pixel/resin-monitor.png");
+  --resin-screen-mask: url("/images/realisations/french-pixel/monitor-screen-mask.svg");
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--resin-ratio);
+  perspective: var(--resin-perspective);
+  container-type: inline-size;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.stage,
+.stage * {
+  box-sizing: border-box;
+}
+
+.device {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--resin-ratio);
+  transform-origin: var(--resin-origin);
+  isolation: isolate;
+  /* Frontal, visible CSS defaults also serve reduced motion and no JS. */
+}
+
+.screen {
+  position: absolute;
+  z-index: 1;
+  inset: var(--resin-screen-inset);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 2%;
+  background: #fff;
+}
+
+.nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  height: 16%;
+  padding: 0 2.5%;
+  border-bottom: 1px solid #eeeee8;
+  color: #20261f;
+}
+
+.brand {
+  font-family: Georgia, serif;
+  font-size: clamp(12px, 2.8cqi, 30px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+
+.links {
+  display: flex;
+  gap: clamp(8px, 1.7cqi, 18px);
+  color: #60665d;
+  font-size: clamp(7px, 1.15cqi, 12px);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.prints {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 2.6%;
+  height: 84%;
+  min-height: 0;
+  padding: 2% 2.5% 3%;
+}
+
+.print {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* These small artwork mounts belong to the gallery UI in the POC.
+   The surrounding lime resin is exclusively the original illustrated PNG. */
+.wood {
+  height: 100%;
+  min-height: 0;
+  padding: 5px;
+  background: linear-gradient(100deg, #ba8d5c, #dfc59d 7%, #cfa575 14%, #e1c39d 49%, #c29c73 97%, #f0d5ad);
+  box-shadow: 0 2px 5px #4638292c, inset 0 0 0 1px #a5815266;
+}
+
+.mat {
+  height: 100%;
+  padding: 6px;
+  background: #fffefa;
+  box-shadow: inset 0 1px 3px #442b2130;
+}
+
+.print img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.frameViewport {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.frame {
+  position: absolute;
+  top: var(--resin-image-top);
+  left: var(--resin-image-left);
+  width: var(--resin-image-width);
+  height: var(--resin-image-height);
+  max-width: none;
+  user-select: none;
+}
+
+.reflection {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  /* Combine the PNG's actual alpha (bezel + stand) with the filled screen.
+     The reflection crosses all visible surfaces, never the empty margins
+     or the transparent opening in the stand. The mask shares the PNG crop.
+     Background-position is a fraction of the extra image size: 52 / 92. */
+  mask-image: var(--resin-image), var(--resin-screen-mask);
+  mask-size: var(--resin-image-width) var(--resin-image-height), 100% 100%;
+  mask-position: 50% calc(100% * 52 / 92), center;
+  mask-repeat: no-repeat;
+  mask-mode: alpha;
+  mask-composite: add;
+  pointer-events: none;
+}
+
+.reflection::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(110deg, transparent 42%, #ffffff00 46%, #ffffff48 49%, #ffffff08 53%, transparent 57%);
+  transform: translateX(var(--shine, -20%));
+  opacity: 0.65;
+}
+
+@container (max-width: 480px) {
+  .links span:nth-child(-n + 2) {
+    display: none;
+  }
+
+  .wood,
+  .mat {
+    padding: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device {
+    transform: none !important;
+  }
+
+  .reflection {
+    display: none;
+  }
+}

@@ -5,7 +5,10 @@ import { useLenis } from "lenis/react"
 import { attachSectionTransitions } from "./section-transition-controller"
 
 /** Page-like transitions at section edges; long sections retain free scrolling. */
-export function SectionTransitions({ targetIds }: { targetIds: readonly (string | readonly [string, string])[] }) {
+export function SectionTransitions({ targetIds, forwardOnly = false }: {
+  targetIds: readonly (string | readonly [string, string])[]
+  forwardOnly?: boolean
+}) {
   const lenis = useLenis()
 
   useEffect(() => {
@@ -23,7 +26,7 @@ export function SectionTransitions({ targetIds }: { targetIds: readonly (string 
     let detach = () => {}
     const sync = () => {
       detach()
-      detach = desktop.matches ? attachSectionTransitions(lenis, targets) : () => {}
+      detach = desktop.matches ? attachSectionTransitions(lenis, targets, { forwardOnly }) : () => {}
     }
     sync()
     desktop.addEventListener("change", sync)
@@ -31,7 +34,7 @@ export function SectionTransitions({ targetIds }: { targetIds: readonly (string 
       desktop.removeEventListener("change", sync)
       detach()
     }
-  }, [lenis, targetIds])
+  }, [lenis, targetIds, forwardOnly])
 
   return null
 }

@@ -14,7 +14,11 @@ type SectionTransitionTarget = { start: HTMLElement; end: HTMLElement }
 
 /** Animate the document through Lenis so sticky scenes and ScrollTrigger keep
  * their real scroll positions. Only the gaps between reading ranges snap. */
-export function attachSectionTransitions(lenis: Lenis, targets: readonly SectionTransitionTarget[]) {
+export function attachSectionTransitions(
+  lenis: Lenis,
+  targets: readonly SectionTransitionTarget[],
+  options: { forwardOnly?: boolean } = {},
+) {
   const win = targets[0]?.start.ownerDocument.defaultView
   if (!win) return () => {}
 
@@ -87,7 +91,9 @@ export function attachSectionTransitions(lenis: Lenis, targets: readonly Section
       || deltaY === 0 || Math.abs(deltaX) >= Math.abs(deltaY) || !event.cancelable
       || lenis.prefersReducedMotion || lenis.isStopped || lenis.isLocked || !lenis.options.smoothWheel
       || (event as Event & { lenisStopPropagation?: boolean }).lenisStopPropagation
-      || belongsToNestedScroll(data)) {
+      || belongsToNestedScroll(data)
+      // A single entrance must not pull readers back to it from later sections.
+      || (options.forwardOnly && deltaY < 0)) {
       release()
       return true
     }

@@ -13,8 +13,8 @@ import { ContactSection } from "@/components/sections/contact/ContactSection"
 import { ContactFormSection } from "@/components/sections/contact/ContactFormSection"
 
 const SECTION_TARGETS = [
-  "statistics", ["garanties-timeline", "offres"], "offers-showcase",
-  "la-methode", "le-studio", "estimation", "contact",
+  // Only the downward entrance into Nos garanties snaps.
+  "statistics", "garanties-timeline",
 ] as const
 
 export default function HomePage() {
@@ -26,7 +26,6 @@ export default function HomePage() {
         <div id="page-body" className="page-body">
           <GuaranteesTimelineSection />
           <OffersSection />
-          {/* The green surface remains behind the project previews. */}
           <ShowcaseSection>
             <ShowcaseContent />
           </ShowcaseSection>
@@ -35,7 +34,7 @@ export default function HomePage() {
           <ContactSection />
           <ContactFormSection />
         </div>
-        <SectionTransitions targetIds={SECTION_TARGETS} />
+        <SectionTransitions targetIds={SECTION_TARGETS} forwardOnly />
       </PageFrame>
     </>
   )

@@ -49,7 +49,7 @@ after(() => {
   else Reflect.deleteProperty(globalThis, "HTMLElement")
 })
 
-function setup(previousFilter?: (data: VirtualScrollData) => boolean, continuousSecondAndThird = false) {
+function setup(previousFilter?: (data: VirtualScrollData) => boolean, continuousSecondAndThird = false, guaranteesOnly = false) {
   const win = new TestWindow()
   const root = new TestElement(win)
   const targets = [new TestElement(win, 0), new TestElement(win, 800, 2000), new TestElement(win, 2800, 1600)]
@@ -96,7 +96,8 @@ function setup(previousFilter?: (data: VirtualScrollData) => boolean, continuous
     const elements = targets as unknown as HTMLElement[]
     const ranges = elements.map(element => ({ start: element, end: element }))
     if (continuousSecondAndThird) ranges.splice(1, 2, { start: elements[1], end: elements[2] })
-    return attachSectionTransitions(lenis as unknown as Lenis, ranges)
+    if (guaranteesOnly) ranges.splice(2)
+    return attachSectionTransitions(lenis as unknown as Lenis, ranges, { forwardOnly: guaranteesOnly })
   }
   const dispose = mount()
   function wheel(deltaY: number, time: number, options: {
@@ -154,6 +155,51 @@ test("fast repeated wheel events cannot accelerate the arrival or skip into anot
   assert.equal(rig.calls.length, 1)
   assert.equal(rig.wheel(60, 1200).accepted, true, "A fresh gesture reads freely inside the long section")
   assert.equal(rig.lenis.targetScroll, 860)
+  rig.dispose()
+})
+
+test("the guarantees-only entrance still snaps from the hero and absorbs the gesture's momentum", () => {
+  const rig = setup(undefined, false, true)
+  assert.equal(rig.wheel(120, 0).accepted, false)
+  assert.equal(rig.calls[0].top, 800)
+  rig.frame(0.5)
+  assert.equal(rig.wheel(2000, 100).accepted, false)
+  rig.frame(1)
+  assert.equal(rig.wheel(80, 1400).accepted, true)
+  assert.equal(rig.lenis.targetScroll, 880)
+  assert.equal(rig.calls.length, 1)
+  rig.dispose()
+})
+
+test("all later boundaries and upward scrolling remain free with only the guarantees entrance enabled", () => {
+  const rig = setup(undefined, false, true)
+  for (const [position, delta] of [
+    [800, 120], [1900, 700], [2600, 400], [3500, 6000],
+    [3800, -600], [3000, -1000], [2100, -6000], [900, -500], [800, -160], [400, -6000],
+  ]) {
+    rig.position(position)
+    const result = rig.wheel(delta, 0)
+    assert.equal(result.accepted, true)
+    assert.equal(result.event.defaultPrevented, false)
+    assert.equal(result.data.deltaY, delta, "No reading stop or snap may shorten the gesture")
+    assert.equal(rig.lenis.targetScroll, Math.max(0, Math.min(rig.lenis.limit, position + delta)))
+  }
+  assert.equal(rig.calls.length, 0)
+  rig.dispose()
+})
+
+test("reversing the guarantees entrance cancels the snap and immediately restores free scrolling", () => {
+  const rig = setup(undefined, false, true)
+  rig.wheel(120, 0)
+  rig.frame(0.5)
+  const halfway = rig.lenis.actualScroll
+  const result = rig.wheel(-80, 200)
+  assert.equal(result.accepted, true)
+  assert.equal(result.event.defaultPrevented, false)
+  assert.equal(result.data.deltaY, -80)
+  assert.equal(rig.lenis.targetScroll, halfway - 80)
+  assert.equal(rig.calls.length, 2, "Only the entrance and its cancellation are issued")
+  assert.equal(rig.calls[1].options.immediate, true)
   rig.dispose()
 })
 
