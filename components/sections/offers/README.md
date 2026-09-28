@@ -13,7 +13,9 @@ cursor coordinates are mapped across its width and height, including near the CT
 Only that card's icon reacts, then settles when the cursor leaves. Their SVG shapes
 and colours are preserved. Reduced motion keeps them static.
 Touch uses the same shared interaction: a press starts the reflection, finger
-movement updates it, and release or native scrolling returns it to rest.
+movement updates it, and the effect stays active during native scrolling until
+that finger lifts or its touch is cancelled. If the card leaves the touch area,
+the last pose holds until release.
 Quick taps retain 180 ms of feedback. All touch listeners are passive.
 `FEATURE_FLAG_RESINE_ICON_ENABLED` in `lib/feature-flags.ts` defaults to `false`.
 Set it to `true` to restore the original resin icons and their existing playback.

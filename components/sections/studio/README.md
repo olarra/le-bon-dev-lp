@@ -12,8 +12,9 @@
   la plus proche du curseur. Le suivi couvre toute la section, photo et fond
   compris, avec une direction calculée depuis chaque icône jusqu’aux bords.
   Aucun reflet permanent ni composant dédié au studio.
-  Sur mobile, un appui ou un mouvement du doigt pilote le même effet ; le
-  relâchement ou le défilement le ramène au repos, sans bloquer les gestes natifs.
+  Sur mobile, l’effet reste actif pendant l’appui et le défilement, jusqu’au
+  relâchement du doigt ou à l’annulation du geste. La dernière inclinaison est
+  conservée si le doigt sort de la zone ; les gestes natifs restent libres.
 - `ResinCta` fournit le bouton partagé, avec une flèche tournée au survol ici.
 - `StudioEcosystem` présente les technologies ; `integrations.content.ts`
   contient les noms, assets et paramètres des trois rubans.
