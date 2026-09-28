@@ -31,7 +31,8 @@ export const SECTION_TITLE_LINES = ["Votre vision.", "Notre savoir-faire."] as c
 export const SUBTITLE_INTRO =
   "Une idée à concrétiser ou un produit à reprendre : on vous accompagne de la conception à la mise en ligne."
 
-export const CTA_LABEL = "Parlons de votre projet"
+export const CTA_LABEL = "Estimer mon projet"
+export const CTA_HINT = "Présentez votre projet en 3 minutes."
 export const CTA_HREF = "#contact"
 
 /**

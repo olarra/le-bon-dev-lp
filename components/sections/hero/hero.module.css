@@ -285,14 +285,19 @@
   color: #10251c;
 }
 
-/* CTA button: hand-written (not the generated framer/button.jsx used
-   elsewhere) so it can match the ported header's own CTA styling —
-   bright lime pill, dark text, arrow that rotates on hover, both
-   inverting to a darker/lighter pair on hover. Colors are the same
-   family the header's button already uses (Artora's lime accent). */
+.ctaGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 32px);
+}
+
+/* Keep the action prominent, with the completion-time hint beneath it. */
 .ctaButton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 18px 36px;
   border-radius: 999px;
@@ -301,9 +306,20 @@
   font-family: "Outfit", sans-serif;
   font-size: 16px;
   font-weight: 700;
+  white-space: nowrap;
   text-decoration: none;
   outline-offset: 4px;
   transition: background-color 0.3s ease;
+}
+
+.ctaHint {
+  margin: 0;
+  color: #43593d;
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
 }
 /* "Pilule forêt": dark near-black forest green at rest, a lighter forest
    green on hover *and* keyboard focus (:focus-visible gets the same

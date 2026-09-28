@@ -1,9 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none">
-  <defs>
-    <linearGradient id="handover-fill" x1="240" y1="75" x2="350" y2="550" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#CCE5C7"/>
-      <stop offset="1" stop-color="#DDEFD1"/>
-    </linearGradient>
-  </defs>
-  <path fill="url(#handover-fill)" d="M114 219C119 132 178 75 263 79C359 83 411 140 467 212C523 284 584 354 557 425C530 496 435 548 339 550C242 552 128 527 71 477C14 427 52 349 87 299C102 277 112 246 114 219Z"/>
-</svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="420" viewBox="0 0 600 420" role="img" aria-label="Blob en résine satinée — handover">
+    <defs>
+      <linearGradient id="blob-handover-fill" x1=".18" y1="0" x2=".8" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#edf4d9" stop-opacity=".9"/><stop offset=".36" stop-color="#d4e6bd" stop-opacity=".65"/><stop offset=".7" stop-color="#c6dca9" stop-opacity=".64"/><stop offset="1" stop-color="#a7c894" stop-opacity=".8"/></linearGradient>
+      <linearGradient id="blob-handover-rim" x1=".12" y1=".05" x2=".8" y2="1"><stop stop-color="#fffef4"/><stop offset=".33" stop-color="#f7ffe7" stop-opacity=".95"/><stop offset=".57" stop-color="#a7c287" stop-opacity=".25"/><stop offset=".82" stop-color="#749967" stop-opacity=".4"/><stop offset="1" stop-color="#f2ffde" stop-opacity=".95"/></linearGradient>
+      <radialGradient id="blob-handover-light" cx=".29" cy=".12" r=".8"><stop stop-color="#fffef4" stop-opacity=".9"/><stop offset=".42" stop-color="#fffef4" stop-opacity=".16"/><stop offset="1" stop-color="#fffef4" stop-opacity="0"/></radialGradient>
+      <filter id="blob-handover-shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="12" result="shadow-blur"/><feOffset in="shadow-blur" dx="0" dy="13" result="shadow-offset"/><feFlood flood-color="#54743d" flood-opacity=".11" result="shadow-color"/><feComposite in="shadow-color" in2="shadow-offset" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="blob-handover-inset" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"/><feFlood flood-color="#faffed" flood-opacity=".6"/><feComposite in2="edge" operator="in"/><feComposite in2="SourceGraphic" operator="over"/></filter>
+      <path id="blob-handover-shape" data-morph-path="true" d="M302 60 C376 70 399 140 440 208 C492 295 400 351 303 348 C213 346 123 323 149 235 C181 162 195 45 302 60 Z"/>
+      <clipPath id="blob-handover-clip"><use xlink:href="#blob-handover-shape"/></clipPath>
+    </defs>
+    <use xlink:href="#blob-handover-shape" fill="url(#blob-handover-fill)" filter="url(#blob-handover-shadow)"/>
+    <use xlink:href="#blob-handover-shape" fill="url(#blob-handover-fill)" filter="url(#blob-handover-inset)"/>
+    <g clip-path="url(#blob-handover-clip)"><rect x="80" y="30" width="450" height="360" fill="url(#blob-handover-light)"/></g>
+    <use xlink:href="#blob-handover-shape" fill="none" stroke="url(#blob-handover-rim)" stroke-width="2"/>
+  </svg>

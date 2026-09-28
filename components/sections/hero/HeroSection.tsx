@@ -15,6 +15,7 @@ import styles from "./hero.module.css"
 import { HERO_DOTS_ANIMATED, HERO_HALFTONE, HERO_SHIMMER, HERO_STATIC_DOT_COLOR } from "./hero.background"
 import type { Breakpoint as Bp } from "@/lib/breakpoints"
 import {
+  CTA_HINT,
   CTA_HREF,
   CTA_LABEL,
   EYEBROW,
@@ -212,7 +213,7 @@ export function HeroSection() {
             <ScrollReveal className={styles.headingContainer}>
               {/* display:contents: a ref boundary around the reveal's children
                   without becoming a flex item itself, so .headingAndLabel /
-                  .subtitleGroup / .cta keep participating directly in
+                  .subtitle / .ctaGroup keep participating directly in
                   .headingContainer's flex gap as before. */}
               <div ref={headingRef} style={{ display: "contents" }}>
                 <div ref={spiralRef} className={styles.spiralField} aria-hidden="true" />
@@ -235,24 +236,27 @@ export function HeroSection() {
 
                 <p className={styles.subtitle}>{SUBTITLE_INTRO}</p>
 
-                <a href={CTA_HREF} className={styles.ctaButton}>
-                  {CTA_LABEL}
-                  <svg
-                    className={styles.ctaArrow}
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M5 12h14" />
-                    <path d="m13 6 6 6-6 6" />
-                  </svg>
-                </a>
+                <div className={styles.ctaGroup}>
+                  <a href={CTA_HREF} className={styles.ctaButton} aria-describedby="hero-estimate-hint">
+                    <span>{CTA_LABEL}</span>
+                    <svg
+                      className={styles.ctaArrow}
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m13 6 6 6-6 6" />
+                    </svg>
+                  </a>
+                  <p className={styles.ctaHint} id="hero-estimate-hint">{CTA_HINT}</p>
+                </div>
 
                 <div className={styles.highlight}>
                   <Image

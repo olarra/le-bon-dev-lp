@@ -1,9 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none">
-  <defs>
-    <linearGradient id="budget-fill" x1="420" y1="80" x2="130" y2="530" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#D0E8C8"/>
-      <stop offset="1" stop-color="#E9F3BE"/>
-    </linearGradient>
-  </defs>
-  <path fill="url(#budget-fill)" d="M78 282C72 179 130 131 229 106C321 83 423 42 483 104C525 147 537 218 557 282C579 353 558 413 482 450C401 490 287 534 185 537C107 540 43 513 37 458C31 403 84 356 78 282Z"/>
-</svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="420" viewBox="0 0 600 420" role="img" aria-label="Blob en résine satinée — budget">
+    <defs>
+      <linearGradient id="blob-budget-fill" x1=".18" y1="0" x2=".8" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#edf4d9" stop-opacity=".9"/><stop offset=".36" stop-color="#d4e6bd" stop-opacity=".65"/><stop offset=".7" stop-color="#c6dca9" stop-opacity=".64"/><stop offset="1" stop-color="#a7c894" stop-opacity=".8"/></linearGradient>
+      <linearGradient id="blob-budget-rim" x1=".12" y1=".05" x2=".8" y2="1"><stop stop-color="#fffef4"/><stop offset=".33" stop-color="#f7ffe7" stop-opacity=".95"/><stop offset=".57" stop-color="#a7c287" stop-opacity=".25"/><stop offset=".82" stop-color="#749967" stop-opacity=".4"/><stop offset="1" stop-color="#f2ffde" stop-opacity=".95"/></linearGradient>
+      <radialGradient id="blob-budget-light" cx=".29" cy=".12" r=".8"><stop stop-color="#fffef4" stop-opacity=".9"/><stop offset=".42" stop-color="#fffef4" stop-opacity=".16"/><stop offset="1" stop-color="#fffef4" stop-opacity="0"/></radialGradient>
+      <filter id="blob-budget-shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="12" result="shadow-blur"/><feOffset in="shadow-blur" dx="0" dy="13" result="shadow-offset"/><feFlood flood-color="#54743d" flood-opacity=".11" result="shadow-color"/><feComposite in="shadow-color" in2="shadow-offset" operator="in" result="shadow"/><feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="blob-budget-inset" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/><feComposite in="SourceAlpha" in2="blur" operator="out" result="edge"/><feFlood flood-color="#faffed" flood-opacity=".6"/><feComposite in2="edge" operator="in"/><feComposite in2="SourceGraphic" operator="over"/></filter>
+      <path id="blob-budget-shape" data-morph-path="true" d="M300 64 C390 38 449 106 466 195 C486 289 419 343 313 350 C209 372 129 329 122 246 C99 152 200 95 300 64 Z"/>
+      <clipPath id="blob-budget-clip"><use xlink:href="#blob-budget-shape"/></clipPath>
+    </defs>
+    <use xlink:href="#blob-budget-shape" fill="url(#blob-budget-fill)" filter="url(#blob-budget-shadow)"/>
+    <use xlink:href="#blob-budget-shape" fill="url(#blob-budget-fill)" filter="url(#blob-budget-inset)"/>
+    <g clip-path="url(#blob-budget-clip)"><rect x="80" y="30" width="450" height="360" fill="url(#blob-budget-light)"/></g>
+    <use xlink:href="#blob-budget-shape" fill="none" stroke="url(#blob-budget-rim)" stroke-width="2"/>
+  </svg>

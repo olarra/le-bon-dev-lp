@@ -1,7 +1,7 @@
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin"
-import { MORPH_BLOBS, MORPH_PALETTES, MOBILE_MORPH_PALETTES } from "./morph-content"
+import { MORPH_BLOBS, MORPH_PALETTES } from "./morph-content"
 import { getMorphState, getStackMorphState, MOBILE_STACK_TRANSITIONS } from "./morph-progress"
 import { createRenderer, type MorphRenderer } from "./morph-renderer"
 import { fitMobileStack, MOBILE_STACK_SPACING } from "./mobile-stack-layout"
@@ -15,9 +15,8 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     return element
   }
   const canvas = find<HTMLCanvasElement>("[data-guarantee-canvas]")
-  const blob = find<SVGPathElement>("[data-guarantee-blob]")
-  const stopA = find<SVGStopElement>("[data-stop-a]")
-  const stopB = find<SVGStopElement>("[data-stop-b]")
+  const blob = find<SVGPathElement>("[data-guarantee-visual] [data-morph-path]")
+  const colorStops = Array.from(root.querySelectorAll<SVGStopElement>("[data-guarantee-visual] [data-blob-fill] stop"))
   const fill = find<HTMLElement>("[data-guarantee-fill]")
   const shapes = Array.from(root.querySelectorAll<SVGPathElement>("[data-morph-shape]"))
   const steps = Array.from(root.querySelectorAll<HTMLElement>("[data-guarantee-step]"))
@@ -144,10 +143,10 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
         duration: 1, ease: "none", paused: true, immediateRender: false },
     ))
   }, root)
-  const colors = [MORPH_PALETTES, MOBILE_MORPH_PALETTES].map((palettes) => [0, 1].map((pair) => [
-    gsap.utils.interpolate(palettes[pair][0], palettes[pair + 1][0]),
-    gsap.utils.interpolate(palettes[pair][1], palettes[pair + 1][1]),
-  ]))
+
+  const colors = MORPH_PALETTES.slice(0, -1).map((palette, pair) => palette.map((color, index) =>
+    gsap.utils.interpolate<string>(color, MORPH_PALETTES[pair + 1][index]),
+  ))
 
   function update(value: number) {
     if (disposed) return
@@ -157,10 +156,11 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     const path = state.blend === 0 ? MORPH_BLOBS[state.pair]
       : state.blend === 1 ? MORPH_BLOBS[state.pair + 1]
       : shapes[state.pair].getAttribute("d")!
+    // Every material layer references this path; the lighting stays fixed.
     blob.setAttribute("d", path)
-    const palette = colors[mobileStack ? 1 : 0][state.pair]
-    stopA.setAttribute("stop-color", palette[0](state.blend))
-    stopB.setAttribute("stop-color", palette[1](state.blend))
+    colorStops.forEach((stop, index) => {
+      stop.setAttribute("stop-color", colors[state.pair][index](state.blend))
+    })
     fill.style.transform = `scaleY(${state.progress})`
     root.dataset.progress = state.progress.toFixed(4)
     root.dataset.active = String(state.active)
@@ -288,8 +288,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     resetMobileLayout()
     delete root.dataset.progress
     blob.setAttribute("d", MORPH_BLOBS[0])
-    stopA.setAttribute("stop-color", MORPH_PALETTES[0][0])
-    stopB.setAttribute("stop-color", MORPH_PALETTES[0][1])
+    colorStops.forEach((stop, index) => stop.setAttribute("stop-color", MORPH_PALETTES[0][index]))
     fill.style.removeProperty("transform")
     steps.forEach((step, index) => {
       if (index === 0) step.setAttribute("aria-current", "step")

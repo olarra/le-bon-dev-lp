@@ -3,9 +3,9 @@
 import { useEffect, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react"
 import { useLenis } from "lenis/react"
 import layout from "@/components/ui/scroll-01.module.css"
-import { GuaranteeArt } from "./GuaranteeArt"
+import { GuaranteeArt, GuaranteeBlob } from "./GuaranteeArt"
 import { GUARANTEE_STEPS } from "./guarantees-timeline.content"
-import { ILLUSTRATION_SCALES, MORPH_BLOBS, MORPH_PALETTES } from "./morph-content"
+import { ILLUSTRATION_SCALES } from "./morph-content"
 import { mountGuaranteesMorph } from "./morph-controller"
 import { mountGuaranteesEntrance } from "./guarantees-entrance"
 import morph from "./guarantees-morph.module.css"
@@ -43,17 +43,7 @@ export function GuaranteesTimeline({ heading }: { heading: ReactNode }) {
             <div className={layout.visualColumn} data-guarantee-visual aria-hidden="true">
               <div className={layout.stickyVisual} data-guarantee-sticky>
                 <div className={`${layout.visualMedia} ${morph.scene}`} data-guarantee-art-entrance>
-                  <svg className={morph.blob} viewBox="0 0 600 600" focusable="false">
-                    <defs>
-                      <linearGradient id="guarantees-morph-gradient" x1="0" y1="0" x2="1" y2="1">
-                        <stop data-stop-a offset="0%" stopColor={MORPH_PALETTES[0][0]} />
-                        <stop data-stop-b offset="100%" stopColor={MORPH_PALETTES[0][1]} />
-                      </linearGradient>
-                      <path data-morph-shape d={MORPH_BLOBS[0]} />
-                      <path data-morph-shape d={MORPH_BLOBS[1]} />
-                    </defs>
-                    <path data-guarantee-blob d={MORPH_BLOBS[0]} fill="url(#guarantees-morph-gradient)" />
-                  </svg>
+                  <GuaranteeBlob morphing />
                   {assets.map((src, index) => (
                     <img
                       key={src}

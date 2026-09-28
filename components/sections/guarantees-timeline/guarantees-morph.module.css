@@ -3,7 +3,6 @@
   pointer-events: none;
 }
 
-.blob,
 .canvas,
 .fallback {
   position: absolute;
@@ -196,9 +195,5 @@
     position: relative;
     width: 100%;
     height: 100%;
-  }
-
-  .track .scene .blob {
-    transform: scale(1.06);
   }
 }
