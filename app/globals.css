@@ -1,58 +1,32 @@
-/* Colors for the ported French Pixel Studio header (TopBar + framer-styles.css
-   token remap in components/framer/framer-styles.css). Kept as their own
-   --color- names, distinct from this project's own --unframer- and --token-
-   palette, since they are exact values carried over from the source project
-   rather than part of this site's own design system. */
+/* Site-wide tokens, document reset and accessibility utilities. */
 :root {
+  --font-body: var(--font-outfit), sans-serif;
+  --font-heading: var(--font-morna), var(--font-outfit), sans-serif;
+  --font-handwriting: var(--font-caveat), cursive;
+  --color-accent: #c8f53e;
+  --color-page: #fefae7;
   --color-bg-secondary: #eef2d0;
   --color-primary-dark: #8aa61f;
   --color-dark: #0e0f0a;
-  /* Surface shared by the legacy guarantees and dark sections. */
   --color-surface-guarantees: #0c120e;
   --color-surface-offers: rgb(255, 252, 238);
-}
-
-/* Shared pale olive surfaces for the hero, floating navigation and utility
-   strip. Keep their colours together so adjustments stay in harmony. */
-:root {
   --color-surface-hero: #f7f8f2;
   --color-surface-hero-mid: #f1f3e7;
   --color-surface-hero-olive: #e7ebd4;
   --color-surface-navigation: #f9faf5;
   --color-border-navigation: #d3dcc0;
+  --scroll-padding-top: 132px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body {
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
-}
-
-/* overflow-x lives on html alone (see the `html` rule below), not body. A
-   non-visible overflow on one axis makes the browser treat the other axis as
-   auto too (CSS Overflow spec), which would turn body into a scroll container
-   and re-parent every position:sticky descendant (including timeline art)
-   to a box whose scrollTop never moves. html's own overflow-x: hidden is
-   enough on its own to stop horizontal scroll at the document root. */
-body {
-  overflow-x: visible;
-}
-
-/* Sections follow the hero in normal document flow. */
-.page-body {
-  position: relative;
-  width: 100%;
-  background: var(--color-surface-guarantees);
-}
-
-html body {
-  background: var(--token-b0bb3938-008d-419c-b18a-42b0ef391a52, rgb(254, 250, 231));
-}
-
-/* Anchor targets land below the floating header. */
-:root {
-  --scroll-padding-top: 132px;
 }
 
 html {
@@ -61,164 +35,46 @@ html {
   overflow-y: auto;
 }
 
-@media (max-width: 1099.98px) {
-  :root {
-    --scroll-padding-top: 104px;
-  }
+/* Keep body from becoming a scroll container: sticky scenes use the document. */
+body {
+  overflow-x: visible;
+  background: var(--color-page);
+  color: #10251c;
+  font-family: var(--font-body);
 }
 
-/* Breakpoint gating (see components/atoms/Breakpoint.tsx) */
-.ssr-variant {
-  display: contents;
+button, input, select, textarea {
+  font: inherit;
 }
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: #10251c;
+  color: #fff;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+@media (max-width: 1099.98px) {
+  :root { --scroll-padding-top: 104px; }
+}
+
+/* Render responsive alternatives during SSR, then keep the active branch. */
+.ssr-variant { display: contents; }
 @media (min-width: 1200px) {
-  .hidden-desktop {
-    display: none !important;
-  }
+  .hidden-desktop { display: none !important; }
 }
 @media (min-width: 810px) and (max-width: 1199.98px) {
-  .hidden-tablet {
-    display: none !important;
-  }
+  .hidden-tablet { display: none !important; }
 }
 @media (max-width: 809.98px) {
-  .hidden-phone {
-    display: none !important;
-  }
-}
-
-/* Oswald (Fontshare), self-hosted copies of the files the Framer export uses.
-   No longer referenced by any hand-written section (Hero moved to Outfit,
-   below) — the site's font policy going forward is Morna Bold + Outfit
-   only. Left in place rather than deleted: framer/styles.css (generated,
-   imported in app/layout.tsx for the not-yet-migrated raw exports) declares
-   the same family from framerusercontent.com regardless, so removing this
-   local copy wouldn't stop Oswald from being loadable, it would just make
-   loading it depend on that remote CDN instead of these local files. */
-@font-face {
-  font-family: "Oswald";
-  src: url("/assets/framerusercontent.com/third-party-assets/fontshare/wf/PYCLPQS6HZBLJGMCPKBPEXQKWPKQ7OHE/TPDXSFLT6F2DLRHVAQNPEX367ZCFB6CP/OF7M536OVLRNXVSLVYIW3HQVUIUZ56CU.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Oswald";
-  src: url("/assets/framerusercontent.com/third-party-assets/fontshare/wf/UYVP6QOYOTHZUSD2QESI7SGUJJDFR5CG/7MQKA3KJYIKEEWMGAVUTITXKM7LENDLO/ZMUCZ2PRQ3LQ3YQOHTCZ7VJCQHAOURPY.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Oswald";
-  src: url("/assets/framerusercontent.com/third-party-assets/fontshare/wf/XUKZCD4YXMROH2RFN7AVQI3ZBPZDZBBJ/TICF42Y6EVCHCW6VT7HP2KTG7LYEAL6Y/QJ44H4IY5JEWLICE2IBFYKPCK7EJANPW.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Oswald";
-  src: url("/assets/framerusercontent.com/third-party-assets/fontshare/wf/4BEU2H62BE4J563L6WLMVQKHOL2QMEWK/KH4J4NPLOSGQTTA3TD7LQA62CQTZ5NMO/J6GZW3TVVNILH7PYSPMC3JPNPGFXNPSF.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-/* ---- Site font policy ----
-   Only two typefaces for hand-written sections: Morna Bold for the pieces
-   meant to grab attention (section titles, hero headlines), Outfit for
-   everything else (eyebrows, body copy, UI). Don't introduce a third. */
-
-/* Morna Bold, user-provided (public/fonts/morna) — one weight/style only. */
-@font-face {
-  font-family: "Morna Bold";
-  src:
-    url("/fonts/morna/morna-bold.woff2") format("woff2"),
-    url("/fonts/morna/morna-bold.woff") format("woff");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-/* Outfit, user-provided (public/fonts/outfit) — all 9 static weights, no italics provided. */
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-Thin.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 100;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-ExtraLight.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 200;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-Light.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-Regular.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-Medium.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-SemiBold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-Bold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-ExtraBold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit/Outfit-Black.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-}
-
-/* Caveat (user-provided static TTFs, public/fonts/caveat): handwriting for
-   the "Les offres" section's margin notes only - a third typeface added by
-   explicit request for that annotation role, not for headings, body or UI. */
-@font-face {
-  font-family: "Caveat";
-  src: url("/fonts/caveat/Caveat-Medium.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Caveat";
-  src: url("/fonts/caveat/Caveat-SemiBold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
+  .hidden-phone { display: none !important; }
 }

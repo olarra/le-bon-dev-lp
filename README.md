@@ -1,45 +1,62 @@
-# Agenius (Next.js)
+# Le bon dev
 
-Migration of the Framer site "Agenius" to React components, section by section.
+Site du studio, construit avec Next.js App Router, React et TypeScript.
+
+## Démarrer
 
 ```bash
 yarn install
 yarn dev
 ```
 
-## Routes
+Copier `.env.example` dans `.env.local` pour configurer `SITE_URL`, l’origine publique
+utilisée par les URL canoniques, le sitemap et les données structurées.
 
-- `/` — the React page. Sections are migrated here one at a time; today it has the Hero.
-- `/legacy` — the original Framer export (`public/index.html`), served byte for byte for
-  visual comparison.
+Production : `yarn build`, puis `yarn start`. Les tests, builds de validation et
+vérifications visuelles ne sont exécutés que sur demande explicite.
 
-## Structure
+## Architecture
 
-- `framer/` — components exported from the Framer project with `npx unframer 815f6a41f6dbdd5f --jsx`.
-  Generated code, do not edit; re-run the export when the Framer project changes.
-  `framer/styles.css` holds the colour tokens, fonts and base Framer styles.
-- `components/atoms/` — reusable building blocks that wrap the Framer runtime (`unframer`):
-  `FitTextHeading`, `AnimatedHeading` (per-character appear effect), `FloatingLabel`
-  (appear + loop wavy label), `CtaButton`, `Breakpoint` (SSR-safe breakpoint gate).
-- `components/sections/hero/` — the hero section: `HeroSection.tsx` (markup),
-  `hero.content.ts` (copy, colours, animation values), `hero.module.css` (layout copied
-  from the Framer CSS, including the tablet/phone overrides).
-- `components/layout/PageFrame.tsx` — page shell matching Framer's root layout.
-- `lib/breakpoints.ts` — Framer breakpoints (desktop ≥1200, tablet 810–1199, phone <810).
+- `app/layout.tsx` : document HTML, polices locales, styles et métadonnées.
+- `app/(site)/layout.tsx` : navigation, cadre et pied de page communs.
+- `app/(site)/page.tsx` : composition de la landing page côté serveur.
+- `app/robots.ts`, `app/sitemap.ts` : routes SEO natives.
+- `components/sections/<section>/` : vue, contenu, CSS Module et hooks de la section.
+- `components/layout/` : navigation et structure du site.
+- `components/atoms/` : petits éléments partagés, dont titres, boutons et rubans.
+- `components/ui/` : interactions partagées (scroll, stickers, révélation de texte).
+- `hooks/` : comportements React réutilisables.
+- `lib/` : configuration, types et logique indépendante du rendu.
+- `public/images/`, `public/fonts/`, `public/logos/` : assets locaux.
+- `tests/` : tests existants de progression, géométrie et nettoyage des animations.
 
-## Notes
+L’export Framer, ses chunks, styles, adaptations de runtime et assets obsolètes
+ont été retirés. Ils restent dans l’historique Git. `/legacy` et `/index.html`
+redirigent vers `/`.
 
-- `reactStrictMode` is off (unframer requirement: double mounting breaks Framer animations).
-- Oswald is self-hosted from `public/assets/...` (same files the Framer export uses).
+## Conventions
 
-## Hero wave colours
+- Garder les pages et le contenu statique côté serveur ; réserver `use client` aux interactions.
+- Les composants décrivent le rendu ; les hooks possèdent l’état et les effets,
+  avec leur nettoyage. Les calculs métier restent dans `lib/`.
+- Garder les fichiers d’une section ensemble. Extraire un élément lorsqu’il a
+  plusieurs usages ; éviter les imports de styles ou de contenu entre sections.
+- Les CSS Modules portent les styles locaux. Les tokens, le reset et les
+  utilitaires globaux restent dans `app/globals.css`.
+- Les titres partagent `AnimatedHeading` et `lib/motion.ts`. Le texte est présent
+  dans le HTML serveur ; le hero possède un seul `h1`.
+- Utiliser les outils présents : Motion pour les caractères et valeurs animées,
+  GSAP pour les séquences au scroll, WAAPI pour les effets locaux, Lenis pour le document.
+- Libérer écouteurs, observateurs et animations au démontage. Préserver le rendu
+  statique et `prefers-reduced-motion`.
+- Créer les nouvelles routes dans `app/(site)/<route>/page.tsx` avec leurs métadonnées.
 
-Edit `WAVE_PALETTE` in `components/sections/hero/hero.content.ts` to recolour the
-moving cards. Each entry has a `background` and `foreground` (SVG logo colour),
-in wave order; the palette repeats automatically. The current palette uses forest,
-ink, lime, mint and sage to match Le bon dev. `WaveBrandCard.tsx` uses the supplied
-SVG files in `public/logos/clients/` as alpha masks, preserving their shapes and
-cutouts while applying `foreground`. No SVG edits are needed to change colours.
-`BRAND_LOGOS` controls the six brands and their individual logo box sizes. The
-supplied `cartes.json` guided the light/dark pairings; its background values do
-not replace the existing wave palette.
+## Contenu et formulaire
+
+Les fichiers `*.content.ts` centralisent le contenu de chaque section. Les coordonnées
+sont dans `lib/contact.ts`, le SEO dans `lib/site.ts`. Les polices Morna, Outfit et
+Caveat sont chargées par `next/font/local`.
+
+Le formulaire prépare un brouillon dans la messagerie du visiteur.
+`lib/contact-draft.ts` compose le message ; `use-contact-form.ts` gère saisie et copie.
+Aucun service d’envoi ni stockage serveur n’est actuellement branché.

@@ -1,53 +1,12 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
 import { CONTACT } from "@/lib/contact"
-import { prepareContactDraft, PROJECT_TYPES, type ContactDraft } from "./contact-form.content"
+import { PROJECT_TYPES } from "@/lib/contact-draft"
+import { useContactForm } from "./use-contact-form"
 import styles from "./contact-form.module.css"
 
 export function ContactForm() {
-  const [draft, setDraft] = useState<ContactDraft | null>(null)
-  const [copyState, setCopyState] = useState<"idle" | "copied" | "unavailable">("idle")
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const form = event.currentTarget
-
-    // Required text must contain more than whitespace; the browser handles email validity.
-    for (const name of ["name", "message"]) {
-      const field = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement
-      if (!field.value.trim()) {
-        field.setCustomValidity(name === "name" ? "Indiquez votre nom." : "Décrivez votre projet en quelques mots.")
-        field.reportValidity()
-        return
-      }
-    }
-    if (!form.reportValidity()) return
-
-    const nextDraft = prepareContactDraft(new FormData(form))
-    setDraft(nextDraft)
-    setCopyState("idle")
-    window.location.href = nextDraft.href
-  }
-
-  function handleInput(event: FormEvent<HTMLFormElement>) {
-    const field = event.target
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
-      field.setCustomValidity("")
-    }
-    setDraft(null)
-    setCopyState("idle")
-  }
-
-  async function copyDraft() {
-    if (!draft) return
-    try {
-      await navigator.clipboard.writeText(draft.copy)
-      setCopyState("copied")
-    } catch {
-      setCopyState("unavailable")
-    }
-  }
+  const { draft, copyState, handleSubmit, handleInput, copyDraft } = useContactForm()
 
   return (
     <form

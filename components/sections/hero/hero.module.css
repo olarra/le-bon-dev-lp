@@ -221,7 +221,7 @@
 /* Eyebrow/kicker above the title. Plain letter-spaced label, no pill. */
 .eyebrow {
   margin: 0 0 20px;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -230,54 +230,47 @@
   color: #10251c;
 }
 
-/* Our own wrapper per title line: the target of the GSAP magnetic drift
-   (HeroSection.tsx), kept separate from Framer's RichText wrapper inside it,
-   whose inline styles Framer re-applies on every render. */
+/* The outer line owns parallax; each inner character owns its reveal. */
+.headline {
+  margin: 0;
+  width: 100%;
+}
+
 .titleLine {
+  display: block;
   width: 100%;
   will-change: transform;
 }
 
 .titleWrapper {
-  /* unframer's base stylesheet sets [data-framer-component-type] {
-     position: absolute } on the RichText wrapper AnimatedHeading renders.
-     That attribute selector and this class selector have the *same*
-     specificity, so without `!important` it's a coin flip which one wins
-     depending on CSS bundle order — sometimes the two title lines (and
-     the subtitle after them) end up stacked exactly on top of each other
-     instead of in normal flex flow. Forcing it removes the ambiguity. */
-  position: relative !important;
+  position: relative;
   width: 100%;
 }
 
 .title {
-  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
-  --framer-font-size: 105px;
-  --framer-font-style: normal;
-  --framer-font-weight: 700;
-  --framer-letter-spacing: -0.01em;
-  --framer-line-height: 90%;
-  /* The shared style preset's class-level default is "start", but this
-     heading's own instance carries an inline override to "center" — that's
-     the one that actually applies (inline beats class), confirmed against
-     the published page's live computed style. */
-  --framer-text-alignment: center;
-  --framer-text-color: #10251c;
+  --heading-font-family: var(--font-heading);
+  --heading-font-size: 105px;
+  --heading-font-style: normal;
+  --heading-font-weight: 700;
+  --heading-letter-spacing: -0.01em;
+  --heading-line-height: 90%;
+  --heading-text-alignment: center;
+  --heading-text-color: #10251c;
   margin: 0;
-  font-family: var(--framer-font-family);
-  font-size: var(--framer-font-size);
-  font-style: var(--framer-font-style);
-  font-weight: var(--framer-font-weight);
-  letter-spacing: var(--framer-letter-spacing);
-  line-height: var(--framer-line-height);
-  text-align: var(--framer-text-alignment);
-  color: var(--framer-text-color);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size);
+  font-style: var(--heading-font-style);
+  font-weight: var(--heading-font-weight);
+  letter-spacing: var(--heading-letter-spacing);
+  line-height: var(--heading-line-height);
+  text-align: var(--heading-text-alignment);
+  color: var(--heading-text-color);
 }
 
 .subtitle {
   margin: 0;
   max-width: 640px;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
   font-size: 20px;
   font-weight: 500;
   line-height: 140%;
@@ -303,7 +296,7 @@
   border-radius: 999px;
   background-color: #10251c;
   color: #ffffff;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 700;
   white-space: nowrap;
@@ -315,7 +308,7 @@
 .ctaHint {
   margin: 0;
   color: #43593d;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
@@ -376,7 +369,7 @@
   max-width: 700px;
   min-width: 0;
   margin: 0;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 400;
   line-height: 1.5;
@@ -427,8 +420,8 @@
   .title {
     /* Scaled from the 105px desktop size for Morna Bold (much wider per
        character than Oswald), same ratio the old Oswald values used. */
-    --framer-font-size: 80px;
-    --framer-letter-spacing: -0.01em;
+    --heading-font-size: 80px;
+    --heading-letter-spacing: -0.01em;
   }
 }
 
@@ -464,7 +457,7 @@
     padding: 0 20px;
   }
   .title {
-    --framer-font-size: 41px;
+    --heading-font-size: 41px;
   }
   .eyebrow {
     font-size: 12px;
@@ -527,12 +520,12 @@
 
 @media (min-width: 1200px) and (min-height: 700px) {
   .title {
-    --framer-font-size: min(105px, 10vh);
+    --heading-font-size: min(105px, 10vh);
   }
 }
 
 @media (min-width: 810px) and (max-width: 1199.98px) and (min-height: 700px) {
   .title {
-    --framer-font-size: min(80px, 10vh);
+    --heading-font-size: min(80px, 10vh);
   }
 }

@@ -1,34 +1,32 @@
 import type { ReactNode } from "react"
-import { Inter, Playfair_Display } from "next/font/google"
-import "@/framer/styles.css"
-import "@/components/framer/framer-styles.css"
+import type { Metadata } from "next"
+import { SITE } from "@/lib/site"
 import "lenis/dist/lenis.css"
 import "./globals.css"
+import { caveat, morna, outfit } from "./fonts"
 import { Providers } from "./providers"
 
-export const metadata = { title: "Le bon dev — Studio de développement web et mobile" }
-
-// Only for the ported French Pixel Studio header (logo wordmark + TopBar);
-// this project's own sections use the self-hosted Oswald in framer/styles.css.
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-})
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-playfair-display",
-  display: "swap",
-})
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
+  title: { default: SITE.title, template: `%s — ${SITE.name}` },
+  description: SITE.description,
+  openGraph: {
+    type: "website",
+    siteName: SITE.name,
+    title: SITE.title,
+    description: SITE.description,
+    locale: SITE.locale,
+  },
+  twitter: { card: "summary", title: SITE.title, description: SITE.description },
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${playfairDisplay.variable}`}>
+    <html lang="fr" className={`${outfit.variable} ${morna.variable} ${caveat.variable}`}>
       <body>
+        <noscript>
+          <style>{'[data-scroll-reveal="pending"] { opacity: 1 !important; transform: none !important; }'}</style>
+        </noscript>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -1,6 +1,6 @@
 .section {
   --contact-bg: var(--color-surface-guarantees, #0c120e);
-  --contact-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --contact-lime: var(--color-accent);
   position: relative;
   isolation: isolate;
   width: 100%;
@@ -8,7 +8,7 @@
   overflow: clip;
   background: var(--contact-bg);
   color: #f5f6ee;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .section,
@@ -183,7 +183,7 @@
 .title {
   max-width: 490px;
   margin: 0;
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(38px, 3.3vw, 48px);
   font-weight: 700;
   line-height: 1.07;

@@ -18,11 +18,6 @@ export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
     const hook = section.querySelector<HTMLElement>("[data-miau-hook]")
     if (!visual || !group || !title || !hook || sides.length !== 2) return
 
-    const letters = Array.from(title.querySelectorAll<HTMLElement>('h2 span[style*="inline-block"]'))
-    letters.forEach((letter, index) => {
-      letter.style.setProperty("--project-letter-tone", `${index / Math.max(1, letters.length - 1) * 100}%`)
-    })
-
     const media = gsap.matchMedia()
     media.add({
       motion: "(prefers-reduced-motion: no-preference)",
@@ -87,7 +82,6 @@ export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
       cancelAnimationFrame(refreshFrame)
       resize.disconnect()
       media.revert()
-      letters.forEach(letter => letter.style.removeProperty("--project-letter-tone"))
     }
   }, [sectionRef])
 }

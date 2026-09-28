@@ -8,7 +8,7 @@
   padding: 136px var(--studio-gutter) 120px;
   background: #fff;
   color: var(--studio-ink);
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .section,
@@ -79,20 +79,20 @@
 }
 
 .headingColor { width: 100%; container-type: inline-size; }
-.titleWrapper { position: relative !important; width: 100%; }
+.titleWrapper { position: relative; width: 100%; }
 .title {
-  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
-  --framer-font-size: clamp(26px, 11.2cqi, 58px);
-  --framer-font-weight: 700;
-  --framer-letter-spacing: -0.015em;
-  --framer-line-height: 1.06;
-  --framer-text-color: var(--studio-ink);
+  --heading-font-family: var(--font-heading);
+  --heading-font-size: clamp(26px, 11.2cqi, 58px);
+  --heading-font-weight: 700;
+  --heading-letter-spacing: -0.015em;
+  --heading-line-height: 1.06;
+  --heading-text-color: var(--studio-ink);
   margin: 0;
-  font-family: var(--framer-font-family);
-  font-size: var(--framer-font-size);
-  font-weight: var(--framer-font-weight);
-  line-height: var(--framer-line-height);
-  letter-spacing: var(--framer-letter-spacing);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size);
+  font-weight: var(--heading-font-weight);
+  line-height: var(--heading-line-height);
+  letter-spacing: var(--heading-letter-spacing);
   word-spacing: -0.09em;
   color: var(--studio-ink);
 }
@@ -100,8 +100,8 @@
 
 /* Colour the actual animated glyphs, as in Les réalisations, so the
    gradient survives the Hero's individually transformed characters. */
-.title span[style*="inline-block"] {
-  color: color-mix(in srgb, #113b29, #5e9b0a var(--studio-letter-tone, 0%));
+.title [data-heading-character] {
+  color: color-mix(in srgb, #113b29, #5e9b0a var(--heading-character-position, 0%));
 }
 
 .copy {
@@ -117,14 +117,12 @@
 .copy strong { font-weight: 600; }
 
 .cta {
-  composes: cta from "../showcase/showcase.module.css";
-  --project-ink: var(--studio-ink);
-  width: min(100%, 326px);
+  --resin-button-ink: var(--studio-ink);
+  --resin-button-width: 326px;
+  --resin-button-hover-transform: rotate(-45deg);
+  --resin-button-arrow-duration: 240ms;
   margin-top: 30px;
 }
-.cta svg { transform: rotate(0deg); transition: transform 240ms ease; }
-.cta:hover:not(:disabled) svg,
-.cta:focus-visible svg { transform: rotate(-45deg); }
 
 .facts {
   display: grid;
@@ -210,7 +208,7 @@
 .principle + .principle { border-left: 1px solid var(--studio-line); }
 .principle h3 {
   margin: 0;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
   font-size: clamp(17px, 1.4vw, 20px);
   font-weight: 400;
   line-height: 1.35;
@@ -285,8 +283,8 @@
   .glassGlow { display: none; }
   .glassBase { background: Canvas; box-shadow: none; }
   .title,
-  .title span[style*="inline-block"],
-  .factValue { --framer-text-color: CanvasText; color: CanvasText; background: none; }
+  .title [data-heading-character],
+  .factValue { --heading-text-color: CanvasText; color: CanvasText; background: none; }
   .copy,
   .copy [data-magic-word],
   .factLabel,

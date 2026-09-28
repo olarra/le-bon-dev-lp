@@ -1,0 +1,416 @@
+.header {
+  --header-base-offset: 24px;
+  --header-height: 70px;
+  --header-logo-ink: #1b4040;
+  --header-action-bg: #102d2d;
+  --header-action-ink: var(--color-surface-navigation);
+  --header-action-border: #102d2d;
+  --header-action-arrow: #cefa3b;
+  --header-action-hover: #1b4040;
+  --header-color-transition: color 0s, background-color 0s, border-color 0s;
+  position: fixed;
+  inset: calc(var(--header-base-offset) + var(--topbar-offset, 44px)) 0 auto;
+  z-index: 40;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  width: calc(100% - 48px);
+  max-width: 1280px;
+  height: var(--header-height);
+  margin-inline: auto;
+  padding-inline: 28px;
+  box-sizing: border-box;
+  color: #102d2d;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.3;
+  pointer-events: none;
+}
+
+.header[data-ready="true"] {
+  --header-color-transition: color 360ms ease, background-color 360ms ease, border-color 360ms ease;
+}
+
+/* Recolor only once the full navigation pill releases the logo and CTA. */
+.header[data-scrolled="true"][data-surface="dark"] {
+  --header-logo-ink: #f9faf5;
+  --header-action-bg: var(--color-accent);
+  --header-action-ink: #102d2d;
+  --header-action-border: var(--header-action-bg);
+  --header-action-arrow: var(--header-action-ink);
+  --header-action-hover: #d5f873;
+}
+
+.header *,
+.header *::before,
+.header *::after {
+  box-sizing: border-box;
+}
+
+/* Only this decoration changes size. The three content groups stay put. */
+.envelope {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: 1px solid var(--color-border-navigation);
+  border-radius: 999px;
+  background: var(--color-surface-navigation);
+  box-shadow:
+    0 2px 4px rgb(16 45 45 / 4%),
+    0 12px 28px rgb(16 45 45 / 5%),
+    inset 0 1px 0 rgb(255 255 255 / 70%);
+}
+
+.header[data-ready="true"] .envelope {
+  transition-property: inset, background-color, border-color, box-shadow, backdrop-filter, -webkit-backdrop-filter;
+  transition-duration: 360ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header[data-scrolled="true"] .envelope {
+  inset: calc((100% - 54px) / 2) calc((100% - var(--navigation-width, 430px)) / 2);
+  border-color: color-mix(in srgb, var(--color-border-navigation) 80%, transparent);
+  box-shadow:
+    0 3px 7px rgb(16 37 28 / 5%),
+    0 12px 28px rgb(16 37 28 / 8%),
+    inset 0 1px 0 rgb(255 255 255 / 65%);
+}
+
+/* The header's top offset follows the utility bar's visible height frame by
+   frame while the next section pushes the bar out (SiteHeader.tsx), so it
+   must not be eased: a transition here would make the pill trail behind the
+   bar's native, scroll-synced push. */
+
+/* Keep the opaque navigation surface where backdrop blur is unavailable. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header[data-scrolled="true"] .envelope {
+    background-color: color-mix(in srgb, var(--color-surface-navigation) 82%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
+    backdrop-filter: blur(18px) saturate(125%);
+  }
+}
+
+.logo,
+.navigation,
+.contact,
+.menuButton {
+  pointer-events: auto;
+}
+
+.logo {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 48px;
+  color: var(--header-logo-ink);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 8px;
+  transition: var(--header-color-transition);
+}
+
+.logo svg {
+  display: block;
+  width: 200px;
+  height: auto;
+}
+
+.menuPanel {
+  display: contents;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 4px 5px;
+}
+
+.navigation a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  color: inherit;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navigation a:hover {
+  background: var(--color-surface-hero-olive);
+}
+
+.contact {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 12px 22px;
+  border: 1px solid var(--header-action-border);
+  border-radius: 999px;
+  background: var(--header-action-bg);
+  color: var(--header-action-ink);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--header-color-transition);
+}
+
+.contact svg {
+  flex: none;
+  color: var(--header-action-arrow);
+  transform-origin: center;
+  transition: var(--header-color-transition), transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact:hover svg {
+    transform: rotate(-45deg);
+  }
+}
+
+.contact:focus-visible svg {
+  transform: rotate(-45deg);
+}
+
+.contact:hover {
+  background: var(--header-action-hover);
+}
+
+.header a:focus-visible,
+.menuButton:focus-visible {
+  outline: 3px solid #102d2d;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px #cefa3b;
+}
+
+.menuButton {
+  display: none;
+}
+
+.header[data-scrolled="true"][data-surface="dark"] a:focus-visible,
+.header[data-scrolled="true"][data-surface="dark"] .menuButton:focus-visible {
+  outline-color: #f9faf5;
+}
+
+@media (min-width: 1100px) {
+  .contact {
+    margin-inline-end: -19px;
+  }
+}
+
+@media (max-width: 1099.98px) {
+  .header {
+    --header-base-offset: 12px;
+    --header-height: 72px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: calc(100% - 24px);
+    padding-inline: 20px 12px;
+  }
+
+  .header[data-scrolled="true"] .envelope {
+    inset: 0;
+  }
+
+  .logo {
+    font-size: 26px;
+  }
+
+  .logo svg {
+    width: 170px;
+    max-width: 100%;
+  }
+
+  .menuButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--header-action-bg);
+    color: var(--header-action-ink);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--header-color-transition);
+  }
+
+  .menuIcon {
+    display: grid;
+    gap: 5px;
+    width: 18px;
+  }
+
+  .menuIcon span {
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--header-action-arrow);
+    /* Hamburger <-> X morphs instead of jumping. */
+    transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1), background-color 360ms ease;
+  }
+
+  .header[data-menu-open="true"] .menuIcon span:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .header[data-menu-open="true"] .menuIcon span:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  /* Always laid out (absolutely positioned, so no effect on flow) and toggled
+     with opacity/transform/visibility rather than display, because
+     display:none can't transition and the menu popped in and out. visibility
+     keeps the closed panel out of the tab order and the accessibility tree
+     exactly as display:none did: it flips immediately on open, and only
+     after the fade-out has finished on close (the delayed 0s transition). */
+  .menuPanel {
+    position: absolute;
+    top: calc(100% + 10px);
+    inset-inline: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: calc(100dvh - var(--header-base-offset) - var(--topbar-offset, 44px) - var(--header-height) - 22px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px;
+    border: 1px solid var(--color-border-navigation);
+    border-radius: 28px;
+    background: var(--color-surface-navigation);
+    box-shadow: 0 12px 30px rgb(16 45 45 / 8%);
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+    transform-origin: top center;
+  }
+
+  /* On phones the envelope stays full width, so it also becomes dark to
+     keep the white wordmark readable. The open menu uses the same surface. */
+  .header[data-scrolled="true"][data-surface="dark"] .envelope {
+    background-color: color-mix(in srgb, var(--color-surface-guarantees) 94%, transparent);
+    border-color: #455839;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 16%), inset 0 1px 0 rgb(255 255 255 / 5%);
+  }
+
+  .header[data-scrolled="true"][data-surface="dark"] .menuPanel {
+    background: #121b14;
+    border-color: #455839;
+    color: #f9faf5;
+  }
+
+  .header[data-scrolled="true"][data-surface="dark"] .navigation a:hover {
+    background: #263820;
+  }
+
+  /* Closing: quick and eased-in, so it gets out of the way. */
+  .header[data-ready="true"] .menuPanel {
+    transition:
+      max-height 200ms ease,
+      opacity 180ms cubic-bezier(0.4, 0, 1, 1),
+      transform 200ms cubic-bezier(0.4, 0, 1, 1),
+      visibility 0s linear 200ms,
+      var(--header-color-transition);
+  }
+
+  .header[data-menu-open="true"] .menuPanel {
+    pointer-events: auto;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Opening: a touch slower and eased-out, so it settles instead of snapping. */
+  .header[data-ready="true"][data-menu-open="true"] .menuPanel {
+    transition:
+      max-height 200ms ease,
+      opacity 240ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      visibility 0s,
+      var(--header-color-transition);
+  }
+
+  /* The links and CTA follow the panel in with a short stagger; on close
+     they simply fade with it, no stagger, so the exit stays quick. */
+  .menuPanel .navigation a,
+  .menuPanel .contact {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 140ms ease-in, transform 140ms ease-in, var(--header-color-transition);
+  }
+
+  .header[data-menu-open="true"] .menuPanel .navigation a,
+  .header[data-menu-open="true"] .menuPanel .contact {
+    opacity: 1;
+    transform: none;
+    transition: opacity 260ms cubic-bezier(0.2, 0.7, 0.2, 1), transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1), var(--header-color-transition);
+    transition-delay: 40ms;
+  }
+
+  .header[data-menu-open="true"] .menuPanel .navigation a:nth-child(2) {
+    transition-delay: 80ms;
+  }
+
+  .header[data-menu-open="true"] .menuPanel .navigation a:nth-child(3) {
+    transition-delay: 120ms;
+  }
+
+  .header[data-menu-open="true"] .menuPanel .contact {
+    transition-delay: 160ms;
+  }
+
+  .navigation {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 0;
+  }
+
+  .navigation a {
+    justify-content: flex-start;
+    min-height: 48px;
+  }
+
+  .contact {
+    align-self: stretch;
+    padding-inline: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header .contact svg {
+    transform: none;
+  }
+
+  .header[data-ready="true"],
+  .header[data-ready="true"] .envelope,
+  .header[data-ready="true"] .menuPanel,
+  .header[data-ready="true"][data-menu-open="true"] .menuPanel,
+  .header .logo,
+  .header .contact svg,
+  .header .menuButton,
+  .header .menuIcon span,
+  .header .menuPanel .navigation a,
+  .header .menuPanel .contact,
+  .header[data-menu-open="true"] .menuPanel .navigation a,
+  .header[data-menu-open="true"] .menuPanel .contact {
+    transition: none;
+  }
+}

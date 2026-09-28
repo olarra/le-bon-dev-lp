@@ -23,7 +23,7 @@
   width: 100%;
   background: color-mix(in srgb, var(--color-surface-guarantees, #0c120e), #fff var(--project-theme-progress));
   color: var(--project-ink);
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .showcase[data-header-theme="dark"] {
@@ -84,24 +84,24 @@
 }
 
 .titleWrapper {
-  position: relative !important;
+  position: relative;
   width: 100%;
 }
 
 .title {
   --project-reveal-end: color-mix(in srgb, var(--project-ink), var(--project-color-end) var(--project-color-reveal, 100%));
-  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
-  --framer-font-size: clamp(44px, 5.8vw, 80px);
-  --framer-font-weight: 700;
-  --framer-letter-spacing: -0.015em;
-  --framer-line-height: 1;
-  --framer-text-color: var(--project-ink);
+  --heading-font-family: var(--font-heading);
+  --heading-font-size: clamp(44px, 5.8vw, 80px);
+  --heading-font-weight: 700;
+  --heading-letter-spacing: -0.015em;
+  --heading-line-height: 1;
+  --heading-text-color: var(--project-ink);
   margin: 0;
-  font-family: var(--framer-font-family);
-  font-size: var(--framer-font-size);
-  font-weight: var(--framer-font-weight);
-  letter-spacing: var(--framer-letter-spacing);
-  line-height: var(--framer-line-height);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size);
+  font-weight: var(--heading-font-weight);
+  letter-spacing: var(--heading-letter-spacing);
+  line-height: var(--heading-line-height);
   word-spacing: -0.07em;
   text-align: center;
   color: var(--project-ink);
@@ -109,8 +109,8 @@
 
 /* Framer promotes each animated letter to a compositor layer. Colour the
    glyphs themselves so they stay visible throughout the Hero's pop-in. */
-.title span[style*="inline-block"] {
-  color: color-mix(in srgb, var(--project-ink), var(--project-reveal-end) var(--project-letter-tone, 0%));
+.title [data-heading-character] {
+  color: color-mix(in srgb, var(--project-ink), var(--project-reveal-end) var(--heading-character-position, 0%));
 }
 
 .gradientText {
@@ -150,7 +150,7 @@
 
 .projectName {
   margin: 0 0 16px;
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(40px, 4.3vw, 60px);
   font-weight: 700;
   line-height: 0.98;
@@ -217,60 +217,8 @@
   flex-shrink: 0;
 }
 
-/* Forest face and inset highlights reuse the offer buttons' resin treatment. */
 .cta {
-  display: inline-flex;
-  width: min(100%, 288px);
-  padding: 3px;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(140deg, #66a369, #123b24 38%, #93be79 70%, #183c25);
-  box-shadow: 0 5px 12px -8px rgb(16 37 28 / 45%);
-  color: #fff;
-  font: 500 17px / 1.3 "Outfit", sans-serif;
-  text-decoration: none;
-  text-align: center;
-  outline-offset: 5px;
-  cursor: pointer;
-}
-
-.cta > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  width: 100%;
-  min-height: 52px;
-  padding: 13px 20px;
-  border-radius: inherit;
-  background: linear-gradient(145deg, #245733, #102d1e 55%, #194329);
-  box-shadow: inset 0 1px 3px rgb(241 255 224 / 45%), inset 0 -2px 4px rgb(0 0 0 / 38%);
-  transition: background-color 200ms ease, box-shadow 200ms ease;
-}
-
-.cta svg {
-  flex-shrink: 0;
-  color: #d5f88c;
-  transition: transform 200ms ease;
-}
-
-.cta:hover:not(:disabled) svg,
-.cta:focus-visible svg {
-  transform: translateX(4px);
-}
-
-.cta:hover:not(:disabled) > span,
-.cta:focus-visible > span {
-  box-shadow: inset 0 1px 4px rgb(241 255 224 / 65%), inset 0 -2px 4px rgb(0 0 0 / 25%);
-}
-
-.cta:focus-visible {
-  outline: 2px solid var(--project-ink);
-}
-
-.cta:disabled {
-  opacity: 1;
-  cursor: default;
+  --resin-button-ink: var(--project-ink);
 }
 
 /* Reserve the enlarged opening pose too; the inner composition keeps its size. */
@@ -381,8 +329,8 @@
   }
 
   .title {
-    --framer-font-size: clamp(38px, 7.7vw, 62px);
-    --framer-line-height: 1.03;
+    --heading-font-size: clamp(38px, 7.7vw, 62px);
+    --heading-line-height: 1.03;
   }
 
   .subtitle {
@@ -441,7 +389,7 @@
   }
 
   .title {
-    --framer-font-size: 34px;
+    --heading-font-size: 34px;
   }
 
   .meta {
@@ -471,10 +419,6 @@
     stroke-dashoffset: 0 !important;
   }
 
-  .cta *,
-  .cta {
-    transition: none !important;
-  }
 }
 
 @media (forced-colors: active) {
@@ -482,6 +426,6 @@
   .gradientText {
     background: none;
     color: CanvasText;
-    --framer-text-color: CanvasText;
+    --heading-text-color: CanvasText;
   }
 }

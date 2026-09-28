@@ -1,46 +1,27 @@
-/* Framer layout template root (.framer-dYXTG.framer-1yv164u) */
-.frame {
-  background-color: var(--token-b0bb3938-008d-419c-b18a-42b0ef391a52, #fefae7);
-  display: flex;
-  flex-flow: column;
-  place-content: center flex-start;
-  align-items: center;
-  gap: 0;
-  width: 100%;
-  min-height: 100vh;
-  height: min-content;
-  padding: 0;
-  position: relative;
-  overflow: visible;
-}
-
-/* Page root (.framer-BuCMd.framer-zgsw7e). The published page overrides the
-   1200px canvas width with `width:auto` on the root, so the layout is fluid. */
+.frame,
 .page {
-  background-color: var(--token-b0bb3938-008d-419c-b18a-42b0ef391a52, #fefae7);
+  position: relative;
   display: flex;
-  flex-flow: column;
-  place-content: center flex-start;
+  flex-direction: column;
   align-items: center;
-  gap: 0;
+  justify-content: flex-start;
   width: 100%;
   height: min-content;
-  padding: 0;
-  position: relative;
-  overflow: visible;
+  background: var(--color-page);
 }
 
-/* Main (.framer-1sv2b1r) */
+.frame {
+  min-height: 100vh;
+}
+
 .main {
+  position: relative;
   display: flex;
-  flex-flow: column;
   flex: none;
-  place-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 0;
+  justify-content: center;
   width: 100%;
   height: min-content;
-  padding: 0;
-  position: relative;
   overflow: clip;
 }

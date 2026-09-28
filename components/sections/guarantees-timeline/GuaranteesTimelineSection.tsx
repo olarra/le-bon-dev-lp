@@ -1,15 +1,15 @@
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { ScrollReveal } from "@/components/atoms/ScrollReveal"
-import { SECTION_TITLE_EFFECT } from "../hero/hero.content"
+import { HEADING_REVEAL } from "@/lib/motion"
 import { GuaranteesTimeline } from "./GuaranteesTimeline"
 import { GUARANTEE_ENTRANCE } from "./guarantees-timeline.content"
 import styles from "./guarantees-timeline.module.css"
 
 const titleEffect = {
-  ...SECTION_TITLE_EFFECT,
+  ...HEADING_REVEAL,
   startDelay: GUARANTEE_ENTRANCE.titleDelay,
   transition: {
-    ...SECTION_TITLE_EFFECT.transition,
+    ...HEADING_REVEAL.transition,
     duration: GUARANTEE_ENTRANCE.titleDuration,
     delay: GUARANTEE_ENTRANCE.titleStagger,
   },

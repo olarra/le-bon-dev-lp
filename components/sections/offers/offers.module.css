@@ -5,7 +5,7 @@
   --offers-muted: #52624e;
   --offers-sage: #e8eddb;
   --offers-ivory: #fcfcf3;
-  --offers-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --offers-lime: var(--color-accent);
   --offers-edge: 4px;
   --offers-radius: 80px;
   --offers-inner-radius: 56px;
@@ -16,7 +16,7 @@
   overflow: visible;
   background: #0c120e;
   color: var(--offers-ink);
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .section,
@@ -77,23 +77,16 @@
 }
 
 .titleWrapper {
-  /* Keep the shared Framer text wrapper in the header's normal flow. */
-  position: relative !important;
+  position: relative;
   width: 100%;
   max-width: 1000px;
 }
 
 .title {
-  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
-  --framer-font-size: clamp(36px, 4.2vw, 60px);
-  --framer-font-weight: 700;
-  --framer-letter-spacing: -0.01em;
-  --framer-line-height: 1.08;
-  --framer-text-color: var(--offers-ivory);
   max-width: 1000px;
   margin: 0;
   color: var(--offers-ivory);
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(36px, 4.2vw, 60px);
   font-weight: 700;
   line-height: 1.08;
@@ -648,8 +641,6 @@
   }
 
   .title {
-    --framer-font-size: clamp(36px, 6vw, 42px);
-    --framer-line-height: 1.12;
     font-size: clamp(36px, 6vw, 42px);
     line-height: 1.12;
     word-spacing: -0.08em;

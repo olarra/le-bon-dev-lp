@@ -1,75 +1,81 @@
 "use client"
 
-import type { CSSProperties, ReactNode } from "react"
-import { RichText } from "unframer"
-
-export type TextAppearEffect = {
-  type: "appear"
-  trigger: "onInView" | "onMount"
-  tokenization: "character" | "word" | "line"
-  repeat: boolean
-  startDelay: number
-  threshold: number
-  /** Start state of each token; every property animates back to its default. */
-  effect: {
-    opacity: number
-    scale: number
-    rotate: number
-    rotateX: number
-    rotateY: number
-    skewX: number
-    skewY: number
-    x: number
-    y: number
-  }
-  /** Transition per token; `delay` is the stagger between tokens. */
-  transition: { type: "spring"; bounce: number; delay: number; duration: number }
-}
+import { Children, cloneElement, isValidElement, type CSSProperties, type ReactNode } from "react"
+import { motion, type Variants } from "motion/react"
+import { useHeadingReveal } from "@/hooks/use-heading-reveal"
+import { HEADING_REVEAL, type HeadingReveal } from "@/lib/motion"
 
 type Props = {
   text: string
-  /** Optional inline formatting, such as a highlighted phrase or a line break. */
   children?: ReactNode
   id?: string
-  effect: TextAppearEffect
+  effect?: HeadingReveal
   as?: "h1" | "h2" | "h3" | "p" | "span"
-  /** Class applied to the text element (typography). */
   textClassName?: string
-  /** Class applied to the container (layout). */
   className?: string
   textAlign?: "left" | "center" | "right"
 }
 
-/**
- * Heading whose characters pop in with Framer's text "appear" effect.
- * Uses the Framer runtime RichText, which tokenizes and animates the text
- * exactly like the published page.
- */
 export function AnimatedHeading({
-  text,
-  children,
-  id,
-  effect,
-  as: Tag = "h1",
-  textClassName,
-  className,
-  textAlign = "center",
+  text, children, id, effect = HEADING_REVEAL, as: Tag = "h2",
+  textClassName, className, textAlign = "center",
 }: Props) {
-  const style = { "--framer-text-alignment": textAlign } as CSSProperties
+  const { ref, controls } = useHeadingReveal(effect.threshold)
+  const Container = Tag === "span" ? "span" : "div"
+  const variants: Variants = {
+    hidden: effect.effect,
+    visible: (index: number) => ({
+      opacity: 1, scale: 1, rotateY: 0,
+      transition: {
+        ...effect.transition,
+        delay: effect.startDelay + index * effect.transition.delay,
+      },
+    }),
+  }
+  const count = Array.from(text.replace(/\s/g, "")).length
+  let index = 0
+
+  // Preserve inline emphasis and line breaks; keep letters grouped into words.
+  function tokenize(content: ReactNode): ReactNode {
+    return Children.map(content, (child) => {
+      if (typeof child === "string" || typeof child === "number") {
+        return String(child).split(/(\s+)/).map((word, wordIndex) => {
+          if (!word.trim()) return word
+          return (
+            <span key={wordIndex} style={{ whiteSpace: "nowrap" }}>
+              {Array.from(word).map((letter) => {
+                const position = index++
+                return (
+                  <motion.span
+                    key={position}
+                    data-heading-character
+                    custom={position}
+                    initial={false}
+                    animate={controls}
+                    variants={variants}
+                    style={{
+                      display: "inline-block",
+                      "--heading-character-position": `${position / Math.max(1, count - 1) * 100}%`,
+                    } as CSSProperties}
+                  >{letter}</motion.span>
+                )
+              })}
+            </span>
+          )
+        })
+      }
+      if (isValidElement<{ children?: ReactNode }>(child) && child.props.children != null) {
+        return cloneElement(child, undefined, tokenize(child.props.children))
+      }
+      return child
+    })
+  }
 
   return (
-    <RichText
-      __fromCanvasComponent
-      className={className}
-      effect={effect}
-      verticalAlignment="top"
-      withExternalLayout
-    >
-      <>
-        <Tag id={id} className={textClassName} style={style}>
-          {children ?? text}
-        </Tag>
-      </>
-    </RichText>
+    <Container ref={ref} className={className} style={{ display: "block" }}>
+      <Tag id={id} className={textClassName} style={{ display: "block", textAlign }} aria-label={text}>
+        <span aria-hidden="true">{tokenize(children ?? text)}</span>
+      </Tag>
+    </Container>
   )
 }

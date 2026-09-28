@@ -2,10 +2,11 @@
 
 import Image from "next/image"
 import { useMemo, useRef } from "react"
+import { ResinCta } from "@/components/atoms/ResinCta"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { OfferIcon } from "@/components/offer-icons/OfferIcon"
 import { SvgFollowScroll } from "@/components/ui/svg-follow-scroll"
-import { SECTION_TITLE_EFFECT } from "@/components/sections/hero/hero.content"
+import { HEADING_REVEAL } from "@/lib/motion"
 import { FRENCH_PIXEL_GALLERY, PROJECT_IMAGES, REALISATIONS, type Realisation } from "./realisations.content"
 import { ResinGallery } from "./ResinGallery"
 import { buildShowcaseThread, THREAD_COMPLETION, THREAD_FALLBACK } from "./showcase-thread"
@@ -32,7 +33,7 @@ export function ShowcaseContent() {
               as="h2"
               id="realisations-title"
               text="Des idées devenues concrètes."
-              effect={SECTION_TITLE_EFFECT}
+              effect={HEADING_REVEAL}
               className={styles.titleWrapper}
               textClassName={styles.title}
             >
@@ -66,7 +67,6 @@ export function ShowcaseContent() {
           <ProjectCopy project={REALISATIONS.studio} id="french-pixel-studio" />
         </article>
       </div>
-      <noscript><style>{`#realisations [data-framer-component-type="RichTextContainer"], #realisations [data-framer-component-type="RichTextContainer"] * { opacity: 1 !important; transform: none !important; visibility: visible !important; }`}</style></noscript>
     </section>
   )
 }
@@ -90,15 +90,8 @@ function ProjectCopy({ project, id }: { project: Realisation; id: string }) {
           <dd><OfferIcon kind={project.icon} size={40} disabled playOnView={false} playOnHover={false} />{project.offer}</dd>
         </div>
       </dl>
-      {project.href ? (
-        <a className={styles.cta} href={project.href}><span>{project.cta}<Arrow /></span></a>
-      ) : (
-        <button className={styles.cta} type="button" disabled><span>{project.cta}<Arrow /></span></button>
-      )}
+      <ResinCta className={styles.cta} href={project.href} label={project.cta} />
     </div>
   )
 }
 
-function Arrow() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6" /></svg>
-}

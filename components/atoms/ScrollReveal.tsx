@@ -1,52 +1,58 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react"
+import styles from "./ScrollReveal.module.css"
 
-/**
- * Framer's "fade + slide up on scroll into view" appear effect
- * (opacity 0→1, translateY(170px)→0), used to reveal the Heading, Ticker and
- * Statistics blocks of the Brands and Statistics section one by one.
- */
-export function ScrollReveal({
-  className,
-  children,
-  distance = 170,
-  delay = 0,
-}: {
+export function ScrollReveal({ className, children, distance = 170, delay = 0 }: {
   className?: string
   children: ReactNode
   distance?: number
   delay?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0 },
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+  useLayoutEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let animation: Animation | undefined
+    let observer: IntersectionObserver | undefined
+    const show = () => {
+      element.dataset.scrollReveal = "visible"
+      animation?.cancel()
+      observer?.disconnect()
+    }
+
+    if (!reduced.matches) {
+      element.dataset.scrollReveal = "pending"
+      observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return
+        observer?.disconnect()
+        animation = element.animate([
+          { opacity: 0.001, transform: `translateY(${distance}px)` },
+          { opacity: 1, transform: "translateY(0)" },
+        ], { duration: 600, delay: delay * 1000, easing: "ease", fill: "both" })
+        animation.onfinish = show
+      })
+      observer.observe(element)
+    } else {
+      show()
+    }
+
+    const onPreference = () => { if (reduced.matches) show() }
+    reduced.addEventListener("change", onPreference)
+    return () => {
+      show()
+      reduced.removeEventListener("change", onPreference)
+    }
+  }, [distance, delay])
 
   return (
     <div
       ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0.001,
-        transform: visible ? "translateY(0px)" : `translateY(${distance}px)`,
-        transition: "opacity 0.6s ease, transform 0.6s ease",
-        transitionDelay: `${delay}s`,
-      }}
+      className={[styles.reveal, className].filter(Boolean).join(" ")}
+      data-scroll-reveal="pending"
+      style={{ "--reveal-distance": `${distance}px` } as CSSProperties}
     >
       {children}
     </div>

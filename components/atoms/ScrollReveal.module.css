@@ -1,0 +1,7 @@
+/* Match the entrance state before hydration, without changing layout. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal[data-scroll-reveal="pending"] {
+    opacity: 0.001;
+    transform: translateY(var(--reveal-distance));
+  }
+}

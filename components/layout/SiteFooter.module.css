@@ -4,7 +4,7 @@
   padding: 0 24px 24px;
   background: var(--color-surface-hero, #f7f8f2);
   color: #1b4034;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .footer,
@@ -39,7 +39,7 @@
 
 .tagline {
   margin: 0;
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: 27px;
   font-weight: 700;
   line-height: 1.14;

@@ -1,3 +1,4 @@
+import { ResinCta } from "@/components/atoms/ResinCta"
 import { MagicText } from "@/components/ui/magic-text"
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
@@ -23,14 +24,7 @@ export function StudioSection() {
               <StudioHeading />
             </header>
             <MagicText paragraphs={STUDIO_PARAGRAPHS} className={styles.copy} />
-            <a className={styles.cta} href={STUDIO_CTA.href}>
-              <span>
-                {STUDIO_CTA.label}
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-                  <path d="M4 12h16m-6-6 6 6-6 6" />
-                </svg>
-              </span>
-            </a>
+            <ResinCta className={styles.cta} href={STUDIO_CTA.href} label={STUDIO_CTA.label} arrowSize={20} strokeWidth={1.8} />
             <dl className={styles.facts} aria-label="Le studio en quelques repères">
               {STUDIO_FACTS.map(fact => (
                 <div className={styles.fact} key={fact.label}>

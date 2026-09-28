@@ -1,4 +1,4 @@
-# Dependencies (yarn.lock stays tracked; patches/ is applied by patch-package on install and stays tracked too)
+# Dependencies (yarn.lock stays tracked)
 /node_modules
 /.pnp
 .pnp.*

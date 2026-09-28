@@ -1,8 +1,8 @@
 "use client"
 
-import gsap from "gsap"
 import Image from "next/image"
-import { useEffect, useLayoutEffect, useRef } from "react"
+import { HEADING_REVEAL } from "@/lib/motion"
+import { useHeroMotion } from "./use-hero-motion"
 import { WaveBrandCard } from "./WaveBrandCard"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { Breakpoint } from "@/components/atoms/Breakpoint"
@@ -22,7 +22,6 @@ import {
   HIGHLIGHT_AFTER,
   HIGHLIGHT_BEFORE,
   HIGHLIGHT_WORD,
-  SECTION_TITLE_EFFECT,
   SECTION_TITLE_LINES,
   SUBTITLE_INTRO,
   TICKER_CONFIG,
@@ -45,132 +44,11 @@ const TICKER_BREAKPOINTS: readonly [Bp, keyof typeof TICKER_CONFIG][] = [
   ["phone", "phone"],
 ]
 
-/**
- * "Section - Brands and Statistics": the studio pitch (eyebrow, headline,
- * two-paragraph copy, CTA), a curved wave ticker of brand logos, and four
- * self-animating stat counters.
- */
 export function HeroSection() {
-  const heroRef = useRef<HTMLElement>(null)
-  const headingRef = useRef<HTMLDivElement>(null)
-  const spiralRef = useRef<HTMLDivElement>(null)
-  // A ref, not state, on purpose: toggling state here re-rendered the whole
-  // hero on scroll, and each re-render made Framer's RichText re-apply its
-  // inline styles over the GSAP-driven magnetic transforms (title jumping,
-  // going dead until a click). Nothing about scrolling re-renders now.
-  const ribbonPausedRef = useRef(false)
-  // Rest the decorative animation once the hero has scrolled out of view.
-  const dotsPausedRef = useRef(false)
-  const heroOffscreenRef = useRef(false)
-
-  // The hero scrolls normally. Only observe visibility to pause its existing
-  // artwork, and measure the utility strip to retain the approved spacing.
-  useLayoutEffect(() => {
-    const hero = heroRef.current
-    if (!hero) return
-    const topBar = document.getElementById("hero-topbar")
-    const ribbon = hero.getElementsByClassName(styles.tickerContainer)[0]
-    const measure = () => {
-      if (topBar) hero.style.setProperty("--hero-topbar-height", `${topBar.offsetHeight}px`)
-    }
-    const resize = new ResizeObserver(measure)
-    if (topBar) resize.observe(topBar)
-    measure()
-
-    const visibility = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.target === hero) {
-          dotsPausedRef.current = !entry.isIntersecting
-          heroOffscreenRef.current = !entry.isIntersecting
-        }
-        if (entry.target === ribbon) ribbonPausedRef.current = !entry.isIntersecting
-      })
-    })
-    visibility.observe(hero)
-    if (ribbon) visibility.observe(ribbon)
-
-    return () => {
-      resize.disconnect()
-      visibility.disconnect()
-      hero.style.removeProperty("--hero-topbar-height")
-      dotsPausedRef.current = false
-      ribbonPausedRef.current = false
-      heroOffscreenRef.current = false
-    }
-  }, [])
-
-  // Magnetic parallax on the spiral + headline, ported from the AURA
-  // template's Hero.svelte: a window-level mousemove drives GSAP, the
-  // spiral drifts opposite the cursor (slower, "receding"), the title
-  // lines drift with it (faster, staggered) - same formula, magnitude and
-  // easing as the source. Gated on pointer capability, not viewport width
-  // (the template's `innerWidth <= 768` proxy for "touch" also switched it
-  // off for a mouse in a narrow window, e.g. responsive-design mode): it
-  // runs wherever a fine, hovering pointer exists, and follows changes.
-  // Touch devices get the same drift from the finger's position instead.
-  useEffect(() => {
-    const heading = headingRef.current
-    const spiral = spiralRef.current
-    if (!heading || !spiral) return
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)")
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-
-    // Plain wrapper divs of our own around each title line (see the JSX),
-    // never Framer's RichText wrapper itself: Framer re-applies inline
-    // styles to its own element on every render, which would clobber the
-    // transform GSAP writes here and desync GSAP's cache from the DOM.
-    const titleLines = Array.from(heading.getElementsByClassName(styles.titleLine))
-    if (titleLines.length === 0) return
-
-    const drift = (clientX: number, clientY: number) => {
-      if (reducedMotion.matches || heroOffscreenRef.current) return
-      const x = (clientX / window.innerWidth - 0.5) * 20
-      const y = (clientY / window.innerHeight - 0.5) * 20
-      gsap.to(spiral, { x: x * -1, y: y * -1, duration: 2, ease: "power2.out" })
-      gsap.to(titleLines, { x, y, duration: 1.5, ease: "power2.out", stagger: 0.01 })
-    }
-    const handleMouseMove = (e: MouseEvent) => drift(e.clientX, e.clientY)
-
-    // Touch: the finger stands in for the cursor. It has to react on
-    // touchstart, not only touchmove - a tap or a press never moves, and a
-    // drag is a pan that scrolls the hero by far more than the drift, so
-    // move-only would never be seen. Touching nudges the composition toward
-    // the finger at once, dragging keeps it following, and everything eases
-    // back to rest when the last finger lifts (unlike a mouse, no pointer
-    // position remains to follow). Passive listeners, so scrolling is never
-    // delayed by them.
-    const handleTouch = (e: TouchEvent) => {
-      const touch = e.touches[0]
-      if (touch) drift(touch.clientX, touch.clientY)
-    }
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (e.touches.length > 0) return
-      gsap.to(spiral, { x: 0, y: 0, duration: 2, ease: "power2.out" })
-      gsap.to(titleLines, { x: 0, y: 0, duration: 1.5, ease: "power2.out", stagger: 0.01 })
-    }
-
-    const sync = () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-      if (finePointer.matches) window.addEventListener("mousemove", handleMouseMove)
-    }
-    sync()
-    finePointer.addEventListener("change", sync)
-    window.addEventListener("touchstart", handleTouch, { passive: true })
-    window.addEventListener("touchmove", handleTouch, { passive: true })
-    window.addEventListener("touchend", handleTouchEnd, { passive: true })
-    window.addEventListener("touchcancel", handleTouchEnd, { passive: true })
-    return () => {
-      finePointer.removeEventListener("change", sync)
-      window.removeEventListener("mousemove", handleMouseMove)
-      window.removeEventListener("touchstart", handleTouch)
-      window.removeEventListener("touchmove", handleTouch)
-      window.removeEventListener("touchend", handleTouchEnd)
-      window.removeEventListener("touchcancel", handleTouchEnd)
-    }
-  }, [])
+  const { heroRef, headingRef, spiralRef, ribbonPausedRef, dotsPausedRef } = useHeroMotion()
 
   return (
-    <section ref={heroRef} className={styles.hero} data-framer-name="Section - Brands and Statistics" id="statistics">
+    <section ref={heroRef} className={styles.hero} id="statistics">
       <div className={styles.utilityRail}>
         <TopBar />
       </div>
@@ -218,20 +96,22 @@ export function HeroSection() {
               <div ref={headingRef} style={{ display: "contents" }}>
                 <div ref={spiralRef} className={styles.spiralField} aria-hidden="true" />
 
-                <div className={styles.headingAndLabel} data-framer-name="Heading and Label">
+                <div className={styles.headingAndLabel}>
                   <p className={styles.eyebrow}>{EYEBROW}</p>
+                  <h1 className={styles.headline} aria-label={SECTION_TITLE_LINES.join(" ")}>
                   {SECTION_TITLE_LINES.map((line) => (
-                    <div key={line} className={styles.titleLine}>
+                    <span key={line} className={styles.titleLine}>
                       <AnimatedHeading
-                        as="h2"
+                        as="span"
                         text={line}
-                        effect={SECTION_TITLE_EFFECT}
+                        effect={HEADING_REVEAL}
                         className={styles.titleWrapper}
                         textClassName={styles.title}
                         textAlign="center"
                       />
-                    </div>
+                    </span>
                   ))}
+                  </h1>
                 </div>
 
                 <p className={styles.subtitle}>{SUBTITLE_INTRO}</p>

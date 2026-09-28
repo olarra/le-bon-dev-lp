@@ -1,14 +1,14 @@
 .section {
   --form-ink: #193c2f;
   --form-muted: #566b4e;
-  --form-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --form-lime: var(--color-accent);
   position: relative;
   isolation: isolate;
   width: 100%;
   padding: 160px 24px 112px;
   background: var(--color-surface-hero, #f7f8f2);
   color: var(--form-ink);
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .section,
@@ -64,7 +64,7 @@
 
 .title {
   margin: 0;
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(48px, 4.8vw, 68px);
   font-weight: 700;
   line-height: 1.05;

@@ -1,5 +1,5 @@
 .section {
-  --method-lime: var(--token-6ac52ac2-c747-4692-97fe-70ca92f4fed9, #c8f53e);
+  --method-lime: var(--color-accent);
   --method-bg: var(--color-surface-guarantees, #0c120e);
   --method-ink: #f5f6ee;
   --method-muted: #bdc6b9;
@@ -8,7 +8,7 @@
   padding: 160px 24px 120px;
   background: var(--method-bg);
   color: var(--method-ink);
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .section,
@@ -52,7 +52,7 @@
 .title {
   max-width: 1000px;
   margin: 0;
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(36px, 4.2vw, 60px);
   font-weight: 700;
   line-height: 1.08;

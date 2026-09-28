@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, useState } from "react"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { OfferIcon, type OfferIconHandle } from "@/components/offer-icons"
-import { SECTION_TITLE_EFFECT } from "../hero/hero.content"
+import { HEADING_REVEAL } from "@/lib/motion"
 import { OFFERS, type Offer } from "./offers.content"
 import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
 import styles from "./offers.module.css"
@@ -27,7 +27,7 @@ export function OffersSection() {
             as="h2"
             id="offres-title"
             text="Votre projet prend forme."
-            effect={SECTION_TITLE_EFFECT}
+            effect={HEADING_REVEAL}
             className={styles.titleWrapper}
             textClassName={styles.title}
           />

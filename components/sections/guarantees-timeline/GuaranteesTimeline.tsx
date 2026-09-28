@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react"
 import { useLenis } from "lenis/react"
-import layout from "@/components/ui/scroll-01.module.css"
+import layout from "./guarantees-layout.module.css"
 import { GuaranteeArt, GuaranteeBlob } from "./GuaranteeArt"
 import { GUARANTEE_STEPS } from "./guarantees-timeline.content"
 import { ILLUSTRATION_SCALES } from "./morph-content"

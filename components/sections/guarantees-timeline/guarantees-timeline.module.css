@@ -10,7 +10,7 @@
   overflow: clip;
   background: var(--timeline-paper);
   color: var(--timeline-ink);
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-body);
 }
 
 .inner {
@@ -52,31 +52,30 @@
 }
 
 .titleWrapper {
-  /* RichText's global Framer rule otherwise positions this wrapper absolutely. */
-  position: relative !important;
+  position: relative;
   width: 100%;
   max-width: 900px;
   margin-top: 24px;
 }
 
 .title {
-  --framer-font-family: "Morna Bold", "Outfit", sans-serif;
-  --framer-font-size: clamp(52px, 4.5vw, 64px);
-  --framer-font-style: normal;
-  --framer-font-weight: 700;
-  --framer-letter-spacing: -0.02em;
-  --framer-line-height: 108%;
-  --framer-text-alignment: center;
-  --framer-text-color: var(--timeline-ink);
+  --heading-font-family: var(--font-heading);
+  --heading-font-size: clamp(52px, 4.5vw, 64px);
+  --heading-font-style: normal;
+  --heading-font-weight: 700;
+  --heading-letter-spacing: -0.02em;
+  --heading-line-height: 108%;
+  --heading-text-alignment: center;
+  --heading-text-color: var(--timeline-ink);
   margin: 0;
-  font-family: var(--framer-font-family);
-  font-size: var(--framer-font-size);
-  font-style: var(--framer-font-style);
-  font-weight: var(--framer-font-weight);
-  letter-spacing: var(--framer-letter-spacing);
-  line-height: var(--framer-line-height);
-  text-align: var(--framer-text-alignment);
-  color: var(--framer-text-color);
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size);
+  font-style: var(--heading-font-style);
+  font-weight: var(--heading-font-weight);
+  letter-spacing: var(--heading-letter-spacing);
+  line-height: var(--heading-line-height);
+  text-align: var(--heading-text-alignment);
+  color: var(--heading-text-color);
   text-wrap: balance;
 }
 
@@ -138,7 +137,7 @@
 
 .stepTitle {
   margin: 0;
-  font-family: "Morna Bold", "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: var(--step-title-size);
   font-weight: 700;
   line-height: 1.14;
@@ -272,7 +271,7 @@
   }
 
   .title {
-    --framer-font-size: clamp(36px, 5.5vw, 44px);
+    --heading-font-size: clamp(36px, 5.5vw, 44px);
   }
 
   .subtitle {
@@ -288,7 +287,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* The shared heading components use inline reveal transforms. Keep their
+  /* Expose the shared heading immediately in reduced-motion mode. Keep its
      typography, but expose this section's heading without motion. */
   .headingContent,
   .headingContent > div,
