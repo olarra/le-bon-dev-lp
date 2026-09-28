@@ -4,8 +4,10 @@ import Image from "next/image"
 import { useMemo, useRef } from "react"
 import { ResinCta } from "@/components/atoms/ResinCta"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
-import { OfferIcon } from "@/components/offer-icons/OfferIcon"
+import { OfferIcon, OfferSticker } from "@/components/offer-icons"
 import { SvgFollowScroll } from "@/components/ui/svg-follow-scroll"
+import { useStickerMotion } from "@/hooks/use-sticker-motion"
+import { FEATURE_FLAG_RESINE_ICON_ENABLED } from "@/lib/feature-flags"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { FRENCH_PIXEL_GALLERY, PROJECT_IMAGES, REALISATIONS, type Realisation } from "./realisations.content"
 import { ResinGallery } from "./ResinGallery"
@@ -21,6 +23,7 @@ export function ShowcaseContent() {
   const anchors = useMemo(() => [phonesRef, monitorRef], [])
   useShowcaseTheme(sectionRef)
   useShowcaseMotion(sectionRef)
+  useStickerMotion(sectionRef, { enabled: !FEATURE_FLAG_RESINE_ICON_ENABLED })
 
   return (
     <section ref={sectionRef} className={styles.section} id="realisations" aria-labelledby="realisations-title">
@@ -61,10 +64,10 @@ export function ShowcaseContent() {
         </article>
 
         <article className={`${styles.project} ${styles.studioProject}`} aria-labelledby="french-pixel-studio-title" data-project="studio">
+          <ProjectCopy project={REALISATIONS.studio} id="french-pixel-studio" />
           <div ref={monitorRef} className={styles.monitorVisual}>
             <ResinGallery {...FRENCH_PIXEL_GALLERY} />
           </div>
-          <ProjectCopy project={REALISATIONS.studio} id="french-pixel-studio" />
         </article>
       </div>
     </section>
@@ -87,11 +90,17 @@ function ProjectCopy({ project, id }: { project: Realisation; id: string }) {
         <div><dt>Contexte</dt><dd>{project.context}</dd></div>
         <div>
           <dt>Offre</dt>
-          <dd><OfferIcon kind={project.icon} size={40} disabled playOnView={false} playOnHover={false} />{project.offer}</dd>
+          <dd>
+            {FEATURE_FLAG_RESINE_ICON_ENABLED ? (
+              <OfferIcon kind={project.icon} size={40} disabled playOnView={false} playOnHover={false} />
+            ) : (
+              <OfferSticker kind={project.icon} className={styles.offerIcon} />
+            )}
+            {project.offer}
+          </dd>
         </div>
       </dl>
       <ResinCta className={styles.cta} href={project.href} label={project.cta} />
     </div>
   )
 }
-

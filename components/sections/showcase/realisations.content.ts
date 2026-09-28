@@ -66,14 +66,13 @@ export const MIAU_REVEAL = {
 } as const
 
 export const SHOWCASE_THEME_REVEAL = {
-  // The introduction arrives on dark. Turn white during the phones' entry,
-  // using their stable visual bounds rather than the section's top edge.
-  start: "top 100%",
-  end: "top 82%",
+  // Desktop copy and phones enter together; use the phones' stable bounds.
+  desktop: { start: "top 100%", end: "top 82%", scrub: 0.7 },
+  // Finish before the section enters the mobile viewport. Direct scrubbing
+  // prevents a grey catch-up phase after a fast swipe.
+  compact: { start: "top 125%", end: "top 100%", scrub: true },
   // A gentler middle slope avoids concentrating the colour change into a flash.
   ease: "sine.inOut",
-  // Smooth wheel steps over 0.7 s while keeping the same entry landmarks.
-  scrub: 0.7,
   // Near this point both white and black text contrast with the neutral surface.
   foregroundSwitch: 0.422,
 } as const

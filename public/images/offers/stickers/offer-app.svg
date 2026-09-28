@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="offer-app-title">
+  <title id="offer-app-title">Applications</title>
+  <g id="app-background" data-layer="background" fill="#103D30"><rect width="256" height="256" rx="36"/></g>
+  <g id="app-module-top-left" data-layer="module-top-left" fill="#F8F9E6"><rect x="36" y="42" width="82" height="82" rx="16"/></g>
+  <g id="app-module-bottom-left" data-layer="module-bottom-left" fill="#B7F400"><rect x="36" y="138" width="82" height="82" rx="16"/></g>
+  <g id="app-module-bottom-right" data-layer="module-bottom-right" fill="#F8F9E6"><rect x="138" y="138" width="82" height="82" rx="16"/></g>
+  <g id="app-spark" data-layer="spark" fill="#B7F400"><path d="M179 39 C184 65 195 77 225 84 C195 91 184 103 179 129 C174 103 163 91 133 84 C163 77 174 65 179 39 Z"/></g>
+</svg>

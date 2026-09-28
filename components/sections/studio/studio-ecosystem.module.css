@@ -164,27 +164,12 @@
 }
 
 .hubMark {
-  --hero-bracket-dark: #a4cf5f;
-  --hero-bracket-light: #d4f581;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  height: 48px;
-}
-
-.bracket {
   display: block;
-  width: 19px;
-  height: 27px;
-}
-
-.slash {
-  width: 5px;
-  height: 36px;
-  margin-inline: 3px;
-  border-radius: 2px;
-  background: linear-gradient(#d4f581, #a4cf5f);
-  transform: rotate(20deg);
+  flex: none;
+  width: 64px;
+  height: 48px;
+  object-fit: contain;
+  user-select: none;
 }
 
 .hubLabel {

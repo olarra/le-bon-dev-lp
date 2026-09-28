@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="offer-web-title">
+  <title id="offer-web-title">Sites internet</title>
+  <g id="web-background" data-layer="background" fill="#B7F400"><rect width="256" height="256" rx="36"/></g>
+  <g id="web-ring" data-layer="ring" fill="#103D30"><path d="M 235.438354 117 A 108 108 0 1 0 235.438354 139 L 213.293611 139 A 86 86 0 1 1 213.293611 117 Z"/></g>
+  <g id="web-globe-lime" data-layer="globe-lime" fill="#B7F400"><circle cx="128" cy="128" r="84"/></g>
+  <g id="web-globe-forest" data-layer="globe-forest" fill="#103D30"><path d="M128 44 C67 76 67 180 128 212 C189 180 189 76 128 44 Z"/></g>
+  <g id="web-grid" data-layer="grid" fill="none" stroke="#F8F9E6" stroke-width="6" stroke-linecap="butt" stroke-linejoin="round">
+    <circle cx="128" cy="128" r="84"/>
+    <path d="M128 44 C67 76 67 180 128 212 M128 44 C189 76 189 180 128 212 M128 44 V212 M44 128 H212 M65.39 72 C103 92 153 92 190.61 72 M65.39 184 C103 164 153 164 190.61 184"/>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Échange</title>
+  <circle data-layer="background" cx="128" cy="128" r="126" fill="#F8F9E6"/>
+  <path data-layer="bubble-fill" fill="#B7F400" d="M96 81 C72 81 62 92 62 114 V126 C62 143 68 153 89 157 V181 L119 158 H162 C184 158 194 147 194 126 V114 C194 91 183 81 160 81 Z"/>
+  <path data-layer="bubble" fill="#103D30" fill-rule="evenodd" d="M96 69 H160 C191 69 206 85 206 114 V126 C206 154 190 170 162 170 H123 L84 199 Q77 204 77 194 V166 C57 159 50 146 50 126 V114 C50 84 66 69 96 69 Z M96 81 C72 81 62 92 62 114 V126 C62 143 68 153 89 157 V181 L119 158 H162 C184 158 194 147 194 126 V114 C194 91 183 81 160 81 Z"/>
+  <g data-layer="dots" fill="#000000">
+    <circle cx="94" cy="120" r="10"/>
+    <circle cx="128" cy="120" r="10"/>
+    <circle cx="162" cy="120" r="10"/>
+  </g>
+</svg>

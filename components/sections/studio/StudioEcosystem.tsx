@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import { useEffect, useRef, useState, type CSSProperties } from "react"
-import { BrandBracket } from "@/components/atoms/BrandBracket"
 import { INTEGRATION_ROWS, STUDIO_INTEGRATIONS } from "./integrations.content"
 import styles from "./studio-ecosystem.module.css"
 
@@ -90,11 +89,15 @@ export function StudioEcosystem() {
 
         <div className={styles.hub}>
           <a className={styles.hubLink} href="#contact" aria-label="Parlons-en : des technologies adaptées à votre projet">
-            <span className={styles.hubMark} aria-hidden="true">
-              <BrandBracket side="open" className={styles.bracket} />
-              <span className={styles.slash} />
-              <BrandBracket side="close" className={styles.bracket} />
-            </span>
+            <Image
+              className={styles.hubMark}
+              src="/images/brand/le-bon-dev-mark-white.svg"
+              alt=""
+              width={875}
+              height={524}
+              unoptimized
+              draggable={false}
+            />
             <span className={styles.hubLabel}>
               Parlons-en
               <svg className={styles.arrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">

@@ -134,16 +134,19 @@
 .project {
   display: grid;
   grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.4fr);
+  grid-template-areas: "copy visual";
   align-items: center;
   gap: clamp(36px, 5vw, 80px);
 }
 
 .studioProject {
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+  grid-template-areas: "visual copy";
   margin-top: clamp(120px, 13vw, 192px);
 }
 
 .copy {
+  grid-area: copy;
   position: relative;
   min-width: 0;
 }
@@ -217,12 +220,17 @@
   flex-shrink: 0;
 }
 
+.offerIcon {
+  --sticker-size: 40px;
+}
+
 .cta {
   --resin-button-ink: var(--project-ink);
 }
 
 /* Reserve the enlarged opening pose too; the inner composition keeps its size. */
 .phoneVisual {
+  grid-area: visual;
   position: relative;
   display: grid;
   align-items: center;
@@ -268,6 +276,7 @@
 }
 
 .monitorVisual {
+  grid-area: visual;
   width: 100%;
 }
 
@@ -341,6 +350,9 @@
   .project,
   .studioProject {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "copy"
+      "visual";
     gap: 40px;
   }
 
@@ -370,16 +382,8 @@
     transform: translate(83.1522%, 8%) scale(0.9);
   }
 
-  .thread path {
-    stroke-width: 4;
-  }
-
-  .thread [data-scroll-line="desktop"] {
+  .thread {
     display: none;
-  }
-
-  .thread [data-scroll-line="mobile"] {
-    display: block;
   }
 }
 

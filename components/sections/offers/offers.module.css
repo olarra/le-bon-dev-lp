@@ -282,6 +282,10 @@
   flex: none;
 }
 
+.offerIcon {
+  --sticker-size: 88px;
+}
+
 .offerBadge {
   position: relative;
   max-width: 100%;

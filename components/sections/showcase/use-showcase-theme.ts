@@ -12,12 +12,19 @@ export function useShowcaseTheme(sectionRef: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
     const section = sectionRef.current
     const surface = section?.closest<HTMLElement>("[data-showcase-theme]")
-    const visual = section?.querySelector<HTMLElement>("[data-miau-visual]")
-    if (!section || !surface || !visual) return
+    if (!section || !surface) return
 
     const media = gsap.matchMedia()
-    media.add("(prefers-reduced-motion: no-preference)", () => {
+    media.add({
+      motion: "(prefers-reduced-motion: no-preference)",
+      compact: "(max-width: 899px)",
+    }, context => {
+      if (!context.conditions?.motion) return
       const config = SHOWCASE_THEME_REVEAL
+      const compact = context.conditions.compact
+      const range = compact ? config.compact : config.desktop
+      const target = compact ? section : section.querySelector<HTMLElement>("[data-miau-visual]")
+      if (!target) return
       const originalTheme = surface.dataset.headerTheme
       const properties = ["--project-theme-progress", "--project-theme-tone"] as const
       const originalStyles = properties.map(property => surface.style.getPropertyValue(property))
@@ -43,10 +50,10 @@ export function useShowcaseTheme(sectionRef: RefObject<HTMLElement | null>) {
         ease: config.ease,
         onUpdate: render,
         scrollTrigger: {
-          trigger: visual,
-          start: config.start,
-          end: config.end,
-          scrub: config.scrub,
+          trigger: target,
+          start: range.start,
+          end: range.end,
+          scrub: range.scrub,
           invalidateOnRefresh: true,
           onRefresh: trigger => {
             trigger.animation?.totalProgress(trigger.progress)

@@ -8,7 +8,12 @@
   jour → coucher de soleil → nuit. La photo démarre lorsqu’elle est visible,
   indépendamment du scroll du texte, et possède une commande de replay.
 - `MagicText` révèle les mots au scroll ; `StickerSurface` et `MetalSticker`
-  gèrent les reflets de l’icône la plus proche du curseur.
+  partagent l’effet du contact : repos discret, puis reflets sur l’icône
+  la plus proche du curseur. Le suivi couvre toute la section, photo et fond
+  compris, avec une direction calculée depuis chaque icône jusqu’aux bords.
+  Aucun reflet permanent ni composant dédié au studio.
+  Sur mobile, un appui ou un mouvement du doigt pilote le même effet ; le
+  relâchement ou le défilement le ramène au repos, sans bloquer les gestes natifs.
 - `ResinCta` fournit le bouton partagé, avec une flèche tournée au survol ici.
 - `StudioEcosystem` présente les technologies ; `integrations.content.ts`
   contient les noms, assets et paramètres des trois rubans.

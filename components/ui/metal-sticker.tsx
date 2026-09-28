@@ -5,10 +5,11 @@ type MetalStickerProps = {
   src: string
   className?: string
   backing?: "circle"
+  response?: "follow" | "counter"
 }
 
 /** The outer SVG silhouette masks the shared finish over artwork and backing. */
-export function MetalSticker({ src, className, backing }: MetalStickerProps) {
+export function MetalSticker({ src, className, backing, response }: MetalStickerProps) {
   const backingSrc = backing === "circle" ? "/images/stickers/circle-lime.svg" : undefined
 
   return (
@@ -16,6 +17,7 @@ export function MetalSticker({ src, className, backing }: MetalStickerProps) {
       className={`${styles.sticker}${className ? ` ${className}` : ""}`}
       data-metal-sticker=""
       data-backing={backing}
+      data-sticker-response={response}
       style={{ "--sticker-mask": `url("${backingSrc ?? src}")` } as CSSProperties}
       aria-hidden="true"
     >

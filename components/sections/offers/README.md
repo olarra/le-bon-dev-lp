@@ -7,7 +7,17 @@ and neither the audience sentence nor the aftercare paragraph is a list.
 Only Applications has a scope badge beside the icon: "Web ou mobile".
 The website price reads "2 500 € HT — cinq pages, contenus fournis";
 no application price is shown.
-The existing animated icons are retained instead of the wireframe's mockups.
+The supplied `offer-web.svg` and `offer-app.svg` use the shared contact
+`MetalSticker` finish at 88 px. `useStickerMotion` tracks each offer's full card:
+cursor coordinates are mapped across its width and height, including near the CTA.
+Only that card's icon reacts, then settles when the cursor leaves. Their SVG shapes
+and colours are preserved. Reduced motion keeps them static.
+Touch uses the same shared interaction: a press starts the reflection, finger
+movement updates it, and release or native scrolling returns it to rest.
+Quick taps retain 180 ms of feedback. All touch listeners are passive.
+`FEATURE_FLAG_RESINE_ICON_ENABLED` in `lib/feature-flags.ts` defaults to `false`.
+Set it to `true` to restore the original resin icons and their existing playback.
+Their components, animation code and image assets are retained.
 The website offer sits directly on the shared sage surface. Only Applications
 has an ivory panel, inside that surface. Five shared grid rows align icons,
 introductions, audience sentences, included services and the closing groups.
@@ -113,7 +123,7 @@ Surface colours, corner radii and the 3–4 px molded rim are CSS variables at t
 top of `offers.module.css`. The faces stay opaque; masked gradients and inset
 shadows form the resin edges. Mobile keeps the nested composition in one column.
 
-Icons use the supplied kit via `components/offer-icons`, at 88 px. The parent
+When the resin flag is enabled, icons use `components/offer-icons`, at 88 px. The parent
 enables playback only once the desktop pose is complete; each icon then plays
 once when visible. Mouse entry and CTA focus can replay it after the pose.
 Mobile keeps once-on-entry playback. A short touch tap on an icon or non-interactive

@@ -2,7 +2,9 @@
 
 import { useLayoutEffect, useRef, useState } from "react"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
-import { OfferIcon, type OfferIconHandle } from "@/components/offer-icons"
+import { OfferIcon, OfferSticker, type OfferIconHandle } from "@/components/offer-icons"
+import { useStickerMotion } from "@/hooks/use-sticker-motion"
+import { FEATURE_FLAG_RESINE_ICON_ENABLED } from "@/lib/feature-flags"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { OFFERS, type Offer } from "./offers.content"
 import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
@@ -49,7 +51,9 @@ export function OffersSection() {
 }
 
 function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
+  const cardRef = useRef<HTMLElement>(null)
   const iconRef = useRef<OfferIconHandle>(null)
+  useStickerMotion(cardRef, { enabled: !FEATURE_FLAG_RESINE_ICON_ENABLED, tracking: "surface" })
   const touch = useRef<{
     id: number; x: number; y: number; time: number; scrollY: number
   } | null>(null)
@@ -59,6 +63,7 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
 
   return (
     <article
+      ref={cardRef}
       className={`${styles.offer} ${offer.kind === "website" ? styles.website : styles.ivory}`}
       id={offer.id}
       aria-labelledby={`${offer.id}-title`}
@@ -68,7 +73,7 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
       }}
       onPointerDown={(event) => {
         touch.current = null
-        if (event.pointerType !== "touch" || !event.isPrimary || isInteractive(event.target)) return
+        if (!FEATURE_FLAG_RESINE_ICON_ENABLED || event.pointerType !== "touch" || !event.isPrimary || isInteractive(event.target)) return
         touch.current = {
           id: event.pointerId, x: event.clientX, y: event.clientY,
           time: event.timeStamp, scrollY: window.scrollY,
@@ -102,14 +107,18 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
         </>
       )}
       <div className={styles.offerTopline}>
-        <OfferIcon
-          ref={iconRef}
-          kind={offer.kind}
-          size={88}
-          disabled={phase === "paused"}
-          playOnView={phase !== "paused"}
-          playOnHover={false}
-        />
+        {FEATURE_FLAG_RESINE_ICON_ENABLED ? (
+          <OfferIcon
+            ref={iconRef}
+            kind={offer.kind}
+            size={88}
+            disabled={phase === "paused"}
+            playOnView={phase !== "paused"}
+            playOnHover={false}
+          />
+        ) : (
+          <OfferSticker kind={offer.kind} className={styles.offerIcon} />
+        )}
         {offer.detail && <span className={styles.offerBadge}>{offer.detail}</span>}
       </div>
       <div className={styles.offerHeading}>

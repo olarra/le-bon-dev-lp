@@ -14,7 +14,7 @@ import styles from "./studio.module.css"
 /** The editorial studio panel, followed by its tools and integrations. */
 export function StudioSection() {
   return (
-    <StickerSurface className={styles.section} id="le-studio" aria-labelledby="studio-title" data-header-theme="light">
+    <StickerSurface className={styles.section} id="le-studio" aria-labelledby="studio-title" data-header-theme="light" tracking="nearest-surface">
       <div className={styles.panel}>
         <div className={styles.glassGlow} aria-hidden="true" />
         <div className={styles.introduction}>
