@@ -100,7 +100,7 @@ function ProjectCopy({ project, id }: { project: Realisation; id: string }) {
           </dd>
         </div>
       </dl>
-      <ResinCta className={styles.cta} href={project.href} label={project.cta} />
+      <ResinCta className={styles.cta} href={project.href} label={project.cta} newTab />
     </div>
   )
 }

@@ -21,5 +21,5 @@ Sur mobile, chaque projet présente son texte et son bouton avant son illustrati
   sur mobile.
 
 Les images locales sont dans `public/images/realisations/`.
-Le bouton Miau reste désactivé tant que son URL est absente du contenu.
+Les boutons Miau et French Pixel Studio ouvrent leur site dans un nouvel onglet.
 Les modes réduit et sans JavaScript conservent les projets visibles.

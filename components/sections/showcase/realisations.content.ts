@@ -1,4 +1,4 @@
-/** Set the destinations here when the public project URLs are available. */
+/** Project copy and public destinations. */
 export type Realisation = {
   name: string
   hook: readonly [string, string]
@@ -19,7 +19,7 @@ export const REALISATIONS: Record<"miau" | "studio", Realisation> = {
     offer: "App",
     icon: "applications",
     cta: "Découvrir Miau",
-    href: null,
+    href: "https://miau-app.com/",
   },
   studio: {
     name: "French Pixel Studio",
