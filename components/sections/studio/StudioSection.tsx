@@ -1,8 +1,8 @@
 import { MagicText } from "@/components/ui/magic-text"
+import { MetalSticker } from "@/components/ui/metal-sticker"
+import { StickerSurface } from "@/components/ui/sticker-surface"
 import { StudioHeading } from "./StudioHeading"
 import { StudioScene } from "./StudioScene"
-import { StudioSticker } from "./StudioSticker"
-import { StudioSurface } from "./StudioSurface"
 import {
   STUDIO_CTA, STUDIO_EYEBROW, STUDIO_FACTS, STUDIO_PARAGRAPHS,
   STUDIO_PRINCIPLES,
@@ -12,7 +12,7 @@ import styles from "./studio.module.css"
 /** One editorial surface, with the original office scene and resin base. */
 export function StudioSection() {
   return (
-    <StudioSurface>
+    <StickerSurface className={styles.section} id="le-studio" aria-labelledby="studio-title" data-header-theme="light">
       <div className={styles.panel}>
         <div className={styles.glassGlow} aria-hidden="true" />
         <div className={styles.introduction}>
@@ -45,13 +45,13 @@ export function StudioSection() {
           <ul className={styles.principles} role="list" aria-label="Les convictions du studio">
             {STUDIO_PRINCIPLES.map(principle => (
               <li className={styles.principle} key={principle.lines[0]}>
-                <StudioSticker name={principle.sticker} />
+                <MetalSticker src={`/images/studio/stickers/${principle.sticker}.svg`} className={styles.sticker} />
                 <h3>{principle.lines[0]}<br />{" "}{principle.lines[1]}</h3>
               </li>
             ))}
           </ul>
         </div>
       </div>
-    </StudioSurface>
+    </StickerSurface>
   )
 }

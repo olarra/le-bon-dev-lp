@@ -21,7 +21,7 @@
   position: relative;
   isolation: isolate;
   width: 100%;
-  background: color-mix(in srgb, #0c120e, #fff var(--project-theme-progress));
+  background: color-mix(in srgb, var(--color-surface-guarantees, #0c120e), #fff var(--project-theme-progress));
   color: var(--project-ink);
   font-family: "Outfit", sans-serif;
 }

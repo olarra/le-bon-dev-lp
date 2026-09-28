@@ -72,8 +72,8 @@ export const SHOWCASE_THEME_REVEAL = {
   end: "top 82%",
   // A gentler middle slope avoids concentrating the colour change into a flash.
   ease: "sine.inOut",
-  // Absorb individual wheel steps while keeping the same viewport landmarks.
-  scrub: 0.35,
+  // Smooth wheel steps over 0.7 s while keeping the same entry landmarks.
+  scrub: 0.7,
   // Near this point both white and black text contrast with the neutral surface.
   foregroundSwitch: 0.422,
 } as const

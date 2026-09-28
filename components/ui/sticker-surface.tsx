@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useRef, type ReactNode } from "react"
-import styles from "./studio.module.css"
+import { useEffect, useRef, type ComponentPropsWithoutRef } from "react"
 
 const MATERIAL = {
   angle: 210,
@@ -21,14 +20,15 @@ const MATERIAL = {
 } as const
 
 const MATERIAL_PROPERTIES = [
-  "--studio-foil-angle", "--studio-foil-x", "--studio-foil-y",
-  "--studio-gloss-x", "--studio-gloss-y", "--studio-gloss-angle",
-  "--studio-sticker-rx", "--studio-sticker-ry",
-  "--studio-sticker-x", "--studio-sticker-y",
+  "--sticker-foil-angle", "--sticker-foil-x", "--sticker-foil-y",
+  "--sticker-gloss-x", "--sticker-gloss-y", "--sticker-gloss-angle",
+  "--sticker-rx", "--sticker-ry",
+  "--sticker-x", "--sticker-y",
+  "--sticker-activity",
 ] as const
 
 /** Track the whole section, but animate only the nearest sticker in its own coordinates. */
-export function StudioSurface({ children }: { children: ReactNode }) {
+export function StickerSurface({ children, ...props }: ComponentPropsWithoutRef<"section">) {
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -36,8 +36,8 @@ export function StudioSurface({ children }: { children: ReactNode }) {
     if (!section) return
 
     // Measure the stationary wrapper, never its transformed artwork.
-    const stickers = Array.from(section.querySelectorAll<HTMLElement>("[data-studio-sticker]"), element => ({
-      element, x: 0, y: 0, targetX: 0, targetY: 0,
+    const stickers = Array.from(section.querySelectorAll<HTMLElement>("[data-metal-sticker]"), element => ({
+      element, x: 0, y: 0, activity: 0, targetX: 0, targetY: 0, targetActivity: 0,
     }))
     if (!stickers.length) return
 
@@ -50,7 +50,7 @@ export function StudioSurface({ children }: { children: ReactNode }) {
     let pointerChanged = false
 
     const updateTargets = () => {
-      stickers.forEach(sticker => { sticker.targetX = sticker.targetY = 0 })
+      stickers.forEach(sticker => { sticker.targetX = sticker.targetY = sticker.targetActivity = 0 })
       if (!pointer) return
 
       const sectionRect = section.getBoundingClientRect()
@@ -81,6 +81,7 @@ export function StudioSurface({ children }: { children: ReactNode }) {
       const influence = 1 - fade * fade * (3 - 2 * fade)
       nearest.targetX = Math.max(-1, Math.min(1, localX / MATERIAL.directionRadius * MATERIAL.pointerGain)) * influence
       nearest.targetY = Math.max(-1, Math.min(1, localY / MATERIAL.directionRadius * MATERIAL.pointerGain)) * influence
+      nearest.targetActivity = influence
     }
 
     const draw = (now: number) => {
@@ -95,25 +96,32 @@ export function StudioSurface({ children }: { children: ReactNode }) {
       lastFrame = now
       let settled = true
       for (const sticker of stickers) {
-        if (sticker.x === sticker.targetX && sticker.y === sticker.targetY) continue
+        if (sticker.x === sticker.targetX && sticker.y === sticker.targetY && sticker.activity === sticker.targetActivity) continue
 
         sticker.x += (sticker.targetX - sticker.x) * blend
         sticker.y += (sticker.targetY - sticker.y) * blend
-        const atRest = Math.abs(sticker.targetX - sticker.x) + Math.abs(sticker.targetY - sticker.y) < 0.001
-        if (atRest) { sticker.x = sticker.targetX; sticker.y = sticker.targetY }
+        sticker.activity += (sticker.targetActivity - sticker.activity) * blend
+        const atRest = Math.abs(sticker.targetX - sticker.x) + Math.abs(sticker.targetY - sticker.y) +
+          Math.abs(sticker.targetActivity - sticker.activity) < 0.001
+        if (atRest) {
+          sticker.x = sticker.targetX
+          sticker.y = sticker.targetY
+          sticker.activity = sticker.targetActivity
+        }
         else settled = false
 
         const { x, y, element } = sticker
-        element.style.setProperty("--studio-foil-angle", `${MATERIAL.angle + x * MATERIAL.angleRangeX + y * MATERIAL.angleRangeY}deg`)
-        element.style.setProperty("--studio-foil-x", `${MATERIAL.originX + x * MATERIAL.originRange}%`)
-        element.style.setProperty("--studio-foil-y", `${MATERIAL.originY + y * MATERIAL.originRange}%`)
-        element.style.setProperty("--studio-gloss-x", `${50 + x * 60}%`)
-        element.style.setProperty("--studio-gloss-y", `${50 + y * 45}%`)
-        element.style.setProperty("--studio-gloss-angle", `${110 + x * 12 + y * 8}deg`)
-        element.style.setProperty("--studio-sticker-rx", `${-y * MATERIAL.tilt}deg`)
-        element.style.setProperty("--studio-sticker-ry", `${x * MATERIAL.tilt}deg`)
-        element.style.setProperty("--studio-sticker-x", `${x * MATERIAL.travelX}px`)
-        element.style.setProperty("--studio-sticker-y", `${y * MATERIAL.travelY}px`)
+        element.style.setProperty("--sticker-foil-angle", `${MATERIAL.angle + x * MATERIAL.angleRangeX + y * MATERIAL.angleRangeY}deg`)
+        element.style.setProperty("--sticker-foil-x", `${MATERIAL.originX + x * MATERIAL.originRange}%`)
+        element.style.setProperty("--sticker-foil-y", `${MATERIAL.originY + y * MATERIAL.originRange}%`)
+        element.style.setProperty("--sticker-gloss-x", `${50 + x * 60}%`)
+        element.style.setProperty("--sticker-gloss-y", `${50 + y * 45}%`)
+        element.style.setProperty("--sticker-gloss-angle", `${110 + x * 12 + y * 8}deg`)
+        element.style.setProperty("--sticker-rx", `${-y * MATERIAL.tilt}deg`)
+        element.style.setProperty("--sticker-ry", `${x * MATERIAL.tilt}deg`)
+        element.style.setProperty("--sticker-x", `${x * MATERIAL.travelX}px`)
+        element.style.setProperty("--sticker-y", `${y * MATERIAL.travelY}px`)
+        element.style.setProperty("--sticker-activity", String(sticker.activity))
       }
 
       frame = settled ? 0 : requestAnimationFrame(draw)
@@ -144,7 +152,7 @@ export function StudioSurface({ children }: { children: ReactNode }) {
       pointer = null
       pointerChanged = false
       stickers.forEach(sticker => {
-        sticker.x = sticker.y = sticker.targetX = sticker.targetY = 0
+        sticker.x = sticker.y = sticker.activity = sticker.targetX = sticker.targetY = sticker.targetActivity = 0
         MATERIAL_PROPERTIES.forEach(property => sticker.element.style.removeProperty(property))
       })
     }
@@ -168,7 +176,7 @@ export function StudioSurface({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <section ref={ref} className={styles.section} id="le-studio" aria-labelledby="studio-title" data-header-theme="light">
+    <section {...props} ref={ref}>
       {children}
     </section>
   )

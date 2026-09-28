@@ -33,7 +33,7 @@ integration marquee are no longer rendered by `StudioSection`.
 ## Conviction stickers
 
 The three supplied SVGs (loupe, code shield and cursor) are preserved unchanged
-in `public/images/studio/stickers/`. `StudioSticker` displays each original and
+in `public/images/studio/stickers/`. The shared `MetalSticker` displays each original and
 uses its alpha channel to mask the chrome foil, specular gloss and fine vinyl grain. The
 finish follows the full silhouette, including the magnifier handle. Layered
 shadows follow that silhouette too. The small Outfit Regular headings remain
@@ -43,7 +43,7 @@ The foil uses the reference's vivid chrome palette with overlay blending. A
 narrow bright band flanked by darker reflections provides metallic contrast;
 there is no broad white radial wash. The source SVG colours remain unchanged.
 
-`StudioSurface` adapts the supplied Framer Sticker Pack's cursor-driven CSS
+`StickerSurface` adapts the supplied Framer Sticker Pack's cursor-driven CSS
 material to the existing section. It captures pointer movement over the whole
 `#le-studio`, including the text, photo and whitespace, but only the closest
 sticker within 380 px receives input. Each sticker has its own coordinates,
@@ -59,6 +59,25 @@ the material gently to rest. Listeners and pending frames are cleaned up on unmo
 or when the input/reduced-motion preference changes. Touch uses a static finish;
 reduced motion also disables the foil/gloss and tilt. SVGs remain visible without
 JavaScript. The illustrations are decorative and do not capture input.
+
+The material and pointer controller live in `components/ui/metal-sticker.tsx`,
+`metal-sticker.module.css` and `sticker-surface.tsx`. The contact section reuses
+them with its own supplied SVGs and independent pointer state. Artwork and
+responsive sizes remain local to each section.
+The contact envelope uses ivory shading and a forest-green fold to stand out
+against its lime backing.
+Contact uses the optional `backing="circle"` variant: a lime SVG disc with a
+white edge sits behind the inset artwork. Both layers share the transform,
+shadow and finish, masked to the disc. Its saturated `#C7F51F` lime base uses
+a 176-degree white-to-transparent-to-black light overlay (18%, 0% at 40%, 18%)
+for a restrained highlight and a deeper lower edge. Both sections share the chrome gradient,
+narrow gloss, grain and cursor response. At rest, the contact's gloss is
+transparent and parked entirely outside the disc (200% horizontal background
+position); its foil stays at 8% to keep the artwork and lime readable. Only
+the nearest sticker's proximity smoothly restores the studio's full finish:
+68% foil with overlay blending and 85% gloss with normal blending. Leaving
+the reaction area parks the reflection again. Touch and no-JS keep the quiet
+resting state. The studio's appearance is unchanged.
 
 No Framer editor, dragging, tap effects, idle loops or additional dependencies
 are included. Sticker visual review is left to the user as requested.

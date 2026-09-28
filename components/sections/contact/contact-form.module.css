@@ -108,22 +108,7 @@
 }
 
 .methodIcon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #d8e5ba;
-}
-
-.methodIcon[data-tone="lime"] {
-  background: var(--form-lime);
-}
-
-.methodIcon[data-tone="forest"] {
-  background: #193c2f;
-  color: #d0ed82;
+  --sticker-size: 56px;
 }
 
 .methodTitle,
@@ -425,8 +410,7 @@
   }
 
   .methodIcon {
-    width: 48px;
-    height: 48px;
+    --sticker-size: 48px;
   }
 
   .methodTitle {
@@ -478,8 +462,7 @@
   }
 
   .methodIcon {
-    width: 48px;
-    height: 48px;
+    --sticker-size: 48px;
   }
 
   .methodTitle {

@@ -18,15 +18,17 @@ from the supplied POC: `https://www.frenchpixelstudio.fr/`.
 
 ## Motion
 
-- `useShowcaseTheme` changes only the background and text palette.
+- `useShowcaseTheme` owns the single background transition, scoped to the
+  showcase surface and text palette.
   `SHOWCASE_THEME_REVEAL` follows Miau's stable visual from `top 100%` to `top 82%`.
   The badge, title and subtitle enter on a fully dark surface, continuous with
   Offers. The transition starts as the phones enter the bottom of the viewport,
   then targets white over 18% of viewport height. `sine.inOut` distributes the
-  colour change more evenly than a cubic ease, while 0.35 s scrubbing smooths
+  colour change more evenly than a cubic ease, while 0.7 s scrubbing smooths
   individual wheel steps. The viewport landmarks stay unchanged. No decorative
   layer, extra space or pinned scrolling is added. Reverse scrolling restores
-  the dark theme.
+  dark theme. After the entrance, the showcase holds white. The following
+  method section always uses its static dark palette and has no theme tween.
 - Palette endpoints live in `showcase.module.css`. Text approaches white while
   the dark surface brightens, switches to black at a contrasting background,
   then settles into the final forest/green palette. This avoids unreadable
@@ -141,6 +143,9 @@ copies at quality 95 from the preserved original PNGs. The POC's small wood
 mounts and white mats remain behind the resin illustration.
 
 ## Verification
+
+The 0.7 s smoothing is left for the user's visual review. The browser checks
+below preceded this adjustment.
 
 - TypeScript: `npx tsc --noEmit --incremental false`
 - Existing scroll controller checks:

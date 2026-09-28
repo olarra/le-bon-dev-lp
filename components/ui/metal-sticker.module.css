@@ -1,0 +1,100 @@
+/* The outer SVG supplies the precise silhouette mask.
+   Each finish receives local pointer coordinates on its own sticker wrapper. */
+.sticker {
+  display: block;
+  flex: 0 0 auto;
+  width: var(--sticker-size, 56px);
+  aspect-ratio: 1;
+  perspective: 360px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.stickerFace {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform:
+    translate3d(var(--sticker-x, 0px), var(--sticker-y, 0px), 0)
+    rotateX(var(--sticker-rx, 0deg)) rotateY(var(--sticker-ry, 0deg));
+  filter:
+    drop-shadow(0 1px 0.5px rgb(18 44 27 / 20%))
+    drop-shadow(0 2px 2px rgb(18 44 27 / 12%))
+    drop-shadow(0 5px 4px rgb(18 44 27 / 8%))
+    drop-shadow(0 9px 8px rgb(18 44 27 / 4%));
+}
+
+.stickerFace img { display: block; width: 100%; height: 100%; }
+
+.sticker[data-backing="circle"] .stickerArtwork {
+  position: absolute;
+  inset: 16%;
+  width: 68%;
+  height: 68%;
+}
+
+.stickerFinish {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: var(--sticker-mask);
+  mask-image: var(--sticker-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-mode: alpha;
+}
+
+.stickerFoil {
+  /* Overlay retains the SVG's deep greens beneath the chrome reflections. */
+  background: conic-gradient(
+    from var(--sticker-foil-angle, 210deg) at var(--sticker-foil-x, 50%) var(--sticker-foil-y, 42%),
+    #f4f7fa 0deg, #dce4ec 26deg, #afc0d2 52deg, #8fa6be 76deg,
+    #3b5be8 102deg, #2a24c8 124deg, #5b3adb 146deg, #a9a2e8 168deg,
+    #e6e9ee 190deg, #fff 212deg, #edf2f7 238deg, #c3d2e0 266deg,
+    #7e93ac 292deg, #3e5bd8 318deg, #9fb6d0 342deg, #f4f7fa 360deg
+  );
+  opacity: 0.68;
+  mix-blend-mode: overlay;
+}
+
+.stickerGloss {
+  /* A narrow specular ridge with darker shoulders reads as polished metal. */
+  background-image: linear-gradient(
+    var(--sticker-gloss-angle, 110deg),
+    transparent 30%, rgb(4 25 18 / 34%) 43%, transparent 47%,
+    rgb(255 255 255 / 90%) 49.3%, #fff 50%, rgb(255 255 255 / 90%) 50.7%,
+    transparent 54%, rgb(4 25 18 / 28%) 58%, transparent 68%
+  );
+  background-size: 220% 160%;
+  background-position: var(--sticker-gloss-x, 50%) var(--sticker-gloss-y, 50%);
+  background-repeat: no-repeat;
+  opacity: 0.85;
+}
+
+/* Park the contact reflection outside the disc at rest, including without JS.
+   Proximity restores the studio finish without a permanent stripe over the icon. */
+.sticker[data-backing="circle"] .stickerFoil {
+  opacity: calc(0.08 + var(--sticker-activity, 0) * 0.60);
+}
+
+.sticker[data-backing="circle"] .stickerGloss {
+  background-position:
+    calc(var(--sticker-gloss-x, 50%) + (1 - var(--sticker-activity, 0)) * 150%)
+    var(--sticker-gloss-y, 50%);
+  opacity: calc(var(--sticker-activity, 0) * 0.85);
+}
+
+.stickerGrain {
+  background: url("/images/stickers/vinyl-grain.svg") center / 140px 140px;
+  mix-blend-mode: multiply;
+  opacity: 0.025;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stickerFace { transform: none; }
+  .stickerFoil, .stickerGloss { display: none; }
+}
