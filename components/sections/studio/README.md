@@ -4,8 +4,26 @@ The section follows the supplied `le-bon-dev-studio` composition B: one ivory
 surface, editorial copy, the full office portrait, and three convictions in a
 shared resin base. The requested figures (10 years, +10 delivered projects,
 24 h response) sit below the contact CTA. They supersede the kit's instruction
-to omit statistics. The previous portrait placeholder, six feature cards and
-integration marquee are no longer rendered by `StudioSection`.
+to omit statistics. The previous portrait placeholder and six feature cards
+are no longer rendered by `StudioSection`.
+
+Below the panel, `StudioEcosystem` presents “Nos technologies” before the
+contact sections, with its original three tickers, local icons,
+contact link and pause control. Its full-width tracks use the studio's responsive
+gutter so they stay within the page on desktop and mobile. Offscreen pausing and
+the static reduced-motion layout remain part of the existing component.
+The heading “Les bons outils pour votre projet.” and its
+supporting copy describe the studio's technology choices in terms of project
+needs, budget, reliability and room to evolve. Accessible labels use the same
+terminology.
+
+The tickers now use the 24 distinct tools from the supplied `icons/` folder.
+Their SVG/PNG files are preserved unchanged in `public/images/integrations/`,
+with one variant each for Docker and GitHub. The generic filenames were mapped
+to the actual logos (including Figma, GraphQL and Redux). Names, filenames and
+Sentry's dark backdrop are defined in `integrations.content.ts`. Colours render
+at full opacity; the white Sentry artwork sits on a small dark tile. The three
+rows start at different tools and retain their original scrolling speeds.
 
 ## Existing site components
 

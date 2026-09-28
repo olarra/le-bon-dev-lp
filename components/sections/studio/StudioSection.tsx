@@ -1,6 +1,7 @@
 import { MagicText } from "@/components/ui/magic-text"
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
+import { StudioEcosystem } from "./StudioEcosystem"
 import { StudioHeading } from "./StudioHeading"
 import { StudioScene } from "./StudioScene"
 import {
@@ -9,7 +10,7 @@ import {
 } from "./studio.content"
 import styles from "./studio.module.css"
 
-/** One editorial surface, with the original office scene and resin base. */
+/** The editorial studio panel, followed by its tools and integrations. */
 export function StudioSection() {
   return (
     <StickerSurface className={styles.section} id="le-studio" aria-labelledby="studio-title" data-header-theme="light">
@@ -52,6 +53,7 @@ export function StudioSection() {
           </ul>
         </div>
       </div>
+      <StudioEcosystem />
     </StickerSurface>
   )
 }

@@ -2,8 +2,8 @@
   --integration-tile-width: 240px;
   --integration-tile-height: 88px;
   position: relative;
-  width: calc(100% + 48px);
-  margin: 128px -24px 0;
+  width: calc(100% + 2 * var(--studio-gutter));
+  margin: 128px calc(-1 * var(--studio-gutter)) 0;
   color: var(--studio-ink);
 }
 
@@ -112,8 +112,13 @@
   width: 40px;
   height: 40px;
   object-fit: contain;
-  opacity: 0.78;
   user-select: none;
+}
+
+.icon[data-contrast="dark"] {
+  padding: 6px;
+  border-radius: 8px;
+  background: #17291e;
 }
 
 .hub {
@@ -316,6 +321,11 @@
   .icon {
     width: 28px;
     height: 28px;
+  }
+
+  .icon[data-contrast="dark"] {
+    padding: 4px;
+    border-radius: 6px;
   }
 
   .hub {

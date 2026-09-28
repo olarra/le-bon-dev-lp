@@ -34,8 +34,8 @@ export function StudioEcosystem() {
       data-paused={paused}
     >
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Les intégrations</p>
-        <h3 className={styles.title} id="studio-ecosystem-title">Un écosystème connecté.</h3>
+        <p className={styles.eyebrow}>Nos technologies</p>
+        <h3 className={styles.title} id="studio-ecosystem-title">Les bons outils pour votre projet.</h3>
       </header>
 
       <div className={styles.stage}>
@@ -61,7 +61,7 @@ export function StudioEcosystem() {
                       className={styles.group}
                       key={String(duplicate)}
                       role="list"
-                      aria-label={index === 0 && !duplicate ? "Les outils et intégrations" : undefined}
+                      aria-label={index === 0 && !duplicate ? "Les technologies et outils du studio" : undefined}
                       aria-hidden={duplicate ? true : undefined}
                       data-duplicate={duplicate}
                     >
@@ -70,7 +70,8 @@ export function StudioEcosystem() {
                           <span>{item.name}</span>
                           <Image
                             className={styles.icon}
-                            src={`/images/integrations/${item.id}.png`}
+                            src={`/images/integrations/${item.icon}`}
+                            data-contrast={item.contrast}
                             alt=""
                             width={40}
                             height={40}
@@ -88,7 +89,7 @@ export function StudioEcosystem() {
         </div>
 
         <div className={styles.hub}>
-          <a className={styles.hubLink} href="#contact" aria-label="Parlons de vos outils et de votre projet">
+          <a className={styles.hubLink} href="#contact" aria-label="Parlons-en : des technologies adaptées à votre projet">
             <span className={styles.hubMark} aria-hidden="true">
               <BrandBracket side="open" className={styles.bracket} />
               <span className={styles.slash} />
@@ -106,13 +107,13 @@ export function StudioEcosystem() {
 
       <footer className={styles.footer}>
         <p className={styles.description}>
-          Vos outils, vos données, vos processus : des connexions sur mesure pour simplifier le quotidien et accompagner votre activité.
+          Site web, application mobile ou outil métier : on choisit les technologies adaptées à vos besoins et à votre budget, pour construire un produit fiable et facile à faire évoluer.
         </p>
         <button
           className={styles.motionToggle}
           type="button"
           onClick={() => setPaused((current) => !current)}
-          aria-label={paused ? "Reprendre le défilement des intégrations" : "Mettre en pause le défilement des intégrations"}
+          aria-label={paused ? "Reprendre le défilement des technologies" : "Mettre en pause le défilement des technologies"}
         >
           <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
             {paused ? <path d="m6 3 11 7-11 7V3Z" /> : <path d="M5 3h3v14H5zm7 0h3v14h-3z" />}

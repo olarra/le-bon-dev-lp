@@ -2,9 +2,10 @@
   --studio-ink: #17291e;
   --studio-muted: #53644f;
   --studio-line: rgb(71 97 47 / 18%);
+  --studio-gutter: 32px;
   --text-reveal-muted: #9ca791;
   width: 100%;
-  padding: 136px 32px 120px;
+  padding: 136px var(--studio-gutter) 120px;
   background: #fff;
   color: var(--studio-ink);
   font-family: "Outfit", sans-serif;
@@ -223,7 +224,7 @@
 }
 
 @media (min-width: 900px) and (max-width: 1199px) {
-  .section { padding-inline: 24px; }
+  .section { --studio-gutter: 24px; }
   .panel { --panel-inset: 26px; padding-top: 26px; }
   .introduction { gap: 28px; }
   .story { padding-left: 0; }
@@ -235,7 +236,7 @@
 }
 
 @media (max-width: 899px) {
-  .section { padding: 96px 20px 92px; }
+  .section { --studio-gutter: 20px; padding-block: 96px 92px; }
   .panel { --panel-inset: 24px; --panel-radius: 28px; max-width: 620px; padding-top: 28px; }
   .glassGlow { inset-inline: 16px; bottom: -22px; height: 156px; border-radius: 0 0 24px 24px; }
   .glassBase { margin-top: 26px; }
@@ -256,7 +257,7 @@
 }
 
 @media (max-width: 389px) {
-  .section { padding-inline: 14px; }
+  .section { --studio-gutter: 14px; }
   .panel { --panel-inset: 20px; }
   .copy { font-size: 17px; }
   .cta > span { padding-inline: 14px; gap: 10px; font-size: 16px; }

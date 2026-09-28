@@ -1,9 +1,9 @@
 "use client"
 
 import gsap from "gsap"
+import Image from "next/image"
 import { useEffect, useLayoutEffect, useRef } from "react"
 import { WaveBrandCard } from "./WaveBrandCard"
-import { BrandBracket } from "@/components/atoms/BrandBracket"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { Breakpoint } from "@/components/atoms/Breakpoint"
 import { HalftoneBackground } from "@/components/atoms/HalftoneBackground"
@@ -255,7 +255,18 @@ export function HeroSection() {
                 </a>
 
                 <div className={styles.highlight}>
-                  <BrandBracket side="open" className={styles.highlightBracket} />
+                  <Image
+                    src="/images/hero/bracket-opening.png"
+                    width={921}
+                    height={876}
+                    sizes="44px"
+                    quality={90}
+                    className={styles.highlightBracket}
+                    data-side="open"
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                  />
                   <p className={styles.highlightText}>
                     {HIGHLIGHT_BEFORE}
                     <mark className={styles.highlightMark}>
@@ -267,7 +278,18 @@ export function HeroSection() {
                     </mark>
                     {HIGHLIGHT_AFTER}
                   </p>
-                  <BrandBracket side="close" className={styles.highlightBracket} />
+                  <Image
+                    src="/images/hero/bracket-closing.png"
+                    width={921}
+                    height={876}
+                    sizes="44px"
+                    quality={90}
+                    className={styles.highlightBracket}
+                    data-side="close"
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                  />
                 </div>
               </div>
             </ScrollReveal>
