@@ -1,54 +1,53 @@
 export const STUDIO_EYEBROW = "Le studio"
+export const STUDIO_TITLE = "Le fond, la forme. La même attention."
 
 export const STUDIO_PARAGRAPHS = [
-  "Le bon dev est un studio de développement à taille humaine, mené par un développeur senior qui suit votre projet de bout en bout : cadrage, design, code, mise en ligne et suivi.",
-  "Quand le projet le demande, d’autres profils — développeur ou designer — rejoignent l’équipe, sans que votre interlocuteur change.",
+  {
+    text: "Un périmètre flou. Un suivi trop discret. Un design déconnecté de l’usage.",
+    emphasis: undefined,
+  },
+  {
+    text: "Le bon dev est né de ce constat : un projet mérite autant de soin dans sa conception que dans sa réalisation.",
+    emphasis: "Le bon dev",
+  },
+  {
+    text: "Votre projet est porté par un développeur senior, pleinement investi du premier échange à la mise en ligne. Selon les besoins, des designers et des développeurs spécialisés viennent apporter leur expertise, avec la même attention aux détails et à la qualité du produit.",
+    emphasis: undefined,
+  },
 ] as const
 
-// Keep the wireframe's placeholders until the real figures are supplied.
+export const STUDIO_CTA = { label: "Parlons de votre projet", href: "#contact" } as const
+
+// Figures explicitly supplied for this version of the section.
 export const STUDIO_FACTS = [
-  { value: "[X]", label: "ans de développement", pending: true },
-  { value: "[N]", label: "projets livrés", pending: true },
-  { value: "24 h", label: "pour vous répondre", pending: false },
+  { value: "10", label: "ans de développement" },
+  { value: "+10", label: "projets livrés" },
+  { value: "24 h", label: "pour vous répondre" },
 ] as const
 
 export const STUDIO_PRINCIPLES = [
-  {
-    id: "code",
-    title: "Un code qui dure",
-    description: "Écrit pour être repris, testé et documenté. Dans un an, vous pouvez le faire évoluer, avec nous ou sans nous.",
-    icon: "code",
-  },
-  {
-    id: "design",
-    title: "Du design au code, une seule équipe",
-    description: "Parcours, écrans et identité sont conçus avant la première ligne de code, pas ajoutés à la fin.",
-    icon: "design",
-  },
-  {
-    id: "automatisation",
-    title: "Ce qui se répète s’automatise",
-    description: "Relances, exports, synchronisation avec vos outils : on repère les tâches répétitives et on les fait disparaître.",
-    icon: "automation",
-  },
-  {
-    id: "suivi",
-    title: "Un suivi qui continue",
-    description: "Mises à jour, corrections, évolutions : ponctuellement ou en accompagnement continu, au rythme de votre activité.",
-    icon: "follow-up",
-  },
-  {
-    id: "choix",
-    title: "Des choix expliqués",
-    description: "Chaque décision technique est justifiée en langage clair, avec son coût et ses conséquences.",
-    icon: "clarity",
-  },
-  {
-    id: "interlocuteur",
-    title: "Un seul interlocuteur",
-    description: "La personne qui vous répond est celle qui développe. Pas d’intermédiaire entre vous et votre projet.",
-    icon: "person",
-  },
+  { lines: ["Comprendre avant", "de construire."], sticker: "comprendre-loupe" },
+  { lines: ["Du code qui", "tient la route."], sticker: "code-bouclier" },
+  { lines: ["Du beau qui", "sert l’usage."], sticker: "usage-curseur" },
 ] as const
 
-export type StudioIconName = (typeof STUDIO_PRINCIPLES)[number]["icon"]
+export const STUDIO_IMAGES = [
+  { state: "day", file: "studio-01-jour" },
+  { state: "sunset", file: "studio-02-coucher-soleil" },
+  { state: "night", file: "studio-03-nuit" },
+] as const
+
+export const STUDIO_PHOTO_MOTION = {
+  duration: 6000,
+  fadeEase: "cubic-bezier(.42,0,.58,1)",
+  revealDuration: 1200,
+  revealEase: "cubic-bezier(.075,.82,.165,1)",
+  revealThreshold: 0.6,
+  cycleThreshold: 0.75,
+  pauseThreshold: 0.25,
+  resetDuration: 550,
+  preloadMargin: "600px 0px",
+  // The leading edge stays diagonal during the wipe, then opens completely.
+  hiddenClip: "polygon(125% 0, 100% 0, 100% 100%, 100% 100%)",
+  visibleClip: "polygon(0% 0, 100% 0, 100% 100%, 0% 100%)",
+} as const

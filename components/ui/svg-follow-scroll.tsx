@@ -1,5 +1,6 @@
 "use client"
 
+import gsap from "gsap"
 import { useEffect, useRef, type RefObject } from "react"
 
 export type ScrollPathBox = { x: number; y: number; width: number; height: number }
@@ -10,11 +11,19 @@ export type ScrollPathLayout = {
   compact: boolean
 }
 
+export type ScrollPathCompletion = {
+  anchorIndex: number
+  viewportLine: number
+  duration: number
+  ease: string
+}
+
 type Props = {
   containerRef: RefObject<HTMLElement | null>
   anchors: readonly RefObject<HTMLElement | null>[]
   buildPath: (layout: ScrollPathLayout) => string
   fallback: { viewBox: string; desktop: string; mobile: string }
+  completion?: ScrollPathCompletion
   className?: string
 }
 
@@ -22,8 +31,9 @@ const DRAW = { viewportLine: 0.73, samples: 500, compactQuery: "(max-width: 899p
 
 /** The POC's line-following effect: the tip follows a viewport reading line.
  * Measure SVG geometry only on resize; scrolling updates only its dash offset.
+ * An optional anchor releases the remaining stroke into a timed finish.
  * Both fallback paths are complete before JS and with reduced motion. */
-export function SvgFollowScroll({ containerRef, anchors, buildPath, fallback, className }: Props) {
+export function SvgFollowScroll({ containerRef, anchors, buildPath, fallback, completion, className }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const wideRef = useRef<SVGPathElement>(null)
   const narrowRef = useRef<SVGPathElement>(null)
@@ -40,18 +50,35 @@ export function SvgFollowScroll({ containerRef, anchors, buildPath, fallback, cl
     let active = wide
     let length = 0
     let sampledY: number[] = []
+    let completionCenter: number | undefined
+    let scrollProgress = 0
+    let completing = false
+    let measured = false
+    const finish = { progress: 0 }
+    let finishTween: gsap.core.Tween | undefined
     let scrollFrame = 0
     let measureFrame = 0
     let disposed = false
 
-    const draw = () => {
-      scrollFrame = 0
+    const paint = () => {
+      // Blend from the current scroll position, so entering/reversing never
+      // jumps and the remaining stroke can finish while scrolling is stopped.
+      const progress = scrollProgress + (1 - scrollProgress) * finish.progress
+      active.style.strokeDashoffset = `${length * (1 - progress)}`
+    }
+
+    const update = (immediate = false) => {
       if (reduced.matches) {
+        finishTween?.kill()
+        finishTween = undefined
+        completing = false
+        finish.progress = 0
         wide.style.strokeDashoffset = "0"
         narrow.style.strokeDashoffset = "0"
         return
       }
-      const y = window.innerHeight * DRAW.viewportLine - container.getBoundingClientRect().top
+      const top = container.getBoundingClientRect().top
+      const y = window.innerHeight * DRAW.viewportLine - top
       // The layout paths descend monotonically, so a binary search is enough.
       let low = 0
       let high = sampledY.length
@@ -60,8 +87,29 @@ export function SvgFollowScroll({ containerRef, anchors, buildPath, fallback, cl
         if (sampledY[mid] <= y) low = mid + 1
         else high = mid
       }
-      const progress = Math.max(0, low - 1) / DRAW.samples
-      active.style.strokeDashoffset = `${length * (1 - progress)}`
+      scrollProgress = Math.max(0, low - 1) / DRAW.samples
+      const shouldComplete = Boolean(completion && completionCenter !== undefined
+        && top + completionCenter <= window.innerHeight * completion.viewportLine)
+      if (immediate || shouldComplete !== completing) {
+        finishTween?.kill()
+        finishTween = undefined
+        completing = shouldComplete
+        if (immediate || !completion) {
+          finish.progress = shouldComplete ? 1 : 0
+        } else {
+          finishTween = gsap.to(finish, {
+            progress: shouldComplete ? 1 : 0,
+            duration: completion.duration,
+            ease: completion.ease,
+            onUpdate: paint,
+          })
+        }
+      }
+      paint()
+    }
+    const draw = () => {
+      scrollFrame = 0
+      update()
     }
 
     const measure = () => {
@@ -80,7 +128,11 @@ export function SvgFollowScroll({ containerRef, anchors, buildPath, fallback, cl
       length = active.getTotalLength()
       active.style.strokeDasharray = `${length} ${length}`
       sampledY = Array.from({ length: DRAW.samples + 1 }, (_, i) => active.getPointAtLength(length * i / DRAW.samples).y)
-      draw()
+      const completionBox = completion ? boxes[completion.anchorIndex] : undefined
+      completionCenter = completionBox ? completionBox.y + completionBox.height / 2 : undefined
+      // Restored positions beyond the finish should render a complete line.
+      update(!measured)
+      measured = true
     }
     const requestMeasure = () => {
       if (!measureFrame) measureFrame = requestAnimationFrame(measure)
@@ -88,27 +140,33 @@ export function SvgFollowScroll({ containerRef, anchors, buildPath, fallback, cl
     const requestDraw = () => {
       if (!reduced.matches && !scrollFrame) scrollFrame = requestAnimationFrame(draw)
     }
+    const motionChanged = () => update(true)
     const observer = new ResizeObserver(requestMeasure)
     observer.observe(container)
     anchors.forEach(ref => { if (ref.current) observer.observe(ref.current) })
     window.addEventListener("scroll", requestDraw, { passive: true })
     window.addEventListener("resize", requestMeasure)
     compact.addEventListener("change", requestMeasure)
-    reduced.addEventListener("change", draw)
+    reduced.addEventListener("change", motionChanged)
     void document.fonts.ready.then(() => { if (!disposed) requestMeasure() })
     measure()
 
     return () => {
       disposed = true
+      finishTween?.kill()
       cancelAnimationFrame(scrollFrame)
       cancelAnimationFrame(measureFrame)
       observer.disconnect()
       window.removeEventListener("scroll", requestDraw)
       window.removeEventListener("resize", requestMeasure)
       compact.removeEventListener("change", requestMeasure)
-      reduced.removeEventListener("change", draw)
+      reduced.removeEventListener("change", motionChanged)
+      for (const path of [wide, narrow]) {
+        path.style.removeProperty("stroke-dasharray")
+        path.style.removeProperty("stroke-dashoffset")
+      }
     }
-  }, [containerRef, anchors, buildPath])
+  }, [containerRef, anchors, buildPath, completion])
 
   return (
     <svg ref={svgRef} className={className} viewBox={fallback.viewBox} preserveAspectRatio="none" fill="none" aria-hidden="true" focusable="false">

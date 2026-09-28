@@ -65,9 +65,15 @@ export const MIAU_REVEAL = {
   },
 } as const
 
-export const REVEAL_COLORS = {
-  initial: "#10251c",
-  middle: "#29632d",
-  // Bright green with sufficient contrast for large text on white.
-  end: "#56850f",
+export const SHOWCASE_THEME_REVEAL = {
+  // The introduction arrives on dark. Turn white during the phones' entry,
+  // using their stable visual bounds rather than the section's top edge.
+  start: "top 100%",
+  end: "top 82%",
+  // A gentler middle slope avoids concentrating the colour change into a flash.
+  ease: "sine.inOut",
+  // Absorb individual wheel steps while keeping the same viewport landmarks.
+  scrub: 0.35,
+  // Near this point both white and black text contrast with the neutral surface.
+  foregroundSwitch: 0.422,
 } as const

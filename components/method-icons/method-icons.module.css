@@ -1,0 +1,30 @@
+/* Keep the kit's shared square canvas and pivots: cropping a layer would
+   change its alignment with the other pieces. */
+.icon {
+  position: relative;
+  display: block;
+  flex: none;
+  width: var(--method-icon-size, 112px);
+  max-width: 100%;
+  aspect-ratio: 1;
+  isolation: isolate;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.icon [data-part] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.icon [data-part="pencil"] { transform-origin: 49% 91%; }
+.icon [data-part="notebook"] { transform-origin: 46% 85%; }
+.icon [data-part="flag"] { transform-origin: 67% 43%; }
+.icon [data-part="flame"] { transform-origin: 32% 66%; }
+.icon [data-part="wrench"] { transform-origin: 38% 36%; }
+.icon [data-part="sprout"] { transform-origin: 58% 86%; }

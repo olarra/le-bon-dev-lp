@@ -100,6 +100,11 @@ export function SiteHeader() {
     if (topBar) observer.observe(topBar)
     if (hero) observer.observe(hero)
     themedSections.forEach((section) => observer.observe(section))
+    // Scroll-driven palettes can finish changing after scrolling has stopped.
+    const themeObserver = new MutationObserver(scheduleUpdate)
+    themedSections.forEach((section) => themeObserver.observe(section, {
+      attributes: true, attributeFilter: ["data-header-theme"],
+    }))
 
     const readyFrame = requestAnimationFrame(() => {
       measureTopBar()
@@ -114,6 +119,7 @@ export function SiteHeader() {
       cancelAnimationFrame(readyFrame)
       cancelAnimationFrame(scrollFrame)
       observer.disconnect()
+      themeObserver.disconnect()
       window.removeEventListener("scroll", scheduleUpdate)
       window.removeEventListener("resize", measureLayout)
       window.removeEventListener("pageshow", measureLayout)

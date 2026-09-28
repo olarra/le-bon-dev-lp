@@ -1,7 +1,9 @@
 # Les réalisations
 
-Two projects in normal document flow, on a white surface. The previous carousel
-files remain available but are no longer mounted here.
+Two projects in normal document flow. The surface starts in the Offers section's
+dark green-black behind the full introduction. As the Miau phones enter
+the viewport, a short scroll interval turns the surface white. The previous
+carousel files remain available but are no longer mounted here.
 
 The implementation reuses Morna Bold / Outfit, `AnimatedHeading` and the Hero's
 character entrance, `OfferIcon`, GSAP / ScrollTrigger and CSS modules. It adds no
@@ -16,6 +18,22 @@ from the supplied POC: `https://www.frenchpixelstudio.fr/`.
 
 ## Motion
 
+- `useShowcaseTheme` changes only the background and text palette.
+  `SHOWCASE_THEME_REVEAL` follows Miau's stable visual from `top 100%` to `top 82%`.
+  The badge, title and subtitle enter on a fully dark surface, continuous with
+  Offers. The transition starts as the phones enter the bottom of the viewport,
+  then targets white over 18% of viewport height. `sine.inOut` distributes the
+  colour change more evenly than a cubic ease, while 0.35 s scrubbing smooths
+  individual wheel steps. The viewport landmarks stay unchanged. No decorative
+  layer, extra space or pinned scrolling is added. Reverse scrolling restores
+  the dark theme.
+- Palette endpoints live in `showcase.module.css`. Text approaches white while
+  the dark surface brightens, switches to black at a contrasting background,
+  then settles into the final forest/green palette. This avoids unreadable
+  mid-grey text during a simultaneous foreground/background crossfade. The
+  header observes the theme attribute and updates its own contrast.
+- The existing title and Miau colour reveals animate their own percentage,
+  independently of the theme; both use whichever palette is currently active.
 - The phone visual reserves the zoomed opening footprint at 25 / 23. Its
   centered inner composition keeps the original 5 / 4 proportions and final
   phone sizes, so the extra room prevents clipping without shrinking devices.
@@ -56,14 +74,19 @@ from the supplied POC: `https://www.frenchpixelstudio.fr/`.
   -100%, opacity 0.65, and `--shine` from -20% to 20% on the same tween as the
   device. It is decorative, non-interactive and never loops.
 - `SvgFollowScroll` uses the POC's viewport reading line (73% of viewport height)
-  and cached SVG samples. It progresses independently from the phones. The
-  path changes columns between projects and stays in the outer margin beside
-  mobile copy. Geometry is recalculated on resize and font readiness. The
-  gallery anchor is its untransformed outer wrapper, so its movement and
-  shimmer cannot affect the thread geometry.
-- CSS defaults show the final devices and complete line. Reduced motion keeps
-  these defaults and disables the gallery shimmer; the `noscript` rule also
-  exposes the shared animated heading. Without JS, the shimmer stays hidden.
+  and cached SVG samples. Once the monitor's centre reaches 65% of viewport
+  height, the remaining stroke finishes automatically over 0.9 s, even if
+  scrolling stops. `THREAD_COMPLETION` groups this timing in `showcase-thread.ts`.
+  Scrolling back before that point smoothly returns to the scroll-driven draw.
+  It progresses independently from the phones. The path changes columns
+  between projects and stays in the outer margin beside mobile copy. Geometry
+  is recalculated on resize and font readiness. The gallery anchor is its
+  untransformed outer wrapper, so its movement and shimmer cannot affect the
+  thread geometry. Restored positions past the finish show the full line.
+- CSS defaults show the light theme, final devices and complete line. Reduced
+  motion keeps these defaults and disables the gallery shimmer; the `noscript`
+  rule also exposes the shared animated heading. Without JS, the shimmer stays
+  hidden.
 - GSAP media contexts, resize observers, animation frames and scroll listeners
   are disposed on unmount.
 
@@ -130,6 +153,20 @@ mounts and white mats remain behind the resin illustration.
 - The Miau zoom refinement also covers a short 1440 × 650 viewport. Verified
   the 1.2× opening size, continuous pullback while spreading, the held and
   reversed poses, stable copy, and the existing monitor motion.
+- The theme transition was checked at five widths, including both sides of
+  the foreground switch: body text contrast ≥ 4.5:1 and large text ≥ 3:1,
+  stable layout, reverse scrolling, header synchronisation and reduced motion.
+- The final theme timing was verified in the browser at 1568 × 1028,
+  1440 × 800, 1440 × 650 and 390 × 844: introduction fully dark before phone
+  entry, full white while only the upper part of the phones is visible, stable
+  copy and layout, readable text and reverse scrolling. Desktop and mobile
+  screenshots were inspected. A wheel gesture also produces continuous
+  intermediate colours; restored scroll positions and reduced motion pass.
+- The thread's timed finish was checked at 1568 × 900, 1440 × 650 and
+  390 × 844. With scrolling stopped and the monitor near the centre, the tail
+  continues through intermediate lengths and reaches zero dash offset.
+  Reverse scrolling, restored positions and reduced motion pass. The monitor,
+  phone poses, curve geometry and copy layout remain independent of this finish.
 - Pixel comparisons with the reflection on/off confirm changes on the art,
   gallery interface, bezel and stand, with none in the transparent margins or
   opening inside the stand. A contrasting backdrop check confirms that the

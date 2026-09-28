@@ -8,8 +8,9 @@ import { SvgFollowScroll } from "@/components/ui/svg-follow-scroll"
 import { SECTION_TITLE_EFFECT } from "@/components/sections/hero/hero.content"
 import { FRENCH_PIXEL_GALLERY, PROJECT_IMAGES, REALISATIONS, type Realisation } from "./realisations.content"
 import { ResinGallery } from "./ResinGallery"
-import { buildShowcaseThread, THREAD_FALLBACK } from "./showcase-thread"
+import { buildShowcaseThread, THREAD_COMPLETION, THREAD_FALLBACK } from "./showcase-thread"
 import { useShowcaseMotion } from "./use-showcase-motion"
+import { useShowcaseTheme } from "./use-showcase-theme"
 import styles from "./showcase.module.css"
 
 export function ShowcaseContent() {
@@ -17,11 +18,12 @@ export function ShowcaseContent() {
   const phonesRef = useRef<HTMLDivElement>(null)
   const monitorRef = useRef<HTMLDivElement>(null)
   const anchors = useMemo(() => [phonesRef, monitorRef], [])
+  useShowcaseTheme(sectionRef)
   useShowcaseMotion(sectionRef)
 
   return (
     <section ref={sectionRef} className={styles.section} id="realisations" aria-labelledby="realisations-title">
-      <SvgFollowScroll containerRef={sectionRef} anchors={anchors} buildPath={buildShowcaseThread} fallback={THREAD_FALLBACK} className={styles.thread} />
+      <SvgFollowScroll containerRef={sectionRef} anchors={anchors} buildPath={buildShowcaseThread} fallback={THREAD_FALLBACK} completion={THREAD_COMPLETION} className={styles.thread} />
       <div className={styles.content}>
         <header className={styles.sectionHeader}>
           <p className={styles.eyebrow}>Les réalisations</p>

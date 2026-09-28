@@ -3,7 +3,7 @@
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLayoutEffect, type RefObject } from "react"
-import { MIAU_REVEAL, REVEAL_COLORS } from "./realisations.content"
+import { MIAU_REVEAL } from "./realisations.content"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -32,8 +32,8 @@ export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
       const config = MIAU_REVEAL
       const width = () => visual.clientWidth
       const finalSpread = context.conditions.compact ? config.sides.compactSpread : config.sides.to.spread
-      const colorStart = { "--project-color-mid": REVEAL_COLORS.initial, "--project-color-end": REVEAL_COLORS.initial }
-      const colorEnd = { "--project-color-mid": REVEAL_COLORS.middle, "--project-color-end": REVEAL_COLORS.end }
+      const colorStart = { "--project-color-reveal": "0%" }
+      const colorEnd = { "--project-color-reveal": "100%" }
 
       const reveal = gsap.timeline({
         defaults: { duration: 1, ease: config.ease },

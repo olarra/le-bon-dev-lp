@@ -1,4 +1,12 @@
-import type { ScrollPathLayout } from "@/components/ui/svg-follow-scroll"
+import type { ScrollPathCompletion, ScrollPathLayout } from "@/components/ui/svg-follow-scroll"
+
+/** Finish the tail as the monitor approaches the viewport's reading centre. */
+export const THREAD_COMPLETION = {
+  anchorIndex: 1,
+  viewportLine: 0.65,
+  duration: 0.9,
+  ease: "power2.out",
+} satisfies ScrollPathCompletion
 
 /** The devices are the anchors; the curve changes columns in the empty gap.
  * All Y coordinates are ordered, allowing the drawing tip to track scroll. */

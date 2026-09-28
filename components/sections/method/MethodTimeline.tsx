@@ -1,6 +1,7 @@
 "use client"
 
 import { useLayoutEffect, useRef, type ReactNode } from "react"
+import { createMethodMotion, type MethodKind } from "@/components/method-icons/motion"
 import styles from "./method.module.css"
 
 /** Keep the first stage lit; fill the rail and light later stages on scroll. */
@@ -21,6 +22,27 @@ export function MethodTimeline({ children }: { children: ReactNode }) {
     let railLength = 0
     let previousProgress = ""
     const reached = steps.map((step) => step.dataset.active === "true")
+    const icons = steps.map(step => {
+      const root = step.querySelector<HTMLElement>("[data-method-icon]")
+      return root ? {
+        root,
+        motion: createMethodMotion(root, root.dataset.methodIcon as MethodKind),
+        visible: false,
+        played: false,
+      } : null
+    })
+
+    const syncIcon = (index: number) => {
+      const icon = icons[index]
+      if (!icon) return
+      if (!reached[index] || !icon.visible) {
+        icon.motion.cancel()
+        if (!reached[index]) icon.played = false
+      } else if (!icon.played) {
+        icon.played = true
+        void icon.motion.play()
+      }
+    }
 
     const update = () => {
       frame = 0
@@ -56,6 +78,7 @@ export function MethodTimeline({ children }: { children: ReactNode }) {
         if (nextReached === reached[index]) return
         step.dataset.active = String(nextReached)
         reached[index] = nextReached
+        syncIcon(index)
       })
     }
 
@@ -68,6 +91,19 @@ export function MethodTimeline({ children }: { children: ReactNode }) {
     }
 
     update()
+    // Visibility only gates playback. Activation still comes from the same
+    // marker crossing as the card highlight, not a second scroll threshold.
+    // The already-active first card plays on its first visible entrance.
+    const iconObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const index = icons.findIndex(icon => icon?.root === entry.target)
+        const icon = icons[index]
+        if (!icon) return
+        icon.visible = entry.isIntersecting && entry.intersectionRatio >= 0.6
+        syncIcon(index)
+      })
+    }, { threshold: [0, 0.6] })
+    icons.forEach(icon => { if (icon) iconObserver.observe(icon.root) })
     const observer = new ResizeObserver(measureAndUpdate)
     observer.observe(timeline)
     steps.forEach((step) => observer.observe(step))
@@ -82,6 +118,8 @@ export function MethodTimeline({ children }: { children: ReactNode }) {
 
     return () => {
       cancelAnimationFrame(frame)
+      iconObserver.disconnect()
+      icons.forEach(icon => icon?.motion.destroy())
       observer.disconnect()
       window.removeEventListener("scroll", scheduleUpdate)
       window.removeEventListener("resize", measureAndUpdate)

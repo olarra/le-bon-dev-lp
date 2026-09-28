@@ -1,15 +1,39 @@
 .showcase {
-  --project-ink: #10251c;
-  --project-muted: #546b61;
+  /* CSS defaults are the final light theme, including without JavaScript. */
+  --project-theme-progress: 100%;
+  --project-theme-tone: 100%;
+  --project-neutral: #000;
+  --project-palette-ink: #10251c;
+  --project-palette-muted: #546b61;
+  --project-palette-label: #53695e;
+  --project-palette-eyebrow: #2d5036;
+  --project-palette-mid: #29632d;
+  --project-palette-end: #56850f;
+  --project-ink: color-mix(in srgb, var(--project-palette-ink) var(--project-theme-tone), var(--project-neutral));
+  --project-muted: color-mix(in srgb, var(--project-palette-muted) var(--project-theme-tone), var(--project-neutral));
+  --project-label: color-mix(in srgb, var(--project-palette-label) var(--project-theme-tone), var(--project-neutral));
+  --project-eyebrow: color-mix(in srgb, var(--project-palette-eyebrow) var(--project-theme-tone), var(--project-neutral));
+  --project-color-mid: color-mix(in srgb, var(--project-palette-mid) var(--project-theme-tone), var(--project-neutral));
+  --project-color-end: color-mix(in srgb, var(--project-palette-end) var(--project-theme-tone), var(--project-neutral));
+  --project-border: color-mix(in srgb, #627d45, #a9c67b var(--project-theme-progress));
+  --project-divider: color-mix(in srgb, #596450, #b9c6bc var(--project-theme-progress));
   --project-lime: #b6ed36;
-  --project-color-mid: #29632d;
-  --project-color-end: #56850f;
   position: relative;
   isolation: isolate;
   width: 100%;
-  background: #fff;
+  background: color-mix(in srgb, #0c120e, #fff var(--project-theme-progress));
   color: var(--project-ink);
   font-family: "Outfit", sans-serif;
+}
+
+.showcase[data-header-theme="dark"] {
+  --project-neutral: #fff;
+  --project-palette-ink: #f4f7ed;
+  --project-palette-muted: #c2cbbd;
+  --project-palette-label: #c2cbbd;
+  --project-palette-eyebrow: #c8f53e;
+  --project-palette-mid: #d2eab0;
+  --project-palette-end: #b6ed36;
 }
 
 .showcase,
@@ -44,9 +68,9 @@
   display: inline-flex;
   margin: 0;
   padding: 8px 18px;
-  border: 1px solid #a9c67b;
+  border: 1px solid var(--project-border);
   border-radius: 999px;
-  color: #2d5036;
+  color: var(--project-eyebrow);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
@@ -65,6 +89,7 @@
 }
 
 .title {
+  --project-reveal-end: color-mix(in srgb, var(--project-ink), var(--project-color-end) var(--project-color-reveal, 100%));
   --framer-font-family: "Morna Bold", "Outfit", sans-serif;
   --framer-font-size: clamp(44px, 5.8vw, 80px);
   --framer-font-weight: 700;
@@ -85,11 +110,13 @@
 /* Framer promotes each animated letter to a compositor layer. Colour the
    glyphs themselves so they stay visible throughout the Hero's pop-in. */
 .title span[style*="inline-block"] {
-  color: color-mix(in srgb, var(--project-ink), var(--project-color-end) var(--project-letter-tone, 0%));
+  color: color-mix(in srgb, var(--project-ink), var(--project-reveal-end) var(--project-letter-tone, 0%));
 }
 
 .gradientText {
-  background-image: linear-gradient(110deg, var(--project-ink) 12%, var(--project-color-mid) 55%, var(--project-color-end) 100%);
+  background-image: linear-gradient(110deg, var(--project-ink) 12%,
+    color-mix(in srgb, var(--project-ink), var(--project-color-mid) var(--project-color-reveal, 100%)) 55%,
+    color-mix(in srgb, var(--project-ink), var(--project-color-end) var(--project-color-reveal, 100%)) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -163,12 +190,12 @@
 .meta > div + div {
   flex-shrink: 0;
   padding-left: 22px;
-  border-left: 1px solid #b9c6bc;
+  border-left: 1px solid var(--project-divider);
 }
 
 .meta dt {
   margin-bottom: 8px;
-  color: #53695e;
+  color: var(--project-label);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.17em;
@@ -238,7 +265,7 @@
 }
 
 .cta:focus-visible {
-  outline: 2px solid #245733;
+  outline: 2px solid var(--project-ink);
 }
 
 .cta:disabled {
