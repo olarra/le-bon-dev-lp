@@ -62,26 +62,78 @@
 }
 
 .stickerGloss {
-  /* A narrow specular ridge with darker shoulders reads as polished metal. */
+  /* A specular ridge with darker shoulders reads as polished metal: a bright
+     core with a soft falloff, wide enough to stay legible while it slides. */
   background-image: linear-gradient(
     var(--sticker-gloss-angle, 110deg),
-    transparent 30%, rgb(4 25 18 / 34%) 43%, transparent 47%,
-    rgb(255 255 255 / 90%) 49.3%, #fff 50%, rgb(255 255 255 / 90%) 50.7%,
-    transparent 54%, rgb(4 25 18 / 28%) 58%, transparent 68%
+    transparent 28%, rgb(4 25 18 / 34%) 42%, transparent 46.5%,
+    rgb(255 255 255 / 55%) 48.2%, rgb(255 255 255 / 92%) 49.2%, #fff 50%,
+    rgb(255 255 255 / 92%) 50.8%, rgb(255 255 255 / 55%) 51.8%, transparent 53.5%,
+    rgb(4 25 18 / 28%) 58%, transparent 70%
   );
   background-size: 220% 160%;
-  /* Keep the contact's quiet resting state for every sticker. */
-  background-position:
-    calc(var(--sticker-gloss-x, 50%) + (1 - var(--sticker-activity, 0)) * 150%)
-    var(--sticker-gloss-y, 50%);
+  /* Fade by opacity alone: dimming must never move the ridge. */
+  background-position: var(--sticker-gloss-x, 50%) var(--sticker-gloss-y, 50%);
   background-repeat: no-repeat;
-  opacity: calc(var(--sticker-activity, 0) * 0.50);
+  opacity: calc(var(--sticker-activity, 0) * 0.65);
 }
 
 .stickerGrain {
   background: url("/images/stickers/vinyl-grain.svg") center / 140px 140px;
   mix-blend-mode: multiply;
   opacity: 0.025;
+}
+
+/* Tone variants. Overlay needs mid-tones: near-black and near-white artwork
+   receive blends that still show the finish. */
+.sticker[data-tone="dark"] .stickerFoil {
+  /* The chrome conic's structure, so the reflections stay as complex, with
+     its whites and pale greys tinted pale lime and mint: added as light, the
+     highlights read in the brand's tones instead of white. The content mask
+     below keeps the artwork crisp. */
+  background: conic-gradient(
+    from var(--sticker-foil-angle, 210deg) at var(--sticker-foil-x, 50%) var(--sticker-foil-y, 42%),
+    #cfeecc 0deg, #b9e2d0 26deg, #8fc4c8 52deg, #6fa0bb 76deg,
+    #3b5be8 102deg, #2a24c8 124deg, #5b3adb 146deg, #a39ae0 168deg,
+    #c6ecc4 190deg, #d9f7b0 212deg, #c3ecd6 238deg, #9fd0cf 266deg,
+    #6f9fb0 292deg, #3e5bd8 318deg, #8fc7cc 342deg, #cfeecc 360deg
+  );
+  mix-blend-mode: screen;
+  opacity: calc(0.05 + var(--sticker-activity, 0) * 0.3);
+}
+
+/* Added light must not wash the artwork's bright content: keep the sheen to
+   the silhouette minus its luminous areas (logo, rims, pale tiles). */
+@supports (mask-composite: exclude) and (mask-mode: luminance) {
+  .sticker[data-tone="dark"] .stickerFoil {
+    -webkit-mask-image: var(--sticker-mask), var(--sticker-artwork), linear-gradient(#fff, #fff);
+    mask-image: var(--sticker-mask), var(--sticker-artwork), linear-gradient(#fff, #fff);
+    mask-mode: alpha, luminance, alpha;
+    mask-composite: intersect, exclude;
+  }
+}
+
+.sticker[data-tone="dark"] .stickerGloss {
+  /* No dark shoulders on a dark surface; a pale lime core, not white, with
+     cyan and violet dispersion fringes keeps the line holographic. */
+  background-image: linear-gradient(
+    var(--sticker-gloss-angle, 110deg),
+    transparent 41%, rgb(120 225 255 / 28%) 46.5%,
+    rgb(190 240 140 / 30%) 48.2%, rgb(190 240 140 / 50%) 49.2%, rgb(200 245 150 / 58%) 50%,
+    rgb(190 240 140 / 50%) 50.8%, rgb(190 240 140 / 30%) 51.8%,
+    rgb(200 150 255 / 28%) 53.5%, transparent 59%
+  );
+}
+
+.sticker[data-tone="light"] .stickerFoil {
+  /* The reference's soft foil, multiplied: it tints ivory like white holographic vinyl. */
+  background: conic-gradient(
+    from var(--sticker-foil-angle, 205deg) at var(--sticker-foil-x, 46%) var(--sticker-foil-y, 40%),
+    #fff 0deg, #dceeff 40deg, #a9c8ff 80deg, #7e86ff 118deg,
+    #b49cff 152deg, #f0e6ff 186deg, #fff 214deg,
+    #d6ecff 250deg, #9bc4ff 292deg, #7f8cff 326deg, #fff 360deg
+  );
+  mix-blend-mode: multiply;
 }
 
 @media (prefers-reduced-motion: reduce) {

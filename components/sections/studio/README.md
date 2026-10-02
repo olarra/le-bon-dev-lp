@@ -8,10 +8,15 @@
   jour → coucher de soleil → nuit. La photo démarre lorsqu’elle est visible,
   indépendamment du scroll du texte, et possède une commande de replay.
 - `MagicText` révèle les mots au scroll ; `StickerSurface` et `MetalSticker`
-  partagent l’effet du contact : seule l’icône visible la plus proche réagit sur
-  toute la section. La distance atténue sa réaction sans la désactiver.
-  L’inclinaison est limitée à 10°, le déplacement reste minime
-  et les reflets sont discrets. Le simple défilement ramène les icônes au repos.
+  partagent l’effet du contact : une lampe fixe au-dessus du viewport éclaire les
+  icônes pendant le défilement, le reflet balayant chaque icône visible tandis
+  qu’elle s’incline jusqu’à 5° avec la vitesse. À l’arrêt, elle revient à plat
+  aussitôt et le reflet s’estompe en 0,7 s environ sans changer de place.
+  Un curseur à moins de 3,5 fois sa taille (320 px au minimum) reprend la
+  lumière : l’inclinaison, limitée à 10°, croît avec l’écart puis revient à plat
+  vers le bord de la portée. Le déplacement reste minime. Le bouclier, presque
+  noir, déclare `tone: "dark"` : sa finition est ajoutée en lumière teintée de
+  lime et masquée hors de son contenu clair.
   Aucun composant dédié au studio. Sur mobile, un appui près d’une icône garde
   son effet jusqu’au relâchement, même si le doigt défile ensuite. Les autres
   gestes de défilement n’activent pas les icônes ; les gestes natifs restent libres.

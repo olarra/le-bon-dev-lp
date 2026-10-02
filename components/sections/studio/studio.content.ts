@@ -25,11 +25,14 @@ export const STUDIO_FACTS = [
   { value: "24 h", label: "pour vous répondre" },
 ] as const
 
-export const STUDIO_PRINCIPLES = [
+// `tone` declares near-black artwork for the metallic finish; lime and ivory need none.
+export const STUDIO_PRINCIPLES: readonly {
+  lines: readonly [string, string]; sticker: string; tone?: "dark" | "light"
+}[] = [
   { lines: ["Comprendre avant", "de construire."], sticker: "comprendre-loupe" },
-  { lines: ["Du code qui", "tient la route."], sticker: "code-bouclier" },
+  { lines: ["Du code qui", "tient la route."], sticker: "code-bouclier", tone: "dark" },
   { lines: ["Du beau qui", "sert l’usage."], sticker: "usage-curseur" },
-] as const
+]
 
 export const STUDIO_IMAGES = [
   { state: "day", file: "studio-01-jour" },

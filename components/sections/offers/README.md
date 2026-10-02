@@ -8,14 +8,21 @@ Only Applications has a scope badge beside the icon: "Web ou mobile".
 The website price reads "2 500 € HT — cinq pages, contenus fournis";
 no application price is shown.
 The supplied `offer-web.svg` and `offer-app.svg` use the shared contact
-`MetalSticker` finish at 88 px. `useStickerMotion` gently tilts each card's icon
-from cursor positions anywhere inside that card. Distance softens the response
-without switching it off. Tilt is capped at 10° and translation at 1.25 px,
-with subdued metallic reflections.
-Wheel input and ordinary scrolling ease the icons back to rest; a real pointer
-movement is needed to activate them again. Hidden sections do not measure on
-every pointer event. Their SVG shapes and colours are preserved, and reduced
-motion keeps them static.
+`MetalSticker` finish at 88 px; the near-black `offer-app.svg` declares
+`tone="dark"`, so its finish is added as lime-tinted light and masked off the
+artwork's bright tiles. `useStickerMotion` lights the icons from a fixed
+lamp above the viewport: while the page scrolls, the highlight sweeps across each
+visible icon as it travels, and the icon leans up to 5° with the scroll speed.
+When scrolling pauses the lean settles flat at once, while the shine fades over
+about 0.7 s and the highlight holds its position, so the next flick continues the
+same sweep. No cursor is needed.
+A cursor within 3.5× the icon's size (at least 320 px, up to 480 px) takes
+the light over: the tilt grows with the offset, holds at 10°, then eases back flat
+toward the edge of that reach, while the reflections fade over its outer half.
+Scrolling hands a still mouse's icon back to the scroll light until it moves
+again. Translation stays within 1.25 px. Hidden sections do not measure on every
+event. Their SVG shapes and colours are preserved, and reduced motion keeps them
+static.
 A touch or pen press on or close to an icon keeps that icon active until release,
 including during native scrolling. A gesture elsewhere does not activate icons
 as they enter the viewport.

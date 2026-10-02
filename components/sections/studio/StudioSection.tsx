@@ -40,7 +40,7 @@ export function StudioSection() {
           <ul className={styles.principles} role="list" aria-label="Les convictions du studio">
             {STUDIO_PRINCIPLES.map(principle => (
               <li className={styles.principle} key={principle.lines[0]}>
-                <MetalSticker src={`/images/studio/stickers/${principle.sticker}.svg`} className={styles.sticker} />
+                <MetalSticker src={`/images/studio/stickers/${principle.sticker}.svg`} className={styles.sticker} tone={principle.tone} />
                 <h3>{principle.lines[0]}<br />{" "}{principle.lines[1]}</h3>
               </li>
             ))}

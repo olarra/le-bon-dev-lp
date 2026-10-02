@@ -12,8 +12,8 @@ export function ContactSection() {
       <div className={styles.inner}>
         <StickerSurface className={styles.callout}>
           <div className={styles.badges} aria-hidden="true">
-            <MetalSticker src="/images/contact/stickers/le-bon-dev-disc-a.svg" className={styles.studioBadge} />
-            <MetalSticker src="/images/contact/stickers/message-disc.svg" className={styles.callBadge} />
+            <MetalSticker src="/images/contact/stickers/le-bon-dev-disc-a.svg" className={styles.studioBadge} tone="dark" />
+            <MetalSticker src="/images/contact/stickers/message-disc.svg" className={styles.callBadge} tone="light" />
           </div>
 
           <h2 className={styles.title} id="estimation-title">Parlons de votre application.</h2>

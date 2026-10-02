@@ -12,18 +12,40 @@ const MATERIAL = {
   tilt: 10,
   travelX: 1.25,
   travelY: 1,
-  smoothingMs: 110,
-  falloffDistance: 420,
+  reachMin: 320,
+  reachScale: 3.5,
+  reachMax: 480,
+  tiltRise: 0.5,
+  tiltFade: 0.7,
+  shineFade: 0.6,
+} as const
+
+// A fixed lamp above the viewport, slightly left. Scrolling carries each visible
+// sticker past it: the highlight sweeps across the finish and the sticker leans
+// with the motion, in proportion to speed, then settles flat. The shine itself
+// decays slowly, so a natural pause between two flicks keeps it softly lit.
+const SCROLL = {
+  lampX: -0.15,
+  sweep: 1.3, // light travel across the viewport; the ridge crosses the sticker in about half of it
+  velocity: 0.5, // px/ms for full shine: an ordinary wheel scroll reaches it
+  lean: 0.5, // fraction of MATERIAL.tilt
+  idleMs: 100,
+  glowDecayMs: 700,
 } as const
 
 const TOUCH_FEEDBACK_MS = 180
 const TOUCH_MARGIN = 20
 const VIEWPORT_MARGIN = 80
 
-const RESPONSES = {
-  follow: { direction: 1, smoothingMs: MATERIAL.smoothingMs },
-  counter: { direction: -0.65, smoothingMs: 140 },
-} as const
+// Quick to follow, slower to let go.
+const FOLLOW_MS = 100
+const SETTLE_MS = 260
+
+const clamp = (value: number, min = -1, max = 1) => Math.min(max, Math.max(min, value))
+const smoothstep = (edge0: number, edge1: number, x: number) => {
+  const t = clamp((x - edge0) / (edge1 - edge0), 0, 1)
+  return t * t * (3 - 2 * t)
+}
 
 const MATERIAL_PROPERTIES = [
   "--sticker-foil-angle", "--sticker-foil-x", "--sticker-foil-y",
@@ -40,7 +62,7 @@ type StickerMotionOptions = {
 type PointerPosition = { x: number; y: number }
 type StickerPress = { kind: "touch" | "pen"; id: number; startedAt: number; element: HTMLElement }
 
-/** Follow the cursor across each surface with its nearest sticker; scrolling stays quiet. */
+/** Light each surface's stickers as scrolling carries them past a fixed lamp; a nearby cursor takes the light over. */
 export function useStickerMotion(
   ref: RefObject<HTMLElement | null>,
   { enabled = true }: StickerMotionOptions = {},
@@ -51,11 +73,13 @@ export function useStickerMotion(
     if (!section) return
 
     // Measure the stationary wrapper, never its transformed artwork.
+    // x/y tilt the sticker; lx/ly place the light on its finish.
     const stickers = Array.from(section.querySelectorAll<HTMLElement>("[data-metal-sticker]"), element => ({
-      element, x: 0, y: 0, activity: 0, targetX: 0, targetY: 0, targetActivity: 0,
-      response: RESPONSES[element.dataset.stickerResponse === "counter" ? "counter" : "follow"],
+      element, x: 0, y: 0, lx: 0, ly: 0, activity: 0,
+      targetX: 0, targetY: 0, targetLx: 0, targetLy: 0, targetActivity: 0,
     }))
     if (!stickers.length) return
+    type Sticker = typeof stickers[number]
 
     const interactive = window.matchMedia("(prefers-reduced-motion: no-preference)")
     let frame = 0
@@ -65,85 +89,123 @@ export function useStickerMotion(
     let lastMousePosition: PointerPosition | null = null
     let press: StickerPress | null = null
     let releaseTimer = 0
+    let scrollY = window.scrollY
+    let scrollVelocity = 0
+    let lastScrollAt = 0
+    let glow = 0
 
     const resetTargets = () => {
-      stickers.forEach(sticker => { sticker.targetX = sticker.targetY = sticker.targetActivity = 0 })
+      stickers.forEach(sticker => {
+        sticker.targetX = sticker.targetY = sticker.targetLx = sticker.targetLy = sticker.targetActivity = 0
+      })
     }
+    const measure = () => stickers.map(sticker => sticker.element.getBoundingClientRect())
+    const isVisible = (rect: DOMRect) => rect.width > 0 && rect.height > 0 && rect.bottom > 0 &&
+      rect.top < window.innerHeight && rect.right > 0 && rect.left < document.documentElement.clientWidth
 
-    const findTarget = (position: PointerPosition, startingPress = false) => {
-      const width = document.documentElement.clientWidth
-      const height = window.innerHeight
-      let nearest: {
-        sticker: typeof stickers[number]
-        dx: number; dy: number; distance: number; centerSoftness: number
-      } | undefined
+    const findTarget = (position: PointerPosition, rects: DOMRect[], startingPress = false) => {
+      let nearest: { sticker: Sticker; dx: number; dy: number; distance: number; proximity: number } | undefined
 
-      for (const sticker of stickers) {
-        if (press && sticker.element !== press.element) continue
-        const rect = sticker.element.getBoundingClientRect()
-        if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0 ||
-            rect.top >= height || rect.right <= 0 || rect.left >= width) continue
+      for (let index = 0; index < stickers.length; index++) {
+        const sticker = stickers[index]
+        const rect = rects[index]
+        if ((press && sticker.element !== press.element) || !isVisible(rect)) continue
+        const size = Math.max(rect.width, rect.height)
         const dx = position.x - (rect.left + rect.width / 2)
         const dy = position.y - (rect.top + rect.height / 2)
         const distance = Math.hypot(dx, dy)
-        const radius = startingPress
-          ? Math.max(44, Math.max(rect.width, rect.height) / 2 + TOUCH_MARGIN)
-          : Infinity
-        if (distance >= radius || (nearest && distance >= nearest.distance)) continue
-        nearest = { sticker, dx, dy, distance, centerSoftness: Math.max(32, Math.max(rect.width, rect.height) * 0.6) }
+        // Each sticker's reach scales with its size; a press must start on or beside it.
+        const reach = startingPress
+          ? Math.max(44, size / 2 + TOUCH_MARGIN)
+          : clamp(size * MATERIAL.reachScale, MATERIAL.reachMin, MATERIAL.reachMax)
+        const proximity = distance / reach
+        // A held press keeps its icon while the page scrolls it out of reach.
+        if ((proximity >= 1 && !press) || (nearest && proximity >= nearest.proximity)) continue
+        nearest = { sticker, dx, dy, distance, proximity }
       }
       return nearest
     }
 
-    const updateTargets = () => {
+    /** Returns whether the scroll light is still live, so drawing continues until it has faded. */
+    const updateTargets = (now: number, elapsed: number) => {
       resetTargets()
-      if (!pointer || !inView) return
-      const target = findTarget(pointer)
-      if (!target) return
+      if (!inView) return false
+      const rects = measure()
+      const height = window.innerHeight
 
-      const { sticker, dx, dy, distance, centerSoftness } = target
-      // Distant cursor positions still produce a gentle response anywhere
-      // inside this section or card, without a proximity cutoff.
-      const influence = press ? 1 : 0.55 + 0.45 / (1 + (distance / MATERIAL.falloffDistance) ** 2)
-      const directionLength = Math.hypot(distance, centerSoftness)
-      sticker.targetX = dx / directionLength * influence
-      sticker.targetY = dy / directionLength * influence
-      sticker.targetActivity = influence
+      // The light's position depends only on each sticker's place in the viewport:
+      // the highlight travels across it as it moves, reverses with the scroll,
+      // and holds where it is when scrolling pauses, instead of springing back.
+      const scrolling = lastScrollAt !== 0 && now - lastScrollAt < SCROLL.idleMs
+      const energy = scrolling ? Math.min(1, Math.sqrt(Math.abs(scrollVelocity) / SCROLL.velocity)) : 0
+      glow = Math.max(energy, glow * Math.exp(-elapsed / SCROLL.glowDecayMs))
+      if (glow < 0.002) glow = 0
+      const lean = -Math.sign(scrollVelocity) * SCROLL.lean * energy
+      for (let index = 0; index < stickers.length; index++) {
+        const sticker = stickers[index]
+        const rect = rects[index]
+        if (!isVisible(rect)) continue
+        const ly = clamp((rect.top + rect.height / 2) / height * 2 - 1)
+        sticker.targetLx = clamp(SCROLL.lampX + ly * SCROLL.sweep)
+        sticker.targetLy = ly
+        sticker.targetY = lean
+        sticker.targetActivity = glow
+      }
+
+      // A nearby cursor takes its icon's light over.
+      const claimed = pointer ? findTarget(pointer, rects) : undefined
+      if (claimed) {
+        const { sticker, dx, dy, distance, proximity } = claimed
+        // The tilt grows with the offset, holds, then eases back flat toward the
+        // edge of the reach; the shine fades over its outer half. A press stays lit.
+        const rise = Math.sin(Math.min(1, proximity / MATERIAL.tiltRise) * Math.PI / 2)
+        const amplitude = press ? rise : rise * (1 - smoothstep(MATERIAL.tiltFade, 1, proximity))
+        sticker.targetX = sticker.targetLx = (distance ? dx / distance : 0) * amplitude
+        sticker.targetY = sticker.targetLy = (distance ? dy / distance : 0) * amplitude
+        sticker.targetActivity = Math.max(glow, press ? 1 : 1 - smoothstep(MATERIAL.shineFade, 1, proximity))
+      }
+      return scrolling || glow > 0
     }
 
     const draw = (now: number) => {
-      // Read geometry before writing material variables; held touches keep
-      // their own icon while the native page moves underneath them.
-      updateTargets()
-
       const elapsed = lastFrame ? Math.min(now - lastFrame, 64) : 1000 / 60
       lastFrame = now
+      // Read geometry before writing material variables; held touches keep
+      // their own icon while the native page moves underneath them.
+      const scrolling = updateTargets(now, elapsed)
+
       let settled = true
       for (const sticker of stickers) {
-        const targetX = sticker.targetX * sticker.response.direction
-        const targetY = sticker.targetY * sticker.response.direction
-        if (sticker.x === targetX && sticker.y === targetY && sticker.activity === sticker.targetActivity) continue
+        const { targetX, targetY, targetLx, targetLy, targetActivity } = sticker
+        if (sticker.x === targetX && sticker.y === targetY && sticker.lx === targetLx &&
+            sticker.ly === targetLy && sticker.activity === targetActivity) continue
 
-        const blend = 1 - Math.exp(-elapsed / sticker.response.smoothingMs)
+        const settling = targetActivity < sticker.activity
+        const blend = 1 - Math.exp(-elapsed / (settling ? SETTLE_MS : FOLLOW_MS))
         sticker.x += (targetX - sticker.x) * blend
         sticker.y += (targetY - sticker.y) * blend
-        sticker.activity += (sticker.targetActivity - sticker.activity) * blend
+        sticker.lx += (targetLx - sticker.lx) * blend
+        sticker.ly += (targetLy - sticker.ly) * blend
+        sticker.activity += (targetActivity - sticker.activity) * blend
         const atRest = Math.abs(targetX - sticker.x) + Math.abs(targetY - sticker.y) +
-          Math.abs(sticker.targetActivity - sticker.activity) < 0.001
+          Math.abs(targetLx - sticker.lx) + Math.abs(targetLy - sticker.ly) +
+          Math.abs(targetActivity - sticker.activity) < 0.001
         if (atRest) {
           sticker.x = targetX
           sticker.y = targetY
-          sticker.activity = sticker.targetActivity
+          sticker.lx = targetLx
+          sticker.ly = targetLy
+          sticker.activity = targetActivity
         }
         else settled = false
 
-        const { x, y, element } = sticker
-        element.style.setProperty("--sticker-foil-angle", `${MATERIAL.angle + x * MATERIAL.angleRangeX + y * MATERIAL.angleRangeY}deg`)
-        element.style.setProperty("--sticker-foil-x", `${MATERIAL.originX + x * MATERIAL.originRange}%`)
-        element.style.setProperty("--sticker-foil-y", `${MATERIAL.originY + y * MATERIAL.originRange}%`)
-        element.style.setProperty("--sticker-gloss-x", `${50 + x * 60}%`)
-        element.style.setProperty("--sticker-gloss-y", `${50 + y * 45}%`)
-        element.style.setProperty("--sticker-gloss-angle", `${110 + x * 12 + y * 8}deg`)
+        const { x, y, lx, ly, element } = sticker
+        element.style.setProperty("--sticker-foil-angle", `${MATERIAL.angle + lx * MATERIAL.angleRangeX + ly * MATERIAL.angleRangeY}deg`)
+        element.style.setProperty("--sticker-foil-x", `${MATERIAL.originX + lx * MATERIAL.originRange}%`)
+        element.style.setProperty("--sticker-foil-y", `${MATERIAL.originY + ly * MATERIAL.originRange}%`)
+        element.style.setProperty("--sticker-gloss-x", `${50 + lx * 60}%`)
+        element.style.setProperty("--sticker-gloss-y", `${50 + ly * 45}%`)
+        element.style.setProperty("--sticker-gloss-angle", `${110 + lx * 12 + ly * 8}deg`)
         element.style.setProperty("--sticker-rx", `${-y * MATERIAL.tilt}deg`)
         element.style.setProperty("--sticker-ry", `${x * MATERIAL.tilt}deg`)
         element.style.setProperty("--sticker-x", `${x * MATERIAL.travelX}px`)
@@ -151,8 +213,8 @@ export function useStickerMotion(
         element.style.setProperty("--sticker-activity", String(sticker.activity))
       }
 
-      frame = settled ? 0 : requestAnimationFrame(draw)
-      if (settled) lastFrame = 0
+      frame = settled && !scrolling ? 0 : requestAnimationFrame(draw)
+      if (!frame) lastFrame = 0
     }
 
     const schedule = () => {
@@ -169,7 +231,7 @@ export function useStickerMotion(
     const startPress = (kind: StickerPress["kind"], id: number, x: number, y: number) => {
       if (!inView) return
       const position = { x, y }
-      const target = findTarget(position, true)
+      const target = findTarget(position, measure(), true)
       if (!target) return
       window.clearTimeout(releaseTimer)
       releaseTimer = 0
@@ -201,12 +263,16 @@ export function useStickerMotion(
       pointer = { x: event.clientX, y: event.clientY }
       layoutChanged()
     }
-    const wheel = () => {
-      if (!press && pointer) rest()
-    }
     const scroll = () => {
-      if (press) layoutChanged()
-      else if (pointer) rest()
+      const now = performance.now()
+      const y = window.scrollY
+      if (lastScrollAt) scrollVelocity = (y - scrollY) / Math.max(1, now - lastScrollAt)
+      scrollY = y
+      lastScrollAt = now
+      // The mouse sits still while the page moves beneath it: its icon passes to
+      // the scroll light until a real pointer movement returns.
+      if (!press) pointer = null
+      if (inView) schedule()
     }
     const release = () => {
       if (!press) return
@@ -257,7 +323,6 @@ export function useStickerMotion(
       section.removeEventListener("pointerdown", down)
       section.removeEventListener("pointermove", move)
       section.removeEventListener("pointerleave", leave)
-      window.removeEventListener("wheel", wheel)
       section.removeEventListener("touchstart", touchStart)
       window.removeEventListener("pointerup", up)
       window.removeEventListener("pointercancel", cancel)
@@ -276,8 +341,13 @@ export function useStickerMotion(
       press = null
       pointer = null
       lastMousePosition = null
+      scrollY = window.scrollY
+      scrollVelocity = 0
+      lastScrollAt = 0
+      glow = 0
       stickers.forEach(sticker => {
-        sticker.x = sticker.y = sticker.activity = sticker.targetX = sticker.targetY = sticker.targetActivity = 0
+        sticker.x = sticker.y = sticker.lx = sticker.ly = sticker.activity = 0
+        sticker.targetX = sticker.targetY = sticker.targetLx = sticker.targetLy = sticker.targetActivity = 0
         MATERIAL_PROPERTIES.forEach(property => sticker.element.style.removeProperty(property))
       })
     }
@@ -290,7 +360,6 @@ export function useStickerMotion(
       section.addEventListener("pointerdown", down, { passive: true })
       section.addEventListener("pointermove", move, { passive: true })
       section.addEventListener("pointerleave", leave)
-      window.addEventListener("wheel", wheel, { passive: true })
       section.addEventListener("touchstart", touchStart, { passive: true })
       window.addEventListener("pointerup", up, { passive: true })
       window.addEventListener("pointercancel", cancel, { passive: true })
