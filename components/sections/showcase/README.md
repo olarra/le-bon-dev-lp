@@ -12,7 +12,11 @@ Sur mobile, chaque projet présente son texte et son bouton avant son illustrati
 - `AnimatedHeading` partage les réglages de `lib/motion.ts` ; `ResinCta` est
   commun aux projets et au studio.
 - `OfferSticker` partage les SVG métalliques des offres, à 40 px dans les
-  métadonnées. `useStickerMotion` anime le sticker le plus proche du curseur.
+  métadonnées. `useStickerMotion` fait réagir l’icône visible la plus proche sur
+  toute la section, avec une inclinaison maximale de 10° et des reflets discrets.
+  La distance atténue progressivement la réaction sans la désactiver.
+  Le simple défilement ramène les icônes au repos. Un appui près d’une icône
+  conserve son effet jusqu’au relâchement du doigt.
   `FEATURE_FLAG_RESINE_ICON_ENABLED` permet de rétablir les anciennes icônes.
 - `ResinGallery` superpose galerie, moniteur en résine et reflet. Les réglages
   de mouvement et d’alignement restent dans le composant et son CSS Module.

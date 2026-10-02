@@ -1,5 +1,6 @@
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
+import { CONTACT } from "@/lib/contact"
 import { ESTIMATE_FACTORS, ESTIMATE_HREF } from "./contact.content"
 import styles from "./contact.module.css"
 
@@ -27,6 +28,15 @@ export function ContactSection() {
                 <span>Estimer mon application</span>
                 <span className={styles.arrowCircle}><Arrow /></span>
               </span>
+            </a>
+            <a
+              className={styles.contactLink}
+              href={CONTACT.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Prendre contact sur WhatsApp (nouvel onglet)"
+            >
+              Prendre contact sur WhatsApp
             </a>
           </div>
         </StickerSurface>

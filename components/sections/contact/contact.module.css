@@ -197,6 +197,20 @@
   margin-top: 32px;
 }
 
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 4px 8px;
+  color: #2c452c;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 /* Price Button's two-pixel gradient rim and softly lit black inset. */
 .estimateLink {
   width: 100%;
@@ -241,7 +255,8 @@
   transition: transform 300ms ease;
 }
 
-.estimateLink:focus-visible {
+.estimateLink:focus-visible,
+.contactLink:focus-visible {
   outline: 2px solid #375d31;
   outline-offset: 5px;
 }
@@ -256,6 +271,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .contactLink:hover {
+    color: #17291e;
+  }
+
   .estimateLink:hover .estimateLinkInner {
     background: #233a25;
     box-shadow: inset 0 0 20px rgb(245 249 234 / 54%);

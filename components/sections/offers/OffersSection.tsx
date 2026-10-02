@@ -53,7 +53,7 @@ export function OffersSection() {
 function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
   const cardRef = useRef<HTMLElement>(null)
   const iconRef = useRef<OfferIconHandle>(null)
-  useStickerMotion(cardRef, { enabled: !FEATURE_FLAG_RESINE_ICON_ENABLED, tracking: "surface" })
+  useStickerMotion(cardRef, { enabled: !FEATURE_FLAG_RESINE_ICON_ENABLED })
   const touch = useRef<{
     id: number; x: number; y: number; time: number; scrollY: number
   } | null>(null)

@@ -1,13 +1,13 @@
 "use client"
 
 import { useRef, type ComponentPropsWithoutRef } from "react"
-import { useStickerMotion, type StickerTracking } from "@/hooks/use-sticker-motion"
+import { useStickerMotion } from "@/hooks/use-sticker-motion"
 
-type Props = ComponentPropsWithoutRef<"section"> & { tracking?: StickerTracking }
+type Props = ComponentPropsWithoutRef<"section">
 
-export function StickerSurface({ children, tracking, ...props }: Props) {
+export function StickerSurface({ children, ...props }: Props) {
   const ref = useRef<HTMLElement>(null)
-  useStickerMotion(ref, { tracking })
+  useStickerMotion(ref)
 
   return (
     <section {...props} ref={ref}>

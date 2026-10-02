@@ -9,21 +9,20 @@ const MATERIAL = {
   originX: 50,
   originY: 42,
   originRange: 30,
-  pointerGain: 1.25,
-  tilt: 12,
-  travelX: 3,
-  travelY: 2,
-  smoothingMs: 70,
-  reactionRadius: 380,
-  fadeStart: 260,
-  directionRadius: 160,
+  tilt: 10,
+  travelX: 1.25,
+  travelY: 1,
+  smoothingMs: 110,
+  falloffDistance: 420,
 } as const
 
 const TOUCH_FEEDBACK_MS = 180
+const TOUCH_MARGIN = 20
+const VIEWPORT_MARGIN = 80
 
 const RESPONSES = {
   follow: { direction: 1, smoothingMs: MATERIAL.smoothingMs },
-  counter: { direction: -0.65, smoothingMs: 115 },
+  counter: { direction: -0.65, smoothingMs: 140 },
 } as const
 
 const MATERIAL_PROPERTIES = [
@@ -34,19 +33,17 @@ const MATERIAL_PROPERTIES = [
   "--sticker-activity",
 ] as const
 
-export type StickerTracking = "proximity" | "surface" | "nearest-surface"
-
 type StickerMotionOptions = {
   enabled?: boolean
-  tracking?: StickerTracking
 }
 
-type StickerPress = { kind: "touch" | "pen"; id: number; startedAt: number }
+type PointerPosition = { x: number; y: number }
+type StickerPress = { kind: "touch" | "pen"; id: number; startedAt: number; element: HTMLElement }
 
-/** Track the nearest sticker, or map a whole card to its own artwork. */
+/** Follow the cursor across each surface with its nearest sticker; scrolling stays quiet. */
 export function useStickerMotion(
   ref: RefObject<HTMLElement | null>,
-  { enabled = true, tracking = "proximity" }: StickerMotionOptions = {},
+  { enabled = true }: StickerMotionOptions = {},
 ) {
   useEffect(() => {
     if (!enabled) return
@@ -63,8 +60,9 @@ export function useStickerMotion(
     const interactive = window.matchMedia("(prefers-reduced-motion: no-preference)")
     let frame = 0
     let lastFrame = 0
-    let pointer: { x: number; y: number } | null = null
-    let pointerChanged = false
+    let inView = false
+    let pointer: PointerPosition | null = null
+    let lastMousePosition: PointerPosition | null = null
     let press: StickerPress | null = null
     let releaseTimer = 0
 
@@ -72,84 +70,51 @@ export function useStickerMotion(
       stickers.forEach(sticker => { sticker.targetX = sticker.targetY = sticker.targetActivity = 0 })
     }
 
-    const updateTargets = () => {
-      if (!pointer) {
-        resetTargets()
-        return
-      }
-
-      const sectionRect = section.getBoundingClientRect()
-      if (pointer.x < sectionRect.left || pointer.x > sectionRect.right ||
-          pointer.y < sectionRect.top || pointer.y > sectionRect.bottom) {
-        // Keep the last pose if scrolling carries the card away from the finger.
-        if (press?.kind !== "touch") resetTargets()
-        return
-      }
-
-      if (tracking === "surface") {
-        // Use the full card's dimensions so movement stays responsive at its bottom.
-        const x = (pointer.x - sectionRect.left) / Math.max(1, sectionRect.width) * 2 - 1
-        const y = (pointer.y - sectionRect.top) / Math.max(1, sectionRect.height) * 2 - 1
-        stickers.forEach(sticker => {
-          sticker.targetX = x
-          sticker.targetY = y
-          sticker.targetActivity = 1
-        })
-        return
-      }
-
-      let nearest: typeof stickers[number] | undefined
-      let nearestRect: DOMRect | undefined
-      let distance: number = tracking === "nearest-surface" ? Infinity : MATERIAL.reactionRadius
-      let localX = 0
-      let localY = 0
+    const findTarget = (position: PointerPosition, startingPress = false) => {
+      const width = document.documentElement.clientWidth
+      const height = window.innerHeight
+      let nearest: {
+        sticker: typeof stickers[number]
+        dx: number; dy: number; distance: number; centerSoftness: number
+      } | undefined
 
       for (const sticker of stickers) {
+        if (press && sticker.element !== press.element) continue
         const rect = sticker.element.getBoundingClientRect()
-        const dx = pointer.x - (rect.left + rect.width / 2)
-        const dy = pointer.y - (rect.top + rect.height / 2)
-        const candidateDistance = Math.hypot(dx, dy)
-        if (candidateDistance < distance) {
-          nearest = sticker
-          nearestRect = rect
-          distance = candidateDistance
-          localX = dx
-          localY = dy
-        }
+        if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0 ||
+            rect.top >= height || rect.right <= 0 || rect.left >= width) continue
+        const dx = position.x - (rect.left + rect.width / 2)
+        const dy = position.y - (rect.top + rect.height / 2)
+        const distance = Math.hypot(dx, dy)
+        const radius = startingPress
+          ? Math.max(44, Math.max(rect.width, rect.height) / 2 + TOUCH_MARGIN)
+          : Infinity
+        if (distance >= radius || (nearest && distance >= nearest.distance)) continue
+        nearest = { sticker, dx, dy, distance, centerSoftness: Math.max(32, Math.max(rect.width, rect.height) * 0.6) }
       }
-      if (!nearest || !nearestRect) {
-        if (press?.kind !== "touch") resetTargets()
-        return
-      }
+      return nearest
+    }
+
+    const updateTargets = () => {
       resetTargets()
+      if (!pointer || !inView) return
+      const target = findTarget(pointer)
+      if (!target) return
 
-      if (tracking === "nearest-surface") {
-        // Each icon looks toward the cursor across the full section, without
-        // reaching its maximum tilt before the pointer reaches an edge.
-        const centerX = nearestRect.left + nearestRect.width / 2
-        const centerY = nearestRect.top + nearestRect.height / 2
-        const rangeX = localX < 0 ? centerX - sectionRect.left : sectionRect.right - centerX
-        const rangeY = localY < 0 ? centerY - sectionRect.top : sectionRect.bottom - centerY
-        nearest.targetX = Math.max(-1, Math.min(1, localX / Math.max(1, rangeX)))
-        nearest.targetY = Math.max(-1, Math.min(1, localY / Math.max(1, rangeY)))
-        nearest.targetActivity = 1
-        return
-      }
-
-      // Full response close by, then a soft falloff at the wide area's edge.
-      const fade = Math.max(0, (distance - MATERIAL.fadeStart) / (MATERIAL.reactionRadius - MATERIAL.fadeStart))
-      const influence = press?.kind === "touch" ? 1 : 1 - fade * fade * (3 - 2 * fade)
-      nearest.targetX = Math.max(-1, Math.min(1, localX / MATERIAL.directionRadius * MATERIAL.pointerGain)) * influence
-      nearest.targetY = Math.max(-1, Math.min(1, localY / MATERIAL.directionRadius * MATERIAL.pointerGain)) * influence
-      nearest.targetActivity = influence
+      const { sticker, dx, dy, distance, centerSoftness } = target
+      // Distant cursor positions still produce a gentle response anywhere
+      // inside this section or card, without a proximity cutoff.
+      const influence = press ? 1 : 0.55 + 0.45 / (1 + (distance / MATERIAL.falloffDistance) ** 2)
+      const directionLength = Math.hypot(distance, centerSoftness)
+      sticker.targetX = dx / directionLength * influence
+      sticker.targetY = dy / directionLength * influence
+      sticker.targetActivity = influence
     }
 
     const draw = (now: number) => {
-      // Batch geometry reads before writing any sticker's material variables.
-      if (pointerChanged) {
-        updateTargets()
-        pointerChanged = false
-      }
+      // Read geometry before writing material variables; held touches keep
+      // their own icon while the native page moves underneath them.
+      updateTargets()
 
       const elapsed = lastFrame ? Math.min(now - lastFrame, 64) : 1000 / 60
       lastFrame = now
@@ -191,9 +156,9 @@ export function useStickerMotion(
     }
 
     const schedule = () => {
-      pointerChanged = true
       if (!frame) frame = requestAnimationFrame(draw)
     }
+    const layoutChanged = () => { if (pointer && inView) schedule() }
     const rest = () => {
       window.clearTimeout(releaseTimer)
       releaseTimer = 0
@@ -202,14 +167,22 @@ export function useStickerMotion(
       schedule()
     }
     const startPress = (kind: StickerPress["kind"], id: number, x: number, y: number) => {
+      if (!inView) return
+      const position = { x, y }
+      const target = findTarget(position, true)
+      if (!target) return
       window.clearTimeout(releaseTimer)
       releaseTimer = 0
       resetTargets()
-      press = { kind, id, startedAt: performance.now() }
-      pointer = { x, y }
+      press = { kind, id, startedAt: performance.now(), element: target.sticker.element }
+      pointer = position
       schedule()
     }
     const down = (event: PointerEvent) => {
+      if (event.pointerType === "mouse") {
+        move(event)
+        return
+      }
       if (event.pointerType !== "pen" || !event.isPrimary || press) return
       startPress("pen", event.pointerId, event.clientX, event.clientY)
     }
@@ -217,11 +190,23 @@ export function useStickerMotion(
       if (event.pointerType === "touch") return
       if (event.pointerType === "mouse") {
         if (press) return
+        // Layout changes can produce pointer events without a real movement.
+        // They must not restart the effect beneath a stationary mouse after scroll.
+        if (event.type === "pointermove" && lastMousePosition?.x === event.clientX &&
+            lastMousePosition.y === event.clientY) return
+        lastMousePosition = { x: event.clientX, y: event.clientY }
         window.clearTimeout(releaseTimer)
         releaseTimer = 0
       } else if (press?.kind !== "pen" || event.pointerId !== press.id) return
       pointer = { x: event.clientX, y: event.clientY }
-      schedule()
+      layoutChanged()
+    }
+    const wheel = () => {
+      if (!press && pointer) rest()
+    }
+    const scroll = () => {
+      if (press) layoutChanged()
+      else if (pointer) rest()
     }
     const release = () => {
       if (!press) return
@@ -249,7 +234,7 @@ export function useStickerMotion(
       const touch = Array.from(event.touches).find(touch => touch.identifier === press?.id)
       if (!touch) return
       pointer = { x: touch.clientX, y: touch.clientY }
-      schedule()
+      layoutChanged()
     }
     const touchEnd = (event: TouchEvent) => {
       if (press?.kind !== "touch" || Array.from(event.touches).some(touch => touch.identifier === press?.id)) return
@@ -259,30 +244,38 @@ export function useStickerMotion(
     const leave = (event: PointerEvent) => {
       if (event.pointerType === "mouse" && !press) rest()
     }
-    const layoutChanged = () => { if (pointer) schedule() }
     const visibilityChanged = () => { if (document.hidden) rest() }
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting
+      schedule()
+    }, { rootMargin: `${VIEWPORT_MARGIN}px` })
+    const resizeObserver = new ResizeObserver(layoutChanged)
 
     const reset = () => {
+      visibilityObserver.disconnect()
+      resizeObserver.disconnect()
       section.removeEventListener("pointerdown", down)
       section.removeEventListener("pointermove", move)
       section.removeEventListener("pointerleave", leave)
+      window.removeEventListener("wheel", wheel)
       section.removeEventListener("touchstart", touchStart)
       window.removeEventListener("pointerup", up)
       window.removeEventListener("pointercancel", cancel)
       window.removeEventListener("touchmove", touchMove)
       window.removeEventListener("touchend", touchEnd)
       window.removeEventListener("touchcancel", touchEnd)
-      window.removeEventListener("scroll", layoutChanged)
+      window.removeEventListener("scroll", scroll, true)
       window.removeEventListener("resize", layoutChanged)
       window.removeEventListener("blur", rest)
       document.removeEventListener("visibilitychange", visibilityChanged)
       cancelAnimationFrame(frame)
       window.clearTimeout(releaseTimer)
       frame = lastFrame = 0
+      inView = false
       releaseTimer = 0
       press = null
       pointer = null
-      pointerChanged = false
+      lastMousePosition = null
       stickers.forEach(sticker => {
         sticker.x = sticker.y = sticker.activity = sticker.targetX = sticker.targetY = sticker.targetActivity = 0
         MATERIAL_PROPERTIES.forEach(property => sticker.element.style.removeProperty(property))
@@ -291,17 +284,20 @@ export function useStickerMotion(
     const syncInputMode = () => {
       reset()
       if (!interactive.matches) return
+      visibilityObserver.observe(section)
+      resizeObserver.observe(section)
       // Passive events keep scrolling, pinch zoom and link activation native.
       section.addEventListener("pointerdown", down, { passive: true })
       section.addEventListener("pointermove", move, { passive: true })
       section.addEventListener("pointerleave", leave)
+      window.addEventListener("wheel", wheel, { passive: true })
       section.addEventListener("touchstart", touchStart, { passive: true })
       window.addEventListener("pointerup", up, { passive: true })
       window.addEventListener("pointercancel", cancel, { passive: true })
       window.addEventListener("touchmove", touchMove, { passive: true })
       window.addEventListener("touchend", touchEnd, { passive: true })
       window.addEventListener("touchcancel", touchEnd, { passive: true })
-      window.addEventListener("scroll", layoutChanged, { passive: true })
+      window.addEventListener("scroll", scroll, { passive: true, capture: true })
       window.addEventListener("resize", layoutChanged, { passive: true })
       window.addEventListener("blur", rest)
       document.addEventListener("visibilitychange", visibilityChanged)
@@ -313,5 +309,5 @@ export function useStickerMotion(
       interactive.removeEventListener("change", syncInputMode)
       reset()
     }
-  }, [ref, enabled, tracking])
+  }, [ref, enabled])
 }

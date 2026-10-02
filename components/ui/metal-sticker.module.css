@@ -57,7 +57,7 @@
     #e6e9ee 190deg, #fff 212deg, #edf2f7 238deg, #c3d2e0 266deg,
     #7e93ac 292deg, #3e5bd8 318deg, #9fb6d0 342deg, #f4f7fa 360deg
   );
-  opacity: calc(0.08 + var(--sticker-activity, 0) * 0.60);
+  opacity: calc(0.08 + var(--sticker-activity, 0) * 0.35);
   mix-blend-mode: overlay;
 }
 
@@ -75,7 +75,7 @@
     calc(var(--sticker-gloss-x, 50%) + (1 - var(--sticker-activity, 0)) * 150%)
     var(--sticker-gloss-y, 50%);
   background-repeat: no-repeat;
-  opacity: calc(var(--sticker-activity, 0) * 0.85);
+  opacity: calc(var(--sticker-activity, 0) * 0.50);
 }
 
 .stickerGrain {
