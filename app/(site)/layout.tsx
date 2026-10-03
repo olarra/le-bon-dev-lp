@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { RevealController } from "@/components/atoms/RevealController"
 import { SiteHeader } from "@/components/layout/header/SiteHeader"
 import { PageFrame } from "@/components/layout/PageFrame"
 import { SiteFooter } from "@/components/layout/SiteFooter"
@@ -11,6 +12,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <a className="skip-link" href="#main-content">Aller au contenu</a>
       <SiteHeader />
       <PageFrame footer={<SiteFooter />}>{children}</PageFrame>
+      <RevealController />
     </>
   )
 }

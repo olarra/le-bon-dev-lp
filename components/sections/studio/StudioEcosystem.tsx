@@ -32,9 +32,9 @@ export function StudioEcosystem() {
       data-in-view={inView}
       data-paused={paused}
     >
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Nos technologies</p>
-        <h3 className={styles.title} id="studio-ecosystem-title">Les bons outils pour votre projet.</h3>
+      <header className={styles.header} data-reveal-group>
+        <p className={styles.eyebrow} data-reveal>Nos technologies</p>
+        <h3 className={styles.title} id="studio-ecosystem-title" data-reveal>Les bons outils pour votre projet.</h3>
       </header>
 
       <div className={styles.stage}>

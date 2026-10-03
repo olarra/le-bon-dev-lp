@@ -19,22 +19,22 @@
 
 .eyebrow {
   margin: 0;
-  padding: 9px 17px;
+  padding: var(--eyebrow-padding);
   border: 1px solid rgb(104 136 54 / 25%);
   border-radius: 999px;
   background: rgb(240 246 221 / 65%);
   color: #536a32;
-  font-size: 13px;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 
 .title {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: clamp(40px, 4.2vw, 60px);
+  font-size: var(--section-title-size);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.015em;
@@ -270,16 +270,6 @@
   .header {
     gap: 24px;
     max-width: 560px;
-  }
-
-  .eyebrow {
-    padding: 8px 15px;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-  }
-
-  .title {
-    font-size: clamp(36px, 7vw, 48px);
   }
 
   .stage {

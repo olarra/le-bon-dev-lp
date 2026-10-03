@@ -23,7 +23,11 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: radial-gradient(ellipse 65% 70% at 95% 90%, rgb(218 230 183 / 24%), transparent);
+  background:
+    linear-gradient(180deg,
+      transparent calc(100% - 180px),
+      var(--color-surface-hero, #f7f8f2) calc(100% - 16px)),
+    radial-gradient(ellipse 65% 70% at 95% 90%, rgb(218 230 183 / 24%), transparent);
   pointer-events: none;
 }
 
@@ -50,22 +54,22 @@
 
 .eyebrow {
   margin: 0;
-  padding: 9px 17px;
+  padding: var(--eyebrow-padding);
   border: 1px solid rgb(104 136 54 / 25%);
   border-radius: 999px;
   background: #edf2dd;
   color: #536a32;
-  font-size: 13px;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 
 .title {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: clamp(48px, 4.8vw, 68px);
+  font-size: var(--section-title-size);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.015em;
@@ -439,15 +443,6 @@
 
   .header {
     gap: 24px;
-  }
-
-  .eyebrow {
-    padding: 8px 15px;
-    font-size: 12px;
-  }
-
-  .title {
-    font-size: clamp(44px, 9vw, 58px);
   }
 
   .description {

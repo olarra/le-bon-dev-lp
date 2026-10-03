@@ -16,6 +16,11 @@
   --color-surface-navigation: #f9faf5;
   --color-border-navigation: #d3dcc0;
   --scroll-padding-top: 132px;
+  /* Shared section header scale: every eyebrow pill and section h2. */
+  --section-title-size: clamp(40px, 4.4vw, 60px);
+  --eyebrow-size: 13px;
+  --eyebrow-padding: 8px 16px;
+  --eyebrow-tracking: 0.12em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -65,6 +70,63 @@ button, input, select, textarea {
 
 @media (max-width: 1099.98px) {
   :root { --scroll-padding-top: 104px; }
+}
+
+@media (max-width: 809.98px) {
+  :root {
+    --section-title-size: clamp(36px, 7vw, 44px);
+    --eyebrow-size: 12px;
+    --eyebrow-padding: 8px 15px;
+    --eyebrow-tracking: 0.1em;
+  }
+}
+
+/* The server pose is the source of truth: RevealController reads this computed
+   transform before revealing, including the tablet / phone distances. */
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    --reveal-rise: 28px;
+    --reveal-card-rise: 36px;
+    --reveal-side: 24px;
+  }
+
+  [data-reveal]:not([data-reveal-done]) {
+    opacity: 0;
+    transform: translateY(var(--reveal-rise));
+  }
+
+  [data-reveal="card"]:not([data-reveal-done]) {
+    transform: translateY(var(--reveal-card-rise));
+  }
+
+  [data-reveal="left"]:not([data-reveal-done]) {
+    transform: translateX(calc(-1 * var(--reveal-side)));
+  }
+
+  [data-reveal="right"]:not([data-reveal-done]) {
+    transform: translateX(var(--reveal-side));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 810px) and (max-width: 1199.98px) {
+  :root {
+    --reveal-rise: 24px;
+    --reveal-card-rise: 32px;
+    --reveal-side: 20px;
+  }
+}
+
+/* Stacked columns: side entrances rise like the rest. */
+@media (prefers-reduced-motion: no-preference) and (max-width: 809.98px) {
+  :root {
+    --reveal-rise: 20px;
+    --reveal-card-rise: 28px;
+  }
+
+  [data-reveal="left"]:not([data-reveal-done]),
+  [data-reveal="right"]:not([data-reveal-done]) {
+    transform: translateY(var(--reveal-rise));
+  }
 }
 
 /* Render responsive alternatives during SSR, then keep the active branch. */

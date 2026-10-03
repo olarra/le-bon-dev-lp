@@ -34,9 +34,9 @@ export function MagicText({ paragraphs, className }: {
         ease: "none",
         scrollTrigger: {
           trigger: paragraph,
-          start: "top 68%",
-          end: "bottom 45%",
-          scrub: 0.35,
+          start: "top 85%",
+          end: "bottom 85%",
+          scrub: true,
           invalidateOnRefresh: true,
         },
       })

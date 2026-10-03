@@ -1,6 +1,7 @@
 "use client"
 
 import { useLayoutEffect, useRef, useState } from "react"
+import { useAnimationControls } from "motion/react"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { OfferIcon, OfferSticker, type OfferIconHandle } from "@/components/offer-icons"
 import { useStickerMotion } from "@/hooks/use-sticker-motion"
@@ -8,19 +9,27 @@ import { FEATURE_FLAG_RESINE_ICON_ENABLED } from "@/lib/feature-flags"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { OFFERS, type Offer } from "./offers.content"
 import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
+import { mountOffersContentEntrance } from "./offers-content-entrance"
 import styles from "./offers.module.css"
 
 export function OffersSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const [iconPhase, setIconPhase] = useState<OfferIconPhase>("paused")
+  const headingControls = useAnimationControls()
 
   useLayoutEffect(() => {
     if (!sectionRef.current) return
-    return mountOffersReveal(sectionRef.current, setIconPhase)
-  }, [])
+    const stopCard = mountOffersReveal(sectionRef.current, setIconPhase)
+    const stopContent = mountOffersContentEntrance(sectionRef.current, headingControls)
+    return () => {
+      stopContent()
+      stopCard()
+    }
+  }, [headingControls])
 
   return (
     <section ref={sectionRef} className={styles.section} id="offres" aria-labelledby="offres-title" data-header-theme="dark">
+      <noscript><style>{"#offres { --offers-pending-opacity: 1; }"}</style></noscript>
       <div className={styles.light} data-offers-light aria-hidden="true" />
       <div className={styles.inner}>
         <header className={styles.header}>
@@ -30,6 +39,7 @@ export function OffersSection() {
             id="offres-title"
             text="Votre projet prend forme."
             effect={HEADING_REVEAL}
+            controls={headingControls}
             className={styles.titleWrapper}
             textClassName={styles.title}
           />
@@ -68,6 +78,7 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
       id={offer.id}
       aria-labelledby={`${offer.id}-title`}
       data-offers-card={offer.kind === "applications" ? "" : undefined}
+      data-offer-kind={offer.kind}
       onPointerEnter={(event) => {
         if (event.pointerType === "mouse") play()
       }}
@@ -107,39 +118,41 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
         </>
       )}
       <div className={styles.offerTopline}>
-        {FEATURE_FLAG_RESINE_ICON_ENABLED ? (
-          <OfferIcon
-            ref={iconRef}
-            kind={offer.kind}
-            size={88}
-            disabled={phase === "paused"}
-            playOnView={phase !== "paused"}
-            playOnHover={false}
-          />
-        ) : (
-          <OfferSticker kind={offer.kind} className={styles.offerIcon} />
-        )}
-        {offer.detail && <span className={styles.offerBadge}>{offer.detail}</span>}
+        <div className={styles.iconAssembly} data-offers-icon>
+          {FEATURE_FLAG_RESINE_ICON_ENABLED ? (
+            <OfferIcon
+              ref={iconRef}
+              kind={offer.kind}
+              size={88}
+              disabled={phase === "paused"}
+              playOnView={phase !== "paused"}
+              playOnHover={false}
+            />
+          ) : (
+            <OfferSticker kind={offer.kind} className={styles.offerIcon} />
+          )}
+        </div>
+        {offer.detail && <span className={styles.offerBadge} data-offers-badge>{offer.detail}</span>}
       </div>
-      <div className={styles.offerHeading}>
+      <div className={styles.offerHeading} data-offers-text="intro">
         <h3 className={styles.cardTitle} id={`${offer.id}-title`}>{offer.title}</h3>
         <p className={styles.promise}>{offer.promise}</p>
       </div>
-      <div className={styles.offerAudience}>
+      <div className={styles.offerAudience} data-offers-text="details">
         <p className={styles.audience}><strong>Pour vous si</strong> {offer.audience}</p>
       </div>
-      <div className={styles.offerFeatures}>
+      <div className={styles.offerFeatures} data-offers-text="details">
         <h4 className={styles.featuresTitle}>Ce qui est compris</h4>
         <FeatureList items={offer.features} />
       </div>
-      <div className={styles.offerClosing}>
-        <div className={styles.offerAftercare}>
+      <div className={styles.offerClosing} data-offers-text="closing">
+        <div className={styles.offerAftercare} data-offers-aftercare>
           <h4 className={styles.featuresTitle}>{offer.aftercare.title}</h4>
           <p className={styles.aftercare}>{offer.aftercare.description}</p>
         </div>
         <div className={styles.offerFooter}>
           {offer.price && (
-            <div className={styles.price}>
+            <div className={styles.price} data-offers-price>
               <p className={styles.priceLabel}>À partir de</p>
               <p className={styles.priceSummary}>
                 <strong className={styles.priceAmount}>{offer.price.amount}</strong>
@@ -150,6 +163,7 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
           <a
             className={styles.offerLink}
             href={offer.href}
+            data-offers-action
             data-offers-sheen-replay={offer.kind === "applications" ? "" : undefined}
             onPointerEnter={(event) => { if (event.pointerType === "mouse") play() }}
             onFocus={play}

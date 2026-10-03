@@ -51,15 +51,15 @@
 .eyebrow {
   display: inline-flex;
   margin: 0 0 32px;
-  padding: 9px 17px;
+  padding: var(--eyebrow-padding);
   border: 1px solid rgb(200 245 62 / 25%);
   border-radius: 999px;
   background: linear-gradient(180deg, rgb(200 245 62 / 8%), rgb(200 245 62 / 2%));
   color: var(--contact-lime);
-  font-size: 12px;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 
@@ -390,7 +390,6 @@
 
   .eyebrow {
     margin-bottom: 25px;
-    padding: 8px 15px;
   }
 
   .criteriaTitle {

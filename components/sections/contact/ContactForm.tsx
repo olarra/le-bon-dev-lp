@@ -12,6 +12,7 @@ export function ContactForm() {
     <form
       className={styles.form}
       id="contact-form"
+      data-reveal="right"
       aria-label="Présentez-nous votre projet"
       aria-describedby="contact-form-hint"
       action={`mailto:${CONTACT.email}`}

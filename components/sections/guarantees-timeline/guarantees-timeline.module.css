@@ -2,7 +2,7 @@
   --timeline-ink: #06352f;
   --timeline-forest: #064b38;
   --timeline-lime: #d6fa7a;
-  --timeline-paper: #f8f9e6;
+  --timeline-paper: #fff;
   position: relative;
   isolation: isolate;
   width: 100%;
@@ -39,15 +39,15 @@
   display: inline-flex;
   align-items: center;
   margin: 0;
-  padding: 8px 17px;
+  padding: var(--eyebrow-padding);
   border: 1px solid rgb(104 136 54 / 25%);
   border-radius: 999px;
-  background: #edf2dd;
+  background: var(--timeline-paper);
   color: #536a32;
-  font-size: 14px;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 
@@ -60,7 +60,7 @@
 
 .title {
   --heading-font-family: var(--font-heading);
-  --heading-font-size: clamp(52px, 4.5vw, 64px);
+  --heading-font-size: var(--section-title-size);
   --heading-font-style: normal;
   --heading-font-weight: 700;
   --heading-letter-spacing: -0.02em;
@@ -204,17 +204,6 @@
   --illustration-scale: 0.90;
 }
 
-.corner {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: min(40vw, 440px);
-  height: auto;
-  color: #dceccc;
-  opacity: 0.8;
-  pointer-events: none;
-}
-
 @media (min-width: 810px) {
   .section {
     /* At the section stop, leave breathing room below the fixed navigation
@@ -270,10 +259,6 @@
     line-height: 1.45;
   }
 
-  .title {
-    --heading-font-size: clamp(36px, 5.5vw, 44px);
-  }
-
   .subtitle {
     margin-top: 20px;
     font-size: 20px;
@@ -281,7 +266,6 @@
 }
 
 @media (max-width: 479.98px) {
-  .eyebrow { font-size: 13px; }
   .titleWrapper { margin-top: 24px; }
   .timeline { margin-top: 44px; }
 }
@@ -292,7 +276,12 @@
   .headingContent,
   .headingContent > div,
   .titleWrapper,
-  .titleWrapper * {
+  .titleWrapper *,
+  .section [data-guarantee-label] > *,
+  .section [data-guarantee-intro] > *,
+  .section [data-guarantee-copy] > *,
+  .section [data-guarantee-art-entrance],
+  .section [data-guarantee-mobile-art] {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;

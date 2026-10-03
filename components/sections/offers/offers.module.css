@@ -1,5 +1,4 @@
-/* Opaque sage and ivory faces, with a thin molded edge. The two plane
-   wrappers belong to scroll motion; hover only changes their surface light. */
+/* Original ivory settling pose over a stationary sage support. */
 .section {
   --offers-ink: #10251c;
   --offers-muted: #52624e;
@@ -24,6 +23,22 @@
 .section *::before,
 .section *::after {
   box-sizing: border-box;
+}
+
+/* Hold content through hydration; the original controller owns the card pose. */
+@media (prefers-reduced-motion: no-preference) {
+  .section:not([data-offers-ready]) :is(
+    .titleWrapper,
+    [data-offers-icon],
+    [data-offers-badge],
+    [data-offers-text="intro"] > *,
+    [data-offers-text="details"] > *,
+    [data-offers-aftercare],
+    [data-offers-price],
+    [data-offers-action]
+  ) {
+    opacity: var(--offers-pending-opacity, 0);
+  }
 }
 
 .light {
@@ -64,15 +79,15 @@
   display: inline-flex;
   align-items: center;
   margin: 0;
-  padding: 8px 15px;
+  padding: var(--eyebrow-padding);
   border: 1px solid rgb(232 237 219 / 22%);
   border-radius: 999px;
   background: rgb(232 237 219 / 5%);
   color: var(--offers-lime);
-  font-size: 13px;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 
@@ -87,7 +102,7 @@
   margin: 0;
   color: var(--offers-ivory);
   font-family: var(--font-heading);
-  font-size: clamp(36px, 4.2vw, 60px);
+  font-size: var(--section-title-size);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -0.01em;
@@ -284,6 +299,11 @@
 
 .offerIcon {
   --sticker-size: 88px;
+}
+
+.iconAssembly {
+  width: 88px;
+  height: 88px;
 }
 
 .offerBadge {
@@ -639,13 +659,7 @@
     margin-bottom: 36px;
   }
 
-  .eyebrow {
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-
   .title {
-    font-size: clamp(36px, 6vw, 42px);
     line-height: 1.12;
     word-spacing: -0.08em;
   }
@@ -728,7 +742,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .titleWrapper,
-  .titleWrapper * {
+  .titleWrapper *,
+  .section [data-offers-text] > *,
+  .section [data-offers-badge],
+  .section [data-offers-price],
+  .section [data-offers-action],
+  .surfacePlane,
+  .website,
+  .iconAssembly,
+  .ivoryPlane,
+  .ivory {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;

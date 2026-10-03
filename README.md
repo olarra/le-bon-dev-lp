@@ -60,3 +60,26 @@ Caveat sont chargées par `next/font/local`.
 Le formulaire prépare un brouillon dans la messagerie du visiteur.
 `lib/contact-draft.ts` compose le message ; `use-contact-form.ts` gère saisie et copie.
 Aucun service d’envoi ni stockage serveur n’est actuellement branché.
+
+## Apparitions au défilement
+
+`RevealController`, monté dans le layout du site, déclenche les éléments
+`data-reveal` à 68% du viewport, 72% sous 810 px. `data-reveal-group` donne une
+séquence aux voisins proches (120 ms, délai total plafonné à 240 ms) et laisse
+les éléments empilés plus bas attendre leur propre position de lecture.
+`data-reveal-anchor` rattache une petite composition, comme une étape Méthode,
+à son texte. L’opacité monte en 0,7 s et le déplacement se pose en 1,1 s.
+Le rythme est dans `lib/motion.ts` ; les poses CSS dans `app/globals.css` sont
+lues directement par JavaScript pour éviter toute divergence aux breakpoints.
+Les styles inline sont nettoyés après chaque entrée. Mouvement réduit, focus,
+restauration du scroll et absence de JavaScript conservent le contenu accessible.
+`AnimatedHeading`, le Hero et l’entrée Garanties gardent leurs systèmes dédiés.
+
+Le pied de page réserve le mouvement lié au scroll au grand lettrage opaque,
+derrière un cadre immobile. Voir `components/layout/README.md`.
+
+Références étudiées : [iPhone, Apple](https://www.apple.com/iphone-18-pro/)
+(groupes explicites et transitions distinctes d’opacité / déplacement) et
+[parallaxe, ProtoPie](https://www.protopie.io/blog/parallax-effect)
+(vitesses différentes entre plans). Les seuils ci-dessus sont adaptés à cette
+page et à ses mesures de scroll, pas repris comme une règle universelle d’Apple.

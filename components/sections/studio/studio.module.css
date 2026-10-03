@@ -67,14 +67,14 @@
 .header { display: grid; justify-items: start; gap: 32px; margin-bottom: 36px; }
 .eyebrow {
   margin: 0;
-  padding: 8px 17px;
+  padding: var(--eyebrow-padding);
   border: 1px solid #91a28c;
   border-radius: 999px;
   color: #395443;
-  font-size: 12px;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 

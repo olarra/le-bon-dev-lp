@@ -114,10 +114,19 @@
   transition: transform 300ms ease;
 }
 
+.wordmarkFrame {
+  --wordmark-rise: 44px;
+  margin: 72px 0 48px;
+  overflow: visible;
+}
+
+.wordmarkMotion {
+  width: 100%;
+}
+
 .wordmark {
   display: block;
   width: 100%;
-  margin: 72px 0 32px;
   color: #1b4034;
   border-radius: 8px;
 }
@@ -126,6 +135,13 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wordmark:not([data-wordmark-revealed]) {
+    opacity: 0;
+    transform: translateY(var(--wordmark-rise));
+  }
 }
 
 .bottomline {
@@ -156,6 +172,10 @@
 .footer a:focus-visible {
   outline: 2px solid #46672e;
   outline-offset: 5px;
+}
+
+.wordmark:focus-visible {
+  outline-offset: -3px;
 }
 
 .contactLink:focus-visible svg {
@@ -200,8 +220,10 @@
     grid-column: 1 / -1;
   }
 
-  .wordmark {
+  .wordmarkFrame {
+    --wordmark-rise: 32px;
     margin-top: 56px;
+    margin-bottom: 40px;
   }
 }
 
@@ -247,7 +269,8 @@
     gap: 5px;
   }
 
-  .wordmark {
+  .wordmarkFrame {
+    --wordmark-rise: 20px;
     margin: 44px 0 24px;
   }
 
@@ -264,6 +287,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .wordmarkMotion,
+  .wordmark {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   .contactLink,
   .contactLink svg {
     transition: none;

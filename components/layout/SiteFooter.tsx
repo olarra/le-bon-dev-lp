@@ -1,5 +1,5 @@
-import { BrandLogo } from "@/components/atoms/BrandLogo"
 import { CONTACT } from "@/lib/contact"
+import { FooterWordmark } from "./FooterWordmark"
 import { FOOTER_GROUPS } from "./footer.content"
 import styles from "./SiteFooter.module.css"
 
@@ -7,14 +7,14 @@ export function SiteFooter() {
   return (
     <footer className={styles.footer} data-header-theme="light">
       <div className={styles.surface}>
-        <div className={styles.topline}>
-          <div className={styles.introduction}>
+        <div className={styles.topline} data-reveal-group>
+          <div className={styles.introduction} data-reveal>
             <p className={styles.tagline}>Votre vision.<br />Notre savoir-faire.</p>
             <p className={styles.description}>Studio de développement<br />web et mobile.</p>
           </div>
 
           {FOOTER_GROUPS.map((group) => (
-            <nav className={styles.navigation} aria-label={`${group.label} — pied de page`} key={group.label}>
+            <nav className={styles.navigation} aria-label={`${group.label} — pied de page`} key={group.label} data-reveal>
               <p className={styles.groupTitle}>{group.label}</p>
               <ul role="list">
                 {group.links.map((link) => <li key={link.href}><a href={link.href}>{link.label}</a></li>)}
@@ -22,7 +22,7 @@ export function SiteFooter() {
             </nav>
           ))}
 
-          <div className={styles.invitation}>
+          <div className={styles.invitation} data-reveal>
             <p className={styles.groupTitle}>Une idée à concrétiser ?</p>
             <a className={styles.email} href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
             <a className={styles.contactLink} href="#contact">
@@ -31,9 +31,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <a className={styles.wordmark} href="#statistics" aria-label="Le bon dev — retour à l’accueil">
-          <BrandLogo placement="footer" />
-        </a>
+        <FooterWordmark />
 
         <div className={styles.bottomline}>
           <small>© {new Date().getFullYear()} Le bon dev</small>

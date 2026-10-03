@@ -67,14 +67,14 @@
 .eyebrow {
   display: inline-flex;
   margin: 0;
-  padding: 8px 18px;
+  padding: var(--eyebrow-padding);
   border: 1px solid var(--project-border);
   border-radius: 999px;
   color: var(--project-eyebrow);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--eyebrow-size);
+  font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
 }
 
@@ -91,7 +91,7 @@
 .title {
   --project-reveal-end: color-mix(in srgb, var(--project-ink), var(--project-color-end) var(--project-color-reveal, 100%));
   --heading-font-family: var(--font-heading);
-  --heading-font-size: clamp(44px, 5.8vw, 80px);
+  --heading-font-size: var(--section-title-size);
   --heading-font-weight: 700;
   --heading-letter-spacing: -0.015em;
   --heading-line-height: 1;
@@ -338,7 +338,6 @@
   }
 
   .title {
-    --heading-font-size: clamp(38px, 7.7vw, 62px);
     --heading-line-height: 1.03;
   }
 
@@ -390,10 +389,6 @@
 @media (max-width: 359px) {
   .content {
     width: calc(100% - 32px);
-  }
-
-  .title {
-    --heading-font-size: 34px;
   }
 
   .meta {

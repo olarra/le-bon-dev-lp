@@ -1,7 +1,7 @@
 "use client"
 
 import { Children, cloneElement, isValidElement, type CSSProperties, type ReactNode } from "react"
-import { motion, type Variants } from "motion/react"
+import { motion, type AnimationControls, type Variants } from "motion/react"
 import { useHeadingReveal } from "@/hooks/use-heading-reveal"
 import { HEADING_REVEAL, type HeadingReveal } from "@/lib/motion"
 
@@ -14,13 +14,14 @@ type Props = {
   textClassName?: string
   className?: string
   textAlign?: "left" | "center" | "right"
+  controls?: AnimationControls
 }
 
 export function AnimatedHeading({
   text, children, id, effect = HEADING_REVEAL, as: Tag = "h2",
-  textClassName, className, textAlign = "center",
+  textClassName, className, textAlign = "center", controls: externalControls,
 }: Props) {
-  const { ref, controls } = useHeadingReveal(effect.threshold)
+  const { ref, controls } = useHeadingReveal(effect.threshold, externalControls)
   const Container = Tag === "span" ? "span" : "div"
   const variants: Variants = {
     hidden: effect.effect,

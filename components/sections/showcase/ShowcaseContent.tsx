@@ -29,8 +29,8 @@ export function ShowcaseContent() {
     <section ref={sectionRef} className={styles.section} id="realisations" aria-labelledby="realisations-title">
       <SvgFollowScroll containerRef={sectionRef} anchors={anchors} buildPath={buildShowcaseThread} fallback={THREAD_FALLBACK} completion={THREAD_COMPLETION} className={styles.thread} />
       <div className={styles.content}>
-        <header className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>Les réalisations</p>
+        <header className={styles.sectionHeader} data-reveal-group>
+          <p className={styles.eyebrow} data-reveal>Les réalisations</p>
           <div className={styles.headingColor} data-project-heading>
             <AnimatedHeading
               as="h2"
@@ -43,7 +43,7 @@ export function ShowcaseContent() {
               Des idées<br />{" "}devenues concrètes.
             </AnimatedHeading>
           </div>
-          <p className={styles.subtitle}>Deux projets, deux besoins. Découvrez ce qu’on a réalisé.</p>
+          <p className={styles.subtitle} data-reveal>Deux projets, deux besoins. Découvrez ce qu’on a réalisé.</p>
         </header>
 
         <article className={styles.project} aria-labelledby="miau-title" data-project="miau">
@@ -80,7 +80,7 @@ function PhoneImage({ src, alt }: { src: string; alt: string }) {
 
 function ProjectCopy({ project, id }: { project: Realisation; id: string }) {
   return (
-    <div className={styles.copy}>
+    <div className={styles.copy} data-reveal={id === "miau" ? "left" : "right"}>
       <h3 className={styles.projectName} id={`${id}-title`}>{project.name}</h3>
       <p className={`${styles.hook} ${id === "miau" ? styles.gradientText : ""}`} data-miau-hook={id === "miau" ? "" : undefined}>
         {project.hook[0]}<br />{project.hook[1]}

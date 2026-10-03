@@ -67,7 +67,7 @@
     padding: var(--mobile-card-padding);
     border: 1px solid rgb(153 175 131 / 22%);
     border-radius: 28px;
-    background: #e3ecd5;
+    background: var(--timeline-paper, #fff);
     box-shadow:
       0 2px 3px rgb(31 63 28 / 5%),
       0 10px 24px rgb(31 63 28 / 8%),
@@ -98,14 +98,6 @@
   .track [data-guarantee-card] > div {
     position: relative;
     z-index: 2;
-  }
-
-  .track [data-kind="followup"] [data-guarantee-card] {
-    background: #edf4c9;
-  }
-
-  .track [data-kind="handover"] [data-guarantee-card] {
-    background: #e0ebdc;
   }
 
   .track [data-guarantee-mobile-art] {

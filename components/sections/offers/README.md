@@ -7,6 +7,83 @@ and neither the audience sentence nor the aftercare paragraph is a list.
 Only Applications has a scope badge beside the icon: "Web ou mobile".
 The website price reads "2 500 € HT — cinq pages, contenus fournis";
 no application price is shown.
+`offers-reveal.ts`, `offers-reveal-motion.ts` and `offers-mobile-reveal.ts`
+retain the original card animation from the committed implementation.
+The sage support stays stationary. At 810 px and above, the ivory panel starts
+raised and tilted, then settles into place as the user scrolls. The original
+settings are 100 px maximum lift, 7° / −2° rotations, 1.025 scale, 1400 px
+perspective, and a transform origin at 50% 80%. Heading clearance limits the lift.
+The scroll range starts with the container at 65% viewport height and ends when
+95% of the card has entered. The 0.9 s scrub, reverse-scroll pose, lift shadow,
+1.5 px landing settle and 1450 ms landing reflection are restored together.
+Below 810 px, the original card entrance is a 36 px rise/fade over 650 ms at
+75% viewport height; its reflection starts once the card reaches 25% and the
+entrance has finished. Restored positions and keyboard focus reveal it immediately.
+
+`offers-content-entrance.ts` handles only the heading and content, independently
+of the restored card controller. It does not transform the card or its wrappers.
+`AnimatedHeading` keeps its existing letter effect and `HEADING_REVEAL` settings.
+Offres supplies animation controls so its section controller starts the heading
+before the content in the same frame on a direct refresh. Other headings keep
+their existing viewport observer. The title's server-rendered pending opacity
+prevents it from appearing fully formed and then disappearing during hydration.
+
+The supplied reference recording (11:45:58), compared with Offres (11:45:16),
+shows a sustained fade during the rise, overlapping left and bottom blocks,
+and a slightly later right block. One desktop/tablet timeline owns both offers;
+below 810 px, each offer has its own timeline. Its schedule is:
+
+| Content | Start | Motion |
+| --- | --- | --- |
+| Left / right icon | 40 / 200 ms | 16 px rise, 0.98 → 1 scale, fade over 900 ms |
+| Card badge | 40 ms after its icon | Opacity only, 900 ms |
+| Left / right copy | 80 / 240 ms | 32 px rise and fade over 950 ms |
+| Aftercare and price | 120 ms | 24 px rise and fade over 950 ms |
+| Buttons | 180 ms | 16 px rise and fade over 950 ms |
+
+Opacity and transforms share `power1.inOut` and the full duration, so the
+movement remains visible throughout the fade instead of settling before it.
+On phones, the column offset is removed; copy/bottom rises shrink to
+24 / 18 px and icons/buttons to 12 px. Titles, promises, audience and the complete feature list form
+one copy block per column; individual paragraphs and list items have no
+independent scroll triggers. Icon wrappers keep the entrance separate from
+the existing sticker lighting. The text entrance has no bounce.
+
+The section title starts at 80% of the viewport. The card container's top
+reaching 90% starts the complete content sequence independently of the card's
+scroll-linked pose. On phones, the stationary card slot is the anchor for
+Applications. The content reveal therefore
+starts as the panel enters, instead of leaving it empty while waiting for the
+heading below its icon to cross a separate threshold. On a direct load
+inside the section, both start in the same controller pass, with the title first.
+Every content beat starts within 240 ms and finishes within 1190 ms, even
+when scrolling stops. Later copy, including content below the fold, belongs
+to that same sequence and cannot wait indefinitely for another threshold.
+
+The heading wrapper itself stays stationary. A passive scroll listener with
+one requestAnimationFrame reads its current position, avoiding cached offsets
+when the Guarantees layout or fonts settle above it. Refreshing directly inside
+an offer plays the same sequence without requiring a scroll gesture, including
+when the browser restores the position after hydration. Server-rendered CSS
+holds the animated content at opacity zero until GSAP installs all starting
+poses, avoiding a visible-to-hidden text jump. The desktop card faces stay opaque
+throughout the pose animation. Only cards entirely above the viewport skip text playback; an offer
+whose heading has passed but whose body is still visible continues to animate.
+Keyboard focus settles the content sequence, including animations already running.
+Once all pending content blocks have started, their scroll listener schedules no further work.
+Reduced motion bypasses the pending pose; a local noscript style also makes
+all content visible without JavaScript.
+Breakpoint changes preserve blocks already seen. GSAP clears text styles on
+completion and reverts its context on teardown; event listeners and queued
+frames are also removed.
+
+The surface/rim reflection plays after the original card landing and remains
+available through the Applications CTA, using `offers-sheen.ts` (1450 ms,
+transform/opacity only). The original controller owns its replay guard and
+cancellation; the content controller adds no duplicate reflection listeners.
+
+The eyebrow and title sizes come from the shared `--eyebrow-*` and
+`--section-title-size` tokens in `app/globals.css`.
 The supplied `offer-web.svg` and `offer-app.svg` use the shared contact
 `MetalSticker` finish at 88 px; the near-black `offer-app.svg` declares
 `tone="dark"`, so its finish is added as lime-tinted light and masked off the
@@ -37,97 +114,7 @@ Each closing group contains aftercare, then the optional price and CTA. This
 keeps the website price close to its aftercare paragraph without reserving the
 longer Applications paragraph's height above it. Both buttons stay bottom-aligned.
 Both actions lead to the existing contact form on this page, with no separate
-offer pages. The nested composition and scroll animation remain unchanged.
-
-`offers-reveal.ts` replaces card parallax with the POC's “Par-dessus” pose.
-The sage container and background remain stationary. The opaque ivory panel
-descends as one object, including its text, icons and actions. Its motion wrapper
-is separate from its resin surface and hover interactions.
-
-`offers-reveal-motion.ts` exposes `OFFERS_REVEAL`:
-
-| Parameter | Default | Effect |
-| --- | --- | --- |
-| `distance` | 100 px | Initial upward displacement, limited by heading clearance |
-| `rotationX` / `rotationZ` | 7° / −2° | Initial ivory tilt |
-| `scale` | 1.025 | Initial ivory scale |
-| `perspective` / `originY` | 1400 px / 0.8 | Perspective and transform origin at 50% 80% |
-| `startViewport` | 0.65 | Container top reaches 65% of viewport height; the initial tilt holds until then |
-| `endCardProgress` | 0.95 | Land when 95% of the ivory card has entered from the viewport bottom |
-| `minScrollDistance` | 160 px | Minimum reveal range for short cards on tall viewports |
-| `scrub` | 0.9 s | Smooth catch-up after fast scroll gestures |
-| `shadow` | 36 px / 58 px / −10 px / 0.22 | Lift shadow offset, blur, spread and alpha |
-| `settle` | 1.5 px | Brief landing compression before returning to exactly zero |
-| `headingClearance` | 24 px | Minimum space between the projected card and heading |
-| `sheenDuration` | 1.45 s | POC version 02 surface and resin-rim reflections |
-| `sheenStart` | 0.999 | Start after the card has settled, as in the POC |
-
-The stable outer wrapper triggers the sequence. The endpoint uses the ivory
-card's actual height and its resting offset inside the support: 5% of its height
-remains below the viewport when the pose finishes and the shimmer begins. It is
-recalculated on resize, including when the card is taller than the viewport.
-The desktop pose follows scroll in both directions: it straightens on descent
-and lifts back into its original tilt when scrolling up through the same range.
-The pose and lift shadow use `sine.inOut` to soften acceleration. GSAP's 0.9 s
-scrub lets the pose catch up smoothly after a fast gesture, including past the
-end of the scroll range; the shimmer waits for the actual animated landing.
-The later start keeps the tilted pose visible before the descent begins. For
-short cards on tall viewports, the start moves earlier only as needed to retain
-160 px of motion. Refresh and breakpoint changes restore the current scroll pose.
-Scrolling upward does not trigger a second reflection.
-At completion, translation and rotations are zero, scale is one and the extra
-lift shadow becomes transparent, restoring the original static surface shadow.
-Card and content opacity never animate.
-
-The clearance helper projects the card's four corners throughout the motion,
-including scale, rotation and perspective. It reduces the starting displacement
-when needed instead of adding demonstration spacing. Resize, font readiness and
-page restoration refresh this local trigger. Initial/restored scroll progress
-is applied before paint, including direct loads into the middle of the page.
-
-The shimmer directly reuses version 02 (“Reflet de résine”) from the supplied
-`deux-shimmers-resine.html`: the ivory gradient, surface sweep, masked 3px rim
-sweep and Web Animations keyframes are copied from that reference. Both sweeps
-run together for 1450ms with `cubic-bezier(.28,.1,.28,1)` and a −16° skew.
-`offers-sheen.ts` shares their keyframes across desktop and mobile: the reflection
-always travels left → right. Their opacity follows
-the POC's 0/12/82/100% offsets.
-Only the decorative layers animate opacity; the card and content stay opaque.
-The surface sweep sits below content, while the second sweep is masked to the
-resin rim. Existing static edge highlights remain. There is no button shimmer.
-The effect starts when the pose is complete. After the reveal, hovering, focusing
-or activating "Estimer mon application" can replay it across the entire card,
-alongside the existing icon animation. An already-running reflection is not
-restarted by a second interaction. Hidden tabs/offscreen cards do not start it.
-Both Web Animations are cancelled on teardown or a media-preference change.
-Motion parents allow shadows to overflow; only the decorative layers clip.
-
-Below the site's 810 px breakpoint, `offers-mobile-reveal.ts` reveals Applications
-with a 36px slide up and opacity 0 → 1 over 650ms (`power2.out`). The timed entrance
-starts when its stable wrapper crosses 75% viewport height, so it continues even
-when scrolling stops. There is no rotation, perspective or scale animation.
-The card stays visible on reverse scroll. Restored positions and keyboard focus
-show the content immediately; the media context restores all styles on teardown.
-The shimmer has a separate threshold: it starts once the reveal has finished and
-the card's top reaches 25% viewport height, matching the mobile reference. It
-plays once on descent. The card stays visible and stationary on return, with no
-automatic reflection replay. The CTA can replay the full-card reflection.
-An offscreen/restored position does not consume this pass before it is visible.
-Mobile uses the desktop's exact surface and resin-rim gradients, keyframes and
-1450ms timing. Both layers cover the full card height: there is no mobile height
-cap, fading mask or colour override. The surface stays below all content, while
-the rim remains confined to its 3px border. The Applications icon waits for the
-entrance, while the Sites internet icon retains viewport-entry playback. Touch
-replay remains available once the card is visible. Desktop is unchanged.
-`MOBILE_OFFER_REVEAL` exposes distance, entrance duration, entrance and shimmer
-viewport thresholds, and shimmer duration.
-
-With reduced motion, GSAP creates no pose animation or shimmer. A
-preference/breakpoint change reverts the transforms. No pinning,
-extra smooth scrolling, wheel handlers or perpetual animation loop is added.
-The GSAP media context, local trigger, scrub tween, landing reflection, resize
-observer, listeners and queued refresh are cleaned up on unmount. Late font
-readiness is ignored after teardown. Guarantees' timeline is not modified.
+offer pages. The nested composition retains its five aligned grid rows.
 
 SectionTransitions handles only the downward entrance from the Hero into Nos garanties. Other sections retain ordinary scrolling.
 
@@ -135,9 +122,10 @@ Surface colours, corner radii and the 3–4 px molded rim are CSS variables at t
 top of `offers.module.css`. The faces stay opaque; masked gradients and inset
 shadows form the resin edges. Mobile keeps the nested composition in one column.
 
-When the resin flag is enabled, icons use `components/offer-icons`, at 88 px. The parent
-enables playback only once the desktop pose is complete; each icon then plays
-once when visible. Mouse entry and CTA focus can replay it after the pose.
+When the resin flag is enabled, icons use `components/offer-icons`, at 88 px.
+The original desktop controller enables them after the card settles. On phones,
+Sites internet keeps viewport-entry playback while Applications waits for its
+card entrance. Mouse entry and CTA focus can replay them once enabled.
 Mobile keeps once-on-entry playback. A short touch tap on an icon or non-interactive
 card area also replays it. Movement beyond 10px, scrolling, cancellation, multi-touch
 and presses longer than 500ms do not replay it. Links retain their native action;

@@ -20,14 +20,14 @@ export function StudioSection() {
         <div className={styles.introduction}>
           <div className={styles.story}>
             <header className={styles.header}>
-              <p className={styles.eyebrow}>{STUDIO_EYEBROW}</p>
+              <p className={styles.eyebrow} data-reveal>{STUDIO_EYEBROW}</p>
               <StudioHeading />
             </header>
             <MagicText paragraphs={STUDIO_PARAGRAPHS} className={styles.copy} />
             <ResinCta className={styles.cta} href={STUDIO_CTA.href} label={STUDIO_CTA.label} arrowSize={20} strokeWidth={1.8} />
-            <dl className={styles.facts} aria-label="Le studio en quelques repères">
+            <dl className={styles.facts} aria-label="Le studio en quelques repères" data-reveal-group data-reveal-viewport="0.9">
               {STUDIO_FACTS.map(fact => (
-                <div className={styles.fact} key={fact.label}>
+                <div className={styles.fact} key={fact.label} data-reveal>
                   <dt className={styles.factLabel}>{fact.label}</dt>
                   <dd className={styles.factValue}>{fact.value}</dd>
                 </div>
@@ -37,9 +37,9 @@ export function StudioSection() {
           <StudioScene />
         </div>
         <div className={styles.glassBase}>
-          <ul className={styles.principles} role="list" aria-label="Les convictions du studio">
+          <ul className={styles.principles} role="list" aria-label="Les convictions du studio" data-reveal-group data-reveal-viewport="0.9">
             {STUDIO_PRINCIPLES.map(principle => (
-              <li className={styles.principle} key={principle.lines[0]}>
+              <li className={styles.principle} key={principle.lines[0]} data-reveal>
                 <MetalSticker src={`/images/studio/stickers/${principle.sticker}.svg`} className={styles.sticker} tone={principle.tone} />
                 <h3>{principle.lines[0]}<br />{" "}{principle.lines[1]}</h3>
               </li>

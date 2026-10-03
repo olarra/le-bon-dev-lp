@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fr" className={`${outfit.variable} ${morna.variable} ${caveat.variable}`}>
       <body>
         <noscript>
-          <style>{'[data-scroll-reveal="pending"] { opacity: 1 !important; transform: none !important; }'}</style>
+          <style>{'[data-scroll-reveal="pending"], [data-reveal] { opacity: 1 !important; transform: none !important; }'}</style>
         </noscript>
         <Providers>{children}</Providers>
       </body>
