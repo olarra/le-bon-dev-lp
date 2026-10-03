@@ -17,6 +17,7 @@ export type TickerMotionOptions = {
   itemGap?: number
   paused?: boolean
   pausedRef?: { readonly current: boolean }
+  pauseOnHover?: boolean
 }
 
 /** Fit absolute M/C coordinate pairs to the container without stretching. */
@@ -44,7 +45,7 @@ function measurePathLength(d: string): number {
 
 export function useTickerMotion({
   svgPath, viewBox, totalItems, speedPercentPerSecond = 5, direction = "normal",
-  scale = 1, itemWidth, itemGap = 24, paused = false, pausedRef,
+  scale = 1, itemWidth, itemGap = 24, paused = false, pausedRef, pauseOnHover = true,
 }: TickerMotionOptions) {
   const reducedMotion = useReducedMotion()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -84,7 +85,7 @@ export function useTickerMotion({
   const speedTargetRef = useRef(1)
   const speedFactorRef = useRef(1)
   const setSpeedTarget = (event: ReactPointerEvent<HTMLDivElement>, target: number) => {
-    if (event.pointerType !== "touch") speedTargetRef.current = target
+    if (pauseOnHover && event.pointerType !== "touch") speedTargetRef.current = target
   }
   const hoverHandlers = {
     onPointerEnter: (event: ReactPointerEvent<HTMLDivElement>) => setSpeedTarget(event, 0),
@@ -93,7 +94,7 @@ export function useTickerMotion({
 
   useAnimationFrame((_time, delta) => {
     if (!resolvedPath || reducedMotion || paused || pausedRef?.current) return
-    const target = speedTargetRef.current
+    const target = pauseOnHover ? speedTargetRef.current : 1
     let factor = speedFactorRef.current
     if (factor !== target) {
       factor += (target - factor) * (1 - Math.exp(-delta / HOVER_EASE_MS))

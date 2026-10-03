@@ -1,4 +1,5 @@
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
+import { AuroraBackground } from "@/components/ui/aurora-background"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { GuaranteesTimeline } from "./GuaranteesTimeline"
 import { GUARANTEE_ENTRANCE } from "./guarantees-timeline.content"
@@ -48,10 +49,10 @@ export function GuaranteesTimelineSection() {
       aria-labelledby="garanties-timeline-title"
       data-header-theme="light"
     >
+      <AuroraBackground className={styles.aurora} aria-hidden="true" />
       <div className={styles.inner}>
         <GuaranteesTimeline heading={heading} />
       </div>
-
     </section>
   )
 }

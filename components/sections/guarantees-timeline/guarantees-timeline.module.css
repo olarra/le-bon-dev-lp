@@ -13,6 +13,13 @@
   font-family: var(--font-body);
 }
 
+.section > .aurora {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+}
+
 .inner {
   position: relative;
   z-index: 1;

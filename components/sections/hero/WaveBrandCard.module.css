@@ -11,6 +11,8 @@
 }
 
 .mark {
+  position: relative;
+  z-index: 1;
   display: block;
   flex: none;
   max-width: calc(100% - 24px);
@@ -25,8 +27,27 @@
   -webkit-mask-size: contain;
 }
 
-/* No per-card hover state on purpose: the cards ride a moving ribbon, so a
-   hover effect on one card (the old lift + brand-name reveal) fought the
-   motion. Hover is handled once, for the whole wave, by the Ticker atom
-   (components/atoms/Ticker.tsx), which eases the ribbon to a pause while
-   the pointer is over it and back up to speed on leave. */
+.foil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.probeX { left: 100%; }
+.probeY { top: 100%; }
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .foil { display: none; }
+}

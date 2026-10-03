@@ -170,6 +170,21 @@
   resolved "https://registry.yarnpkg.com/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.4.tgz#0b67bd0b1f01123a982afcc6ba0dc00b877b8a0a"
   integrity sha512-XtmnYhBcrORsJ4XJngyzr/EWP0hRZLAZRFaApdKuviyqF78+ylxh2y06ZmtULAMOnObJ3ucpN0AcwSWnMowTRg==
 
+"@modelcontextprotocol/core@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@modelcontextprotocol/core/-/core-2.0.0.tgz#c918a4c6aef22a7c59dfb0aabc2a82c187cce157"
+  integrity sha512-pJCEwGG7Lfr/+PQp9ZTwKXNeO5wzbfKL7H3MYpCorM4oFBoQrdjnBgEoqG+RjhsvS1FKrDbKux+M1HhlnGWqcA==
+  dependencies:
+    zod "^4.2.0"
+
+"@modelcontextprotocol/server@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@modelcontextprotocol/server/-/server-2.0.0.tgz#4fae5ccb8f7925ed9a6bf6595bb3b58617063ffd"
+  integrity sha512-YhHWdHfpFMQfd0prsEnxKeS3Qz3ytIGmsS0sth4KDjnacIT7hxk6hXHkJ9KysxlkvTM+WZAtQbbcUhdoP4Hvtw==
+  dependencies:
+    "@modelcontextprotocol/core" "2.0.0"
+    zod "^4.2.0"
+
 "@next/env@15.5.25":
   version "15.5.25"
   resolved "https://registry.npmjs.org/@next/env/-/env-15.5.25.tgz"
@@ -236,6 +251,45 @@
   dependencies:
     csstype "^3.2.2"
 
+"@vgpu/adapter-mock@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vgpu/adapter-mock/-/adapter-mock-0.5.0.tgz#c248cba234ce38d025ed9350d35088fbea69941d"
+  integrity sha512-YtgXOFn1qI+8oTJenG2wWbQPA28V0CfE5UJs5Xqbt6qyR/xaZ5LHH2XWTwFcjnqn2b1xQCyTatJCMyyOdweUnw==
+  dependencies:
+    "@vgpu/core" "0.5.0"
+
+"@vgpu/adapter-node@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vgpu/adapter-node/-/adapter-node-0.5.0.tgz#818eb790a09f0716b59cf16c2db63dd359a3b0f6"
+  integrity sha512-lgzqFcLDejwRgwlaNStzkwLNU9b4aN2OoPpWqT1UyPmK521BSw2OIQKzAuDIkzNlREla6KNC12G6bthhOzZKzw==
+  dependencies:
+    "@vgpu/core" "0.5.0"
+    webgpu "0.4.0"
+
+"@vgpu/core@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vgpu/core/-/core-0.5.0.tgz#51093a6199a03d0d492cf2f5403007e60c6d8a58"
+  integrity sha512-z80DHRHViv6+FKKkPzggEtT1ZZs/WCKRQbzJuwYdA135DZaSbCMoRK4anhM+I/nOHuDpf7H3xjkwE6rfolWZUw==
+  dependencies:
+    "@vgpu/wgsl" "0.5.0"
+
+"@vgpu/wgsl-std@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vgpu/wgsl-std/-/wgsl-std-0.5.0.tgz#34933de8a1b36bfdbcaba55c4cac93f83766d2f1"
+  integrity sha512-NjMyJxwy4evFNCSqFQy4EqAbZ7iU+NUyJYyG9tLUhbdDLzBmfZlk1S3PyRZ9olBFFfEiVW2JNVw10maPKLEs1A==
+
+"@vgpu/wgsl@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vgpu/wgsl/-/wgsl-0.5.0.tgz#62ce4fa04019508e1de3f7173a7579bc98d7be9b"
+  integrity sha512-PDlDJem7J28C9bk+vPy2kYZEoW8+nYIx2oN4nu7/WF2V7ETx32BtmWcawwMbhiu/CVsobFafML0h0eqLRBNa3Q==
+  dependencies:
+    "@vgpu/wgsl-std" "0.5.0"
+
+"@webgpu/types@^0.1.69":
+  version "0.1.74"
+  resolved "https://registry.yarnpkg.com/@webgpu/types/-/types-0.1.74.tgz#e0e0417074a90da1929c7bf710d6bb970aa91b13"
+  integrity sha512-lgiI4hbuLcI9unnm2cL/tvCaQU45dp0xcLWJh5uB/9MBGvIA4F8XIk7nSiBeg+K4xWGYwgZKn80LmERI5CxoTA==
+
 caniuse-lite@^1.0.30001579:
   version "1.0.30001810"
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001810.tgz"
@@ -250,6 +304,13 @@ csstype@^3.2.2:
   version "3.2.3"
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz"
   integrity sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==
+
+debug@^4.4.0:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.3.tgz#c6ae432d9bd9662582fce08709b038c58e9e3d6a"
+  integrity sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==
+  dependencies:
+    ms "^2.1.3"
 
 detect-libc@^2.1.2:
   version "2.1.2"
@@ -295,6 +356,11 @@ motion@^13.4.0:
     framer-motion "^13.4.0"
     tslib "^2.4.0"
 
+ms@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
+  integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
+
 nanoid@^3.3.6:
   version "3.3.19"
   resolved "https://registry.npmjs.org/nanoid/-/nanoid-3.3.19.tgz"
@@ -325,6 +391,18 @@ picocolors@^1.0.0:
   version "1.1.1"
   resolved "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz"
   integrity sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==
+
+pixelmatch@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/pixelmatch/-/pixelmatch-7.2.0.tgz#59f4e6faca733f763756d175e2579ed71369fd72"
+  integrity sha512-xhcb4yHu9sM/G7foGzoLtXYcC0zHEaOXXjRKhGup0fw78Nf2Tkiapv4EQyMzrbcmQPsllAI7DbFY2UT7PlI9Pg==
+  dependencies:
+    pngjs "^7.0.0"
+
+pngjs@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-7.0.0.tgz#a8b7446020ebbc6ac739db6c5415a65d17090e26"
+  integrity sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==
 
 postcss@8.4.31:
   version "8.4.31"
@@ -418,3 +496,38 @@ undici-types@~6.21.0:
   version "6.21.0"
   resolved "https://registry.npmjs.org/undici-types/-/undici-types-6.21.0.tgz"
   integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
+
+vgpu@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/vgpu/-/vgpu-0.5.0.tgz#2d46fdf0d824d1040de5c967a993726b71c8d442"
+  integrity sha512-isQfMHRTysYFfT8UWTzqQI/ROw2L7lVkj7xoUJlvIF6FjYxBNS/YNG7qp3tZ7ZvZZ3uwYjso+geQv/bEq5Hl3w==
+  dependencies:
+    "@modelcontextprotocol/server" "2.0.0"
+    "@vgpu/adapter-mock" "0.5.0"
+    "@vgpu/adapter-node" "0.5.0"
+    "@vgpu/core" "0.5.0"
+    "@vgpu/wgsl" "0.5.0"
+    "@vgpu/wgsl-std" "0.5.0"
+    "@webgpu/types" "^0.1.69"
+    pixelmatch "^7.2.0"
+    pngjs "^7.0.0"
+    wgpu-matrix "^3.4.2"
+    zod "^4.4.3"
+
+webgpu@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/webgpu/-/webgpu-0.4.0.tgz#4bdbb9b38f898e468c9bb5b744b03b2f5b0b654f"
+  integrity sha512-F5pimn3Aoi0zWjuRdiVs5TnrUwSzD2lESBohsIUsqyitWkGRQlXU2fhV6ycXlQTa1bvAf3sjqiUpBEpmSQ5ptA==
+  dependencies:
+    "@webgpu/types" "^0.1.69"
+    debug "^4.4.0"
+
+wgpu-matrix@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/wgpu-matrix/-/wgpu-matrix-3.4.2.tgz#15fda104735ec8e8ec670db8d86b82ab310a9517"
+  integrity sha512-IfZFbG7olEYBD76VCZy2TzqM57GKy3LT++AZh37tMHPPByO6R2h61zXGBZFNPi2IzxNivNi8y5dvze5PjaczjA==
+
+zod@^4.2.0, zod@^4.4.3:
+  version "4.6.5"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-4.6.5.tgz#e3af3edbdc260239c52f73caad05dbbffe6e82cd"
+  integrity sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==

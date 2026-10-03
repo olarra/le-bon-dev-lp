@@ -28,6 +28,8 @@ vérifications visuelles ne sont exécutés que sur demande explicite.
 - `hooks/` : comportements React réutilisables.
 - `lib/` : configuration, types et logique indépendante du rendu.
 - `public/images/`, `public/fonts/`, `public/logos/` : assets locaux.
+- `holographic-card/` : source de référence vgpu conservée ; l’adaptation du
+  reflet des logos est documentée dans `components/sections/hero/README.md`.
 - `tests/` : tests existants de progression, géométrie et nettoyage des animations.
 
 L’export Framer, ses chunks, styles, adaptations de runtime et assets obsolètes

@@ -1,8 +1,28 @@
 # Nos garanties
 
 Le fond de section, la pastille et les cartes mobiles sont blancs, via
-`--timeline-paper: #fff`. Le vert reste dans les accents, le rail et les
-illustrations. Le décor SVG du coin inférieur droit a été retiré.
+`--timeline-paper: #fff`. L'aurore utilise une palette douce lime (`#d6fa7a`),
+menthe (`#b5dfc4`) et sauge (`#c6dbad`), avec une opacité de 50 % à toutes
+les tailles. Le mélange et l'animation de la référence sont conservés.
+Le masque radial part du coin supérieur droit (opaque à 10 %, transparent
+à 70 %). Le décor SVG du coin inférieur droit reste retiré.
+
+`components/ui/aurora-background.tsx` adapte le composant AuroraBackground
+aux CSS Modules du projet : pas de dépendance Tailwind, de second paquet
+Motion, de hauteur imposée ni de nouveau landmark `main`. Le rendu clair
+reprend les dégradés à 100°, leurs arrêts et tailles d'origine, le flou de
+10 px, `invert(1)` et la seconde couche en `mix-blend-mode: difference`.
+Comme dans la référence, seule la seconde couche anime sa
+`background-position` de 50 % à 350 % sur 60 s, en boucle linéaire.
+Cette animation de fond remplace la dérive par transformations pour retrouver
+l'effet demandé. Le fond de cette couche est fixe sur desktop, avec un
+repli `scroll` sur les appareils tactiles.
+Un `IntersectionObserver` met le mouvement en pause hors écran et se
+déconnecte au démontage. Avec `prefers-reduced-motion`, l'animation est
+désactivée et le fond défile avec la section ; le décor disparaît en
+couleurs forcées. Le masque utilise les formes standard et préfixée.
+Le décor possède son propre découpage absolu, sans changer la hauteur de
+la section ni le sticky des cartes mobiles.
 
 - `GuaranteesTimelineSection` rend les textes et le titre côté serveur.
 - La pastille et le titre utilisent les tokens partagés `--eyebrow-*` et

@@ -27,7 +27,7 @@ export function Ticker({ children, repeat = 2, className, scale = 1, ...options 
   const { containerRef, resolvedPath, stepPercent, loopPercent, baseOffset, hoverHandlers } = useTickerMotion({ ...options, scale, totalItems: items.length })
 
   return (
-    <div ref={containerRef} className={[styles.viewport, className].filter(Boolean).join(" ")} {...hoverHandlers}>
+    <div ref={containerRef} data-ticker className={[styles.viewport, className].filter(Boolean).join(" ")} {...hoverHandlers}>
       {resolvedPath && items.map((item) => (
         <TickerItem key={item.key} baseOffset={baseOffset} itemIndex={item.itemIndex} stepPercent={stepPercent} loopPercent={loopPercent} path={resolvedPath} scale={scale}>
           {item.content}
