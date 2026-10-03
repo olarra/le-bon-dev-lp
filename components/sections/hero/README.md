@@ -29,6 +29,9 @@ et sa licence MIT. L’adaptation se trouve dans `./fluid/` :
 - `simulation.ts` et les shaders conservent le solveur : advection, vorticité,
   divergence, pression, projection et buffers alternés. Grille de vitesse
   128 × 72, teinture 512 × 288, pas fixe de 1/60 s.
+- Les sources et la traînée du pointeur utilisent le ratio réel du canvas pour
+  calculer leur rayon, indépendamment de la grille fixe 16:9. Ce ratio est mis à
+  jour au redimensionnement pour éviter des halos étirés sur un écran vertical.
 - Les couleurs des sources et du pointeur passent au vert ; `display.wgsl`
   transforme la densité en opacité prémultipliée, plafonnée à 62 %, sur le fond
   clair. Le contour supérieur et inférieur s’estompe dans la section.

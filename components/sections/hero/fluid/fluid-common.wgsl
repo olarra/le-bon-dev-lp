@@ -6,6 +6,8 @@ export struct Grid {
 export struct Input {
   step: u32,
   pointer_active: f32,
+  // Measure circular splats in the displayed canvas, not the fixed solver grid.
+  surface_aspect: f32,
   pointer_from: vec2f,
   pointer_to: vec2f,
   pointer_velocity: vec2f,

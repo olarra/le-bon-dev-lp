@@ -19,7 +19,7 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
   if (any(id.xy >= grid.size)) { return; }
   let cell = vec2i(id.xy);
   let p = cell_uv(cell, grid.size);
-  let aspect = f32(grid.size.x) / f32(grid.size.y);
+  let aspect = input.surface_aspect;
   let dt = 1.0 / 60.0;
   let source_velocity = src[index_of(cell, grid.size)];
   let backtrace = clamp(p - dt * source_velocity, 0.5 / vec2f(grid.size), 1.0 - 0.5 / vec2f(grid.size));

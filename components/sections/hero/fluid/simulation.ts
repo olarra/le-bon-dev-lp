@@ -37,6 +37,7 @@ export function createFluid(gpu: Gpu) {
       divergence,
       curl,
       passes,
+      surfaceAspect: GRID_SIZE[0] / GRID_SIZE[1],
       step: 0,
       lastInputStep: -1000,
     };
@@ -96,6 +97,7 @@ export async function prepareFluid(
 }
 
 export function resizeFluid(fluid: Fluid, output: Target): void {
+  fluid.surfaceAspect = Math.max(1, output.size[0]) / Math.max(1, output.size[1]);
   fluid.passes.display.set({ config: { output_size: output.size } });
 }
 
@@ -189,6 +191,7 @@ function inputUniforms(fluid: Fluid, input?: StirInput) {
   return {
     step: fluid.step,
     pointer_active: input?.active ? 1 : 0,
+    surface_aspect: fluid.surfaceAspect,
     pointer_from: input?.from ?? [0.5, 0.5],
     pointer_to: input?.to ?? [0.5, 0.5],
     pointer_velocity: pointerVelocity,

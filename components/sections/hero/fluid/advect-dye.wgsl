@@ -37,7 +37,7 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
   if (any(id.xy >= grid.dye_size)) { return; }
   let cell = vec2i(id.xy);
   let p = cell_uv(cell, grid.dye_size);
-  let aspect = f32(grid.size.x) / f32(grid.size.y);
+  let aspect = input.surface_aspect;
   let backtrace = clamp(p - sample_velocity(p) / 60.0, 0.5 / vec2f(grid.dye_size), 1.0 - 0.5 / vec2f(grid.dye_size));
   var color = 0.97 * sample_dye(backtrace);
 
