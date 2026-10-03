@@ -1,51 +1,61 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
-import { prepareContactDraft, type ContactDraft } from "@/lib/contact-draft"
+import { useEffect, useRef, useState, type FormEvent } from "react"
+import type { Locale } from "@/lib/i18n/config"
+import type { Dictionary } from "@/lib/i18n/types"
 
-export function useContactForm() {
-  const [draft, setDraft] = useState<ContactDraft | null>(null)
-  const [copyState, setCopyState] = useState<"idle" | "copied" | "unavailable">("idle")
+type State = "idle" | "sending" | "success" | "error" | "unavailable" | "invalid"
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+export function useContactForm(locale: Locale, copy: Dictionary["contact"]["form"]) {
+  const [state, setState] = useState<State>("idle")
+  const requestRef = useRef<AbortController | null>(null)
+  useEffect(() => () => { requestRef.current?.abort() }, [])
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (requestRef.current) return
     const form = event.currentTarget
-
-    // Required text must contain more than whitespace; the browser handles email validity.
     for (const name of ["name", "message"]) {
       const field = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement
       if (!field.value.trim()) {
-        field.setCustomValidity(name === "name" ? "Indiquez votre nom." : "Décrivez votre projet en quelques mots.")
+        field.setCustomValidity(name === "name" ? copy.nameRequired : copy.messageRequired)
         field.reportValidity()
         return
       }
     }
     if (!form.reportValidity()) return
 
-    const nextDraft = prepareContactDraft(new FormData(form))
-    setDraft(nextDraft)
-    setCopyState("idle")
-    window.location.href = nextDraft.href
+    const payload = { ...Object.fromEntries(new FormData(form)), locale }
+    const controller = new AbortController()
+    requestRef.current = controller
+    setState("sending")
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      })
+      const result = await response.json()
+      if (controller.signal.aborted) return
+      if (!response.ok || result.ok !== true) {
+        setState(result.error === "invalid" ? "invalid" : result.error === "unavailable" ? "unavailable" : "error")
+        return
+      }
+      form.reset()
+      setState("success")
+    } catch {
+      if (!controller.signal.aborted) setState("error")
+    } finally {
+      if (requestRef.current === controller) requestRef.current = null
+    }
   }
 
   function handleInput(event: FormEvent<HTMLFormElement>) {
     const field = event.target
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
-      field.setCustomValidity("")
-    }
-    setDraft(null)
-    setCopyState("idle")
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) field.setCustomValidity("")
+    if (!requestRef.current) setState("idle")
   }
 
-  async function copyDraft() {
-    if (!draft) return
-    try {
-      await navigator.clipboard.writeText(draft.copy)
-      setCopyState("copied")
-    } catch {
-      setCopyState("unavailable")
-    }
-  }
-
-  return { draft, copyState, handleSubmit, handleInput, copyDraft }
+  return { state, handleSubmit, handleInput }
 }

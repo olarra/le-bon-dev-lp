@@ -47,3 +47,9 @@ Sur mobile, chaque projet présente son texte et son bouton avant son illustrati
 Les images locales sont dans `public/images/realisations/`.
 Les boutons Miau et French Pixel Studio ouvrent leur site dans un nouvel onglet.
 Les modes réduit et sans JavaScript conservent les projets visibles.
+
+## Traductions
+
+ShowcaseContent reçoit les textes des projets, les descriptions alternatives des images et les libellés accessibles via `copy`. Les assets et les liens vers les projets restent communs aux langues.
+Les dictionnaires sont chargés côté serveur depuis `lib/i18n/` pour `/fr`, `/en`
+et `/es`, puis seule la langue active est transmise à la section.

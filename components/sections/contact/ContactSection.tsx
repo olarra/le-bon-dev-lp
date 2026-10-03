@@ -1,12 +1,13 @@
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
 import { CONTACT } from "@/lib/contact"
-import { ESTIMATE_FACTORS, ESTIMATE_HREF } from "./contact.content"
+import { ESTIMATE_HREF } from "./contact.content"
+import type { Dictionary } from "@/lib/i18n/types"
 import styles from "./contact.module.css"
 
 /** The reference's consultation panel, adapted to the supplied estimate copy.
  * Its pill CTA follows Conicorn's exported Price Button (55736c5f645fdf8b). */
-export function ContactSection() {
+export function ContactSection({ copy }: { copy: Dictionary["estimate"] }) {
   return (
     <section className={styles.section} id="estimation" aria-labelledby="estimation-title" data-header-theme="dark" data-reveal-viewport="0.9">
       <div className={styles.inner}>
@@ -16,16 +17,16 @@ export function ContactSection() {
             <MetalSticker src="/images/contact/stickers/message-disc.svg" className={styles.callBadge} tone="light" />
           </div>
 
-          <h2 className={styles.title} id="estimation-title" data-reveal>Parlons de votre application.</h2>
+          <h2 className={styles.title} id="estimation-title" data-reveal>{copy.title}</h2>
           <p className={styles.description} data-reveal>
-            Quelques questions sur vos utilisateurs et ce qu’ils doivent pouvoir faire.
-            <span className={styles.response}>Une première estimation sous 24h.</span>
+            {copy.description}
+            <span className={styles.response}>{copy.response}</span>
           </p>
 
           <div className={styles.actions} data-reveal>
             <a className={styles.estimateLink} href={ESTIMATE_HREF}>
               <span className={styles.estimateLinkInner}>
-                <span>Estimer mon application</span>
+                <span>{copy.cta}</span>
                 <span className={styles.arrowCircle}><Arrow /></span>
               </span>
             </a>
@@ -34,18 +35,18 @@ export function ContactSection() {
               href={CONTACT.whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Prendre contact sur WhatsApp (nouvel onglet)"
+              aria-label={copy.whatsappLabel}
             >
-              Prendre contact sur WhatsApp
+              {copy.whatsapp}
             </a>
           </div>
         </StickerSurface>
 
         <div className={styles.criteria} data-reveal-group>
-          <p className={styles.eyebrow} data-reveal="left">Une première estimation</p>
-          <h3 className={styles.criteriaTitle} data-reveal="left">Ce qui peut faire varier l’estimation</h3>
+          <p className={styles.eyebrow} data-reveal="left">{copy.eyebrow}</p>
+          <h3 className={styles.criteriaTitle} data-reveal="left">{copy.criteriaTitle}</h3>
           <ul className={styles.factors} role="list">
-            {ESTIMATE_FACTORS.map((factor, index) => (
+            {copy.factors.map((factor, index) => (
               <li className={styles.factor} key={factor.title} data-reveal="left">
                 <span className={styles.factorNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <div>

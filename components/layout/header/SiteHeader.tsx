@@ -1,11 +1,13 @@
 "use client"
 
 import { BrandLogo } from "@/components/atoms/BrandLogo"
-import { NAVIGATION } from "./header.content"
+import type { Locale } from "@/lib/i18n/config"
+import type { Dictionary } from "@/lib/i18n/types"
+import { LanguageSwitcher } from "./LanguageSwitcher"
 import { useHeader } from "./use-header"
 import styles from "./SiteHeader.module.css"
 
-export function SiteHeader() {
+export function SiteHeader({ locale, copy }: { locale: Locale; copy: Dictionary["header"] }) {
   const { headerRef, navigationRef, menuButtonRef, scrolled, ready, menuOpen, setMenuOpen, closeMenu } = useHeader()
 
   return (
@@ -23,7 +25,7 @@ export function SiteHeader() {
       }}
     >
       <div className={styles.envelope} aria-hidden="true" />
-      <a className={styles.logo} href="#statistics" aria-label="Le bon dev — accueil" onClick={closeMenu}>
+      <a className={styles.logo} href="#statistics" aria-label={copy.home} onClick={closeMenu}>
         <BrandLogo placement="header" />
       </a>
       <button
@@ -34,21 +36,24 @@ export function SiteHeader() {
         aria-controls="header-menu"
         onClick={() => setMenuOpen((open) => !open)}
       >
-        {menuOpen ? "Fermer" : "Menu"}
+        {menuOpen ? copy.close : copy.menu}
         <span className={styles.menuIcon} aria-hidden="true"><span /><span /></span>
       </button>
       <div id="header-menu" className={styles.menuPanel}>
-        <nav ref={navigationRef} className={styles.navigation} aria-label="Navigation principale">
-          {NAVIGATION.map(({ href, label }) => (
+        <nav ref={navigationRef} className={styles.navigation} aria-label={copy.navigation}>
+          {copy.links.map(({ href, label }) => (
             <a key={href} href={href} onClick={closeMenu}>{label}</a>
           ))}
         </nav>
+        <div className={styles.actions}>
         <a className={styles.contact} href="#contact" onClick={closeMenu}>
-          <span>Parlons de votre projet</span>
+          <span>{copy.contact}</span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </a>
+        <LanguageSwitcher locale={locale} label={copy.language} />
+        </div>
       </div>
     </header>
   )

@@ -47,3 +47,9 @@ Cet essai n’a pas fait l’objet de vérifications automatisées ou visuelles.
 L’holographie vgpu reste utilisée pour les blobs de « Nos garanties », documentés
 dans `components/sections/guarantees-timeline/README.md`. La source de référence
 et sa licence MIT sont conservées dans `holographic-card/`.
+
+## Traductions
+
+HeroSection reçoit les textes traduits du Hero et de TopBar via les props `copy` et `topbar`. La géométrie du ruban, les logos et le fluide WebGPU gardent leur configuration existante.
+Les dictionnaires sont chargés côté serveur depuis `lib/i18n/` pour `/fr`, `/en`
+et `/es`, puis seule la langue active est transmise à la section.

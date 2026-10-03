@@ -201,18 +201,77 @@
   display: none;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 8px;
+}
+
+.language {
+  position: relative;
+  pointer-events: auto;
+  color: #102d2d;
+  font-size: 14px;
+}
+
+.language summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--color-border-navigation);
+  border-radius: 999px;
+  background: var(--color-surface-navigation);
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+
+.language summary::-webkit-details-marker { display: none; }
+.language summary:focus-visible { outline: 3px solid #50732e; outline-offset: 3px; }
+
+.language nav {
+  position: absolute;
+  inset: calc(100% + 8px) 0 auto auto;
+  min-width: 140px;
+  padding: 6px;
+  border: 1px solid var(--color-border-navigation);
+  border-radius: 16px;
+  background: var(--color-surface-navigation);
+  box-shadow: 0 8px 24px rgb(16 45 45 / 12%);
+}
+
+.language a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.language a:hover,
+.language a[aria-current="page"] { background: var(--color-surface-hero-olive); }
+
 .header[data-scrolled="true"][data-surface="dark"] a:focus-visible,
 .header[data-scrolled="true"][data-surface="dark"] .menuButton:focus-visible {
   outline-color: #f9faf5;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 1280px) {
+  .navigation a { padding-inline: 12px; font-size: 14px; }
   .contact {
-    margin-inline-end: -19px;
+    padding-inline: 16px;
+    gap: 10px;
+    font-size: 14px;
   }
 }
 
-@media (max-width: 1099.98px) {
+@media (max-width: 1279.98px) {
   .header {
     --header-base-offset: 12px;
     --header-height: 72px;
@@ -392,6 +451,13 @@
     align-self: stretch;
     padding-inline: 14px;
   }
+
+  .actions { align-self: stretch; flex-wrap: wrap; }
+  .actions .contact { flex: 1; font-size: 14px; }
+  .language nav { position: static; margin-top: 8px; }
+  .language[open] { width: 100%; }
+  .language[open] summary { justify-content: flex-start; }
+  .language[open] nav { display: flex; flex-wrap: wrap; box-shadow: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

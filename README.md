@@ -9,18 +9,22 @@ yarn install
 yarn dev
 ```
 
-Copier `.env.example` dans `.env.local` pour configurer `SITE_URL`, l’origine publique
-utilisée par les URL canoniques, le sitemap et les données structurées.
+Copier `.env.example` dans `.env.local` pour configurer `SITE_URL` et Mailjet.
+`SITE_URL` reste `https://lebondev.fr` : cette origine unique alimente les URL
+canoniques, le sitemap et les données structurées. Le domaine est indépendant
+des traductions et pourra être changé ultérieurement.
 
 Production : `yarn build`, puis `yarn start`. Les tests, builds de validation et
 vérifications visuelles ne sont exécutés que sur demande explicite.
 
 ## Architecture
 
-- `app/layout.tsx` : document HTML, polices locales, styles et métadonnées.
-- `app/(site)/layout.tsx` : navigation, cadre et pied de page communs.
-- `app/(site)/page.tsx` : composition de la landing page côté serveur.
+- `app/[lang]/layout.tsx` : document HTML avec sa langue, polices et métadonnées traduites.
+- `app/[lang]/(site)/layout.tsx` : navigation, cadre et pied de page communs.
+- `app/[lang]/(site)/page.tsx` : composition de la landing page côté serveur.
+- `app/api/contact/route.ts` : réception du formulaire et envoi via Mailjet.
 - `app/robots.ts`, `app/sitemap.ts` : routes SEO natives.
+- `lib/i18n/` : langues autorisées, dictionnaires typés et chargement côté serveur.
 - `components/sections/<section>/` : vue, contenu, CSS Module et hooks de la section.
 - `components/layout/` : navigation et structure du site.
 - `components/atoms/` : petits éléments partagés, dont titres, boutons et rubans.
@@ -35,8 +39,8 @@ vérifications visuelles ne sont exécutés que sur demande explicite.
 - `tests/` : tests existants de progression, géométrie et nettoyage des animations.
 
 L’export Framer, ses chunks, styles, adaptations de runtime et assets obsolètes
-ont été retirés. Ils restent dans l’historique Git. `/legacy` et `/index.html`
-redirigent vers `/`.
+ont été retirés. Ils restent dans l’historique Git. `/`, `/legacy` et `/index.html`
+redirigent directement et définitivement vers `/fr`.
 
 ## Conventions
 
@@ -53,17 +57,65 @@ redirigent vers `/`.
   GSAP pour les séquences au scroll, WAAPI pour les effets locaux, Lenis pour le document.
 - Libérer écouteurs, observateurs et animations au démontage. Préserver le rendu
   statique et `prefers-reduced-motion`.
-- Créer les nouvelles routes dans `app/(site)/<route>/page.tsx` avec leurs métadonnées.
+- Conserver une page par langue ; les rubriques sont des ancres dans cette page.
+
+## Langues et navigation
+
+Les routes déclaratives Next.js sont `/fr`, `/en` et `/es`, sans segment `/home`.
+`generateStaticParams` fournit ces trois langues ; les autres préfixes sont refusés.
+La version espagnole est commune à l’Espagne et au Mexique. Aucune redirection
+n’est décidée à partir de l’IP ou de la langue du navigateur.
+
+Chaque page a son titre, sa description, son URL canonique, ses métadonnées sociales
+et ses liens `hreflang` réciproques `fr`, `en`, `es` et `x-default` vers `/fr`.
+Le sitemap expose les mêmes trois URL et leurs variantes. Les données structurées
+décrivent le studio, le site et la page courante sans inventer d’adresse locale.
+
+Les dictionnaires sont chargés côté serveur, puis seule la copie utile est passée
+à chaque composant. Le français réutilise les contenus de section existants ;
+`lib/i18n/en.ts` et `es.ts` contiennent les traductions. Les marques et interfaces
+illustrées des projets restent celles des réalisations présentées.
+
+Le menu dessert Garanties, Offres, Réalisations, Méthode et Studio ; le bouton
+de contact dessert `#contact`. `SectionNavigation` (dans `smooth-scroll.tsx`)
+intercepte les liens de la page, met à jour le fragment et confie le défilement à
+Lenis, avec le décalage du header défini dans `app/globals.css`. Le focus rejoint
+la section à l’arrivée ; le mouvement réduit utilise un déplacement immédiat.
+Les ancres restent identiques dans toutes les langues.
+Le sélecteur propose des liens accessibles et indexables et reprend la section
+consultée lors du changement de langue. Les menus mobiles se ferment sur navigation.
 
 ## Contenu et formulaire
 
-Les fichiers `*.content.ts` centralisent le contenu de chaque section. Les coordonnées
-sont dans `lib/contact.ts`, le SEO dans `lib/site.ts`. Les polices Morna, Outfit et
-Caveat sont chargées par `next/font/local`.
+Les coordonnées sont dans `lib/contact.ts`, le domaine dans `lib/site.ts`, les
+métadonnées traduites dans `lib/i18n/`. Les polices Morna, Outfit et Caveat sont
+chargées par `next/font/local`.
 
-Le formulaire prépare un brouillon dans la messagerie du visiteur.
-`lib/contact-draft.ts` compose le message ; `use-contact-form.ts` gère saisie et copie.
-Aucun service d’envoi ni stockage serveur n’est actuellement branché.
+Le formulaire envoie un JSON à `/api/contact`. `lib/contact-form.ts` définit les
+identifiants de projet et les règles de saisie. La route appelle directement
+`sendMailjet(to, subject, text, replyTo?)` pour notifier le studio puis confirmer
+dans la langue du visiteur, suivant le déroulé du projet de référence.
+La route lit le corps avec `request.json()` et valide les champs avant l’envoi.
+Le helper `lib/mailjet.ts` utilise l’API Mailjet v3.1 avec un délai maximal de 8 secondes.
+L’adresse du visiteur est utilisée en Reply-To. L’échec de la confirmation ne fait
+pas échouer une demande déjà reçue par le studio. Le formulaire conserve la saisie
+en cas d’erreur et empêche un second envoi pendant la requête. Sans JavaScript,
+les liens e-mail et WhatsApp restent disponibles.
+
+Pour activer l’envoi, renseigner côté serveur, en local et chez l’hébergeur :
+
+- `MAIL_MJ_API_KEY_PUBLIC` et `MAIL_MJ_API_KEY_PRIVATE` : clés du compte Mailjet.
+- `MAIL_USERNAME` : expéditeur autorisé et boîte de réception du studio, par exemple
+  `hello@lebondev.fr`, comme dans le projet de référence.
+
+Ces variables ne doivent pas porter le préfixe `NEXT_PUBLIC_`. L’API répond avec
+une indisponibilité si elles manquent. Aucun e-mail de test n’est envoyé au démarrage.
+Le serveur valide les champs et leur longueur, ainsi qu’un champ piège anti-spam.
+Il n’applique pas de limite de fréquence ni de limite personnalisée sur le corps HTTP.
+Les demandes ne sont pas stockées en base et les erreurs ne journalisent pas leur contenu.
+
+Le formulaire d’estimation guidé et la FAQ restent à réaliser ; les CTA d’estimation
+continuent d’ouvrir la section Contact en attendant le parcours guidé.
 
 ## Apparitions au défilement
 

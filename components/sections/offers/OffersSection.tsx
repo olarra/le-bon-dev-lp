@@ -7,12 +7,13 @@ import { OfferIcon, OfferSticker, type OfferIconHandle } from "@/components/offe
 import { useStickerMotion } from "@/hooks/use-sticker-motion"
 import { FEATURE_FLAG_RESINE_ICON_ENABLED } from "@/lib/feature-flags"
 import { HEADING_REVEAL } from "@/lib/motion"
-import { OFFERS, type Offer } from "./offers.content"
+import type { Offer } from "./offers.content"
+import type { Dictionary } from "@/lib/i18n/types"
 import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
 import { mountOffersContentEntrance } from "./offers-content-entrance"
 import styles from "./offers.module.css"
 
-export function OffersSection() {
+export function OffersSection({ copy }: { copy: Dictionary["offers"] }) {
   const sectionRef = useRef<HTMLElement>(null)
   const [iconPhase, setIconPhase] = useState<OfferIconPhase>("paused")
   const headingControls = useAnimationControls()
@@ -33,11 +34,11 @@ export function OffersSection() {
       <div className={styles.light} data-offers-light aria-hidden="true" />
       <div className={styles.inner}>
         <header className={styles.header}>
-          <p className={styles.eyebrow}>Les offres</p>
+          <p className={styles.eyebrow}>{copy.eyebrow}</p>
           <AnimatedHeading
             as="h2"
             id="offres-title"
-            text="Votre projet prend forme."
+            text={copy.title}
             effect={HEADING_REVEAL}
             controls={headingControls}
             className={styles.titleWrapper}
@@ -48,9 +49,9 @@ export function OffersSection() {
         <div className={styles.entry} data-offers-entry>
           <div className={styles.surfacePlane} data-offers-surface>
             <div className={styles.surface} data-offers-support>
-              <OfferCard offer={OFFERS[0]} phase={iconPhase === "mobile-pending" ? "viewport" : iconPhase} />
+              <OfferCard offer={copy.items[0]} copy={copy} phase={iconPhase === "mobile-pending" ? "viewport" : iconPhase} />
               <div className={styles.ivoryPlane} data-offers-ivory>
-                <OfferCard offer={OFFERS[1]} phase={iconPhase === "mobile-pending" ? "paused" : iconPhase} />
+                <OfferCard offer={copy.items[1]} copy={copy} phase={iconPhase === "mobile-pending" ? "paused" : iconPhase} />
               </div>
             </div>
           </div>
@@ -60,7 +61,7 @@ export function OffersSection() {
   )
 }
 
-function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
+function OfferCard({ offer, phase, copy }: { offer: Offer; phase: OfferIconPhase; copy: Dictionary["offers"] }) {
   const cardRef = useRef<HTMLElement>(null)
   const iconRef = useRef<OfferIconHandle>(null)
   useStickerMotion(cardRef, { enabled: !FEATURE_FLAG_RESINE_ICON_ENABLED })
@@ -139,10 +140,10 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
         <p className={styles.promise}>{offer.promise}</p>
       </div>
       <div className={styles.offerAudience} data-offers-text="details">
-        <p className={styles.audience}><strong>Pour vous si</strong> {offer.audience}</p>
+        <p className={styles.audience}><strong>{copy.audience}</strong> {offer.audience}</p>
       </div>
       <div className={styles.offerFeatures} data-offers-text="details">
-        <h4 className={styles.featuresTitle}>Ce qui est compris</h4>
+        <h4 className={styles.featuresTitle}>{copy.included}</h4>
         <FeatureList items={offer.features} />
       </div>
       <div className={styles.offerClosing} data-offers-text="closing">
@@ -153,7 +154,7 @@ function OfferCard({ offer, phase }: { offer: Offer; phase: OfferIconPhase }) {
         <div className={styles.offerFooter}>
           {offer.price && (
             <div className={styles.price} data-offers-price>
-              <p className={styles.priceLabel}>À partir de</p>
+              <p className={styles.priceLabel}>{copy.from}</p>
               <p className={styles.priceSummary}>
                 <strong className={styles.priceAmount}>{offer.price.amount}</strong>
                 <span className={styles.priceDetail}>— {offer.price.detail}</span>

@@ -68,7 +68,7 @@ button, input, select, textarea {
   transform: none;
 }
 
-@media (max-width: 1099.98px) {
+@media (max-width: 1279.98px) {
   :root { --scroll-padding-top: 104px; }
 }
 

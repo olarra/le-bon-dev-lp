@@ -23,10 +23,11 @@ export const RESIN_GALLERY_REVEAL = {
 type Artwork = { src: string; alt: string; width: number; height: number }
 type ResinGalleryProps = {
   brand: string
-  artworks: readonly [Artwork, Artwork, Artwork]
+  artworks: readonly Artwork[]
+  label: string
 }
 
-export function ResinGallery({ brand, artworks }: ResinGalleryProps) {
+export function ResinGallery({ brand, artworks, label }: ResinGalleryProps) {
   const stageRef = useRef<HTMLDivElement>(null)
   const deviceRef = useRef<HTMLDivElement>(null)
   const reflectionRef = useRef<HTMLDivElement>(null)
@@ -87,7 +88,7 @@ export function ResinGallery({ brand, artworks }: ResinGalleryProps) {
   }, [])
 
   return (
-    <div ref={stageRef} className={styles.stage} data-resin-stage role="group" aria-label={`Aperçu de la galerie ${brand}`}>
+    <div ref={stageRef} className={styles.stage} data-resin-stage role="group" aria-label={label}>
       <div ref={deviceRef} className={styles.device} data-resin-device>
         <div className={styles.screen} data-resin-screen>
           <div className={styles.nav} aria-hidden="true">

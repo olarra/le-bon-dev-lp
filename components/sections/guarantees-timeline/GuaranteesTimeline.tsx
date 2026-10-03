@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from "react"
 import { useLenis } from "lenis/react"
+import type { Dictionary } from "@/lib/i18n/types"
 import layout from "./guarantees-layout.module.css"
 import { GuaranteeArt, GuaranteeBlob } from "./GuaranteeArt"
 import { GUARANTEE_STEPS } from "./guarantees-timeline.content"
@@ -13,7 +14,7 @@ import styles from "./guarantees-timeline.module.css"
 
 const assets = GUARANTEE_STEPS.map((step) => `/images/guarantees-timeline/png/${step.image}`)
 
-export function GuaranteesTimeline({ heading }: { heading: ReactNode }) {
+export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; steps: Dictionary["guarantees"]["steps"] }) {
   const ref = useRef<HTMLDivElement>(null)
   const lenis = useLenis()
 
@@ -81,9 +82,9 @@ export function GuaranteesTimeline({ heading }: { heading: ReactNode }) {
                   <div data-guarantee-card>
                     <div className={layout.mobileArt} data-guarantee-mobile-art><GuaranteeArt step={step} /></div>
                     <div className={layout.copy} data-guarantee-copy>
-                      <p className={styles.phase}>{step.phase}</p>
-                      <h3 className={styles.stepTitle}>{step.title}</h3>
-                      <p className={styles.description}>{step.description}</p>
+                      <p className={styles.phase}>{steps[index].phase}</p>
+                      <h3 className={styles.stepTitle}>{steps[index].title}</h3>
+                      <p className={styles.description}>{steps[index].description}</p>
                     </div>
                   </div>
                 </li>

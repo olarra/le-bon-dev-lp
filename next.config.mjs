@@ -12,8 +12,9 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      { source: "/legacy", destination: "/", permanent: true },
-      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/", destination: "/fr", permanent: true },
+      { source: "/legacy", destination: "/fr", permanent: true },
+      { source: "/index.html", destination: "/fr", permanent: true },
     ]
   },
 }

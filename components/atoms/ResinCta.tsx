@@ -4,12 +4,13 @@ type Props = {
   label: string
   href?: string | null
   newTab?: boolean
+  newTabLabel?: string
   className?: string
   arrowSize?: number
   strokeWidth?: number
 }
 
-export function ResinCta({ label, href, newTab = false, className, arrowSize = 24, strokeWidth = 1.7 }: Props) {
+export function ResinCta({ label, href, newTab = false, newTabLabel, className, arrowSize = 24, strokeWidth = 1.7 }: Props) {
   const classes = [styles.button, className].filter(Boolean).join(" ")
   const content = (
     <span>
@@ -26,7 +27,7 @@ export function ResinCta({ label, href, newTab = false, className, arrowSize = 2
         href={href}
         target={newTab ? "_blank" : undefined}
         rel={newTab ? "noopener noreferrer" : undefined}
-        aria-label={newTab ? `${label} (nouvel onglet)` : undefined}
+        aria-label={newTab && newTabLabel ? `${label} (${newTabLabel})` : undefined}
       >{content}</a>
     : <button className={classes} type="button" disabled>{content}</button>
 }

@@ -1,13 +1,14 @@
 # Prochaines étapes
 
 - [ ] Créer le formulaire d’estimation guidé en plusieurs étapes.
-- [ ] Brancher les liens du header et du menu mobile. il faut reecrile le lien de la barre de navigation pour mathc le different section dans la page avec un navigation inapp scroll to section
+- [x] Brancher le header et le menu mobile sur les sections : Garanties, Offres, Réalisations, Méthode, Studio et Contact.
 - [x] Ajouter les animations d’apparition aux textes de toutes les sections.
 - [x] Vérifier la cohérence des dimensions des pastilles et des titres de section sur desktop et mobile.
-- [ ] Connecter le formulaire de contact à un service d’envoi d’e-mails.
+- [x] Implémenter l’envoi du formulaire via Mailjet, avec confirmation traduite et gestion des erreurs.
+- [ ] Renseigner les clés Mailjet et l’expéditeur autorisé dans l’environnement de déploiement pour activer l’envoi.
 - [x] Ajouter une animation de parallaxe au logo du footer.
 - [ ] Ajouter la section FAQ manquante.
-- [ ] Mettre en place l’internationalisation (i18n) et les traductions du site.
+- [x] Mettre en place les routes `/fr`, `/en`, `/es`, les traductions et le changement de langue en conservant la section.
 - [ ] Effectuer une revue SEO du site.
-- [ ] Revoir les métadonnées de chaque page.
+- [x] Ajouter les métadonnées traduites, canoniques, hreflang et sitemap des trois versions.
 - [ ] Mesurer les performances avec Lighthouse sur mobile et desktop.

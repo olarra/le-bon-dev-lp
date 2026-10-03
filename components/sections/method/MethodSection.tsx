@@ -1,17 +1,18 @@
 import { MethodIcon } from "@/components/method-icons/MethodIcon"
 import { MethodTimeline } from "./MethodTimeline"
-import { METHOD_EYEBROW, METHOD_STEPS, METHOD_TITLE } from "./method.content"
+import { METHOD_STEPS } from "./method.content"
+import type { Dictionary } from "@/lib/i18n/types"
 import styles from "./method.module.css"
 
 /** Dark adaptation of Conicorn's Process Item / Process Item 2 composition
  *  from Framer project 55736c5f645fdf8b, with the site's four project stages. */
-export function MethodSection() {
+export function MethodSection({ copy }: { copy: Dictionary["method"] }) {
   return (
     <section className={styles.section} id="la-methode" aria-labelledby="methode-title" data-header-theme="dark">
       <div className={styles.inner}>
         <header className={styles.header} data-reveal-group>
-          <p className={styles.eyebrow} data-reveal>{METHOD_EYEBROW}</p>
-          <h2 className={styles.title} id="methode-title" data-reveal>{METHOD_TITLE}</h2>
+          <p className={styles.eyebrow} data-reveal>{copy.eyebrow}</p>
+          <h2 className={styles.title} id="methode-title" data-reveal>{copy.title}</h2>
         </header>
 
         <MethodTimeline>
@@ -25,8 +26,8 @@ export function MethodSection() {
                 <span className={styles.marker} data-method-marker><span className={styles.markerCore} /></span>
               </div>
               <div className={styles.copy} data-reveal={index % 2 === 0 ? "right" : "left"}>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.description}>{step.description}</p>
+                <h3 className={styles.stepTitle}>{copy.steps[index].title}</h3>
+                <p className={styles.description}>{copy.steps[index].description}</p>
               </div>
             </li>
           ))}

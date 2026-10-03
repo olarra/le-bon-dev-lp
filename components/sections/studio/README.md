@@ -43,3 +43,9 @@
 
 Les images locales conservent leur format 2:3. Les modes statique et réduit
 conservent le contenu visible.
+
+## Traductions
+
+StudioSection reçoit ses textes via `copy` et les transmet à StudioHeading, StudioScene et StudioEcosystem. Les images, outils, stickers et réglages des animations restent dans les fichiers de section.
+Les dictionnaires sont chargés côté serveur depuis `lib/i18n/` pour `/fr`, `/en`
+et `/es`, puis seule la langue active est transmise à la section.

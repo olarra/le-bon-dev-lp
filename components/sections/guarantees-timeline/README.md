@@ -114,3 +114,9 @@ une position déjà lue au montage s'affiche directement. Les styles sont retir�
 à la fin de chaque entrée. Sans JavaScript ou avec `prefers-reduced-motion`,
 ces contenus restent visibles. Le contexte GSAP nettoie animations et triggers,
 avec retrait de l'écoute Lenis et des observateurs au démontage.
+
+## Traductions
+
+GuaranteesTimelineSection reçoit la copie traduite, puis transmet les trois textes à GuaranteesTimeline. Les identifiants budget/followup/handover, les illustrations et la progression du morphing restent indépendants des traductions.
+Les dictionnaires sont chargés côté serveur depuis `lib/i18n/` pour `/fr`, `/en`
+et `/es`, puis seule la langue active est transmise à la section.

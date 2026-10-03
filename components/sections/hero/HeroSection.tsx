@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import type { Dictionary } from "@/lib/i18n/types"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { useHeroMotion } from "./use-hero-motion"
 import { WaveBrandCard } from "./WaveBrandCard"
@@ -16,15 +17,7 @@ import styles from "./hero.module.css"
 import { HERO_DOTS_ANIMATED, HERO_FLUID_ENABLED, HERO_HALFTONE, HERO_SHIMMER, HERO_STATIC_DOT_COLOR } from "./hero.background"
 import type { Breakpoint as Bp } from "@/lib/breakpoints"
 import {
-  CTA_HINT,
   CTA_HREF,
-  CTA_LABEL,
-  EYEBROW,
-  HIGHLIGHT_AFTER,
-  HIGHLIGHT_BEFORE,
-  HIGHLIGHT_WORD,
-  SECTION_TITLE_LINES,
-  SUBTITLE_INTRO,
   TICKER_CONFIG,
   TICKER_DIRECTION,
   TICKER_PATH,
@@ -45,13 +38,13 @@ const TICKER_BREAKPOINTS: readonly [Bp, keyof typeof TICKER_CONFIG][] = [
   ["phone", "phone"],
 ]
 
-export function HeroSection() {
+export function HeroSection({ copy, topbar }: { copy: Dictionary["hero"]; topbar: Dictionary["topbar"] }) {
   const { heroRef, headingRef, spiralRef, ribbonPausedRef, dotsPausedRef } = useHeroMotion()
 
   return (
     <section ref={heroRef} className={styles.hero} id="statistics">
       <div className={styles.utilityRail}>
-        <TopBar />
+        <TopBar copy={topbar} />
       </div>
       {/* The existing gradient and artwork scroll together with the hero. */}
       <div className={styles.stage}>
@@ -100,9 +93,9 @@ export function HeroSection() {
                 <div ref={spiralRef} className={styles.spiralField} aria-hidden="true" />
 
                 <div className={styles.headingAndLabel}>
-                  <p className={styles.eyebrow}>{EYEBROW}</p>
-                  <h1 className={styles.headline} aria-label={SECTION_TITLE_LINES.join(" ")}>
-                  {SECTION_TITLE_LINES.map((line) => (
+                  <p className={styles.eyebrow}>{copy.eyebrow}</p>
+                  <h1 className={styles.headline} aria-label={copy.titleLines.join(" ")}>
+                  {copy.titleLines.map((line) => (
                     <span key={line} className={styles.titleLine}>
                       <AnimatedHeading
                         as="span"
@@ -117,11 +110,11 @@ export function HeroSection() {
                   </h1>
                 </div>
 
-                <p className={styles.subtitle}>{SUBTITLE_INTRO}</p>
+                <p className={styles.subtitle}>{copy.subtitle}</p>
 
                 <div className={styles.ctaGroup}>
                   <a href={CTA_HREF} className={styles.ctaButton} aria-describedby="hero-estimate-hint">
-                    <span>{CTA_LABEL}</span>
+                    <span>{copy.cta}</span>
                     <svg
                       className={styles.ctaArrow}
                       width="16"
@@ -138,7 +131,7 @@ export function HeroSection() {
                       <path d="m13 6 6 6-6 6" />
                     </svg>
                   </a>
-                  <p className={styles.ctaHint} id="hero-estimate-hint">{CTA_HINT}</p>
+                  <p className={styles.ctaHint} id="hero-estimate-hint">{copy.hint}</p>
                 </div>
 
                 <div className={styles.highlight}>
@@ -155,15 +148,15 @@ export function HeroSection() {
                     draggable={false}
                   />
                   <p className={styles.highlightText}>
-                    {HIGHLIGHT_BEFORE}
+                    {copy.highlightBefore}
                     <mark className={styles.highlightMark}>
                       <svg className={styles.highlightStroke} viewBox="0 0 180 40" preserveAspectRatio="none" aria-hidden="true">
                         <path d="M8 12C48 4 112 4 171 8L175 29C124 25 61 29 8 35L3 20Z" fill="currentColor" />
                         <path d="M13 33C61 27 119 25 169 28" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                       </svg>
-                      {HIGHLIGHT_WORD}
+                      {copy.highlightWord}
                     </mark>
-                    {HIGHLIGHT_AFTER}
+                    {copy.highlightAfter}
                   </p>
                   <Image
                     src="/images/hero/bracket-closing.png"

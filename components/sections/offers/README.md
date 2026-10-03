@@ -133,3 +133,9 @@ no touch event is prevented or captured manually. Reduced motion disables playba
 existing icon visibility guard handles direct loads below the section without
 consuming an offscreen replay. See that component's README for asset optimization
 and cancellation details.
+
+## Traductions
+
+OffersSection reçoit les offres et leurs libellés traduits via `copy`. Les identifiants `sites-vitrines` et `saas-mobile` restent stables dans les trois langues ; les animations conservent leurs déclencheurs.
+Les dictionnaires sont chargés côté serveur depuis `lib/i18n/` pour `/fr`, `/en`
+et `/es`, puis seule la langue active est transmise à la section.

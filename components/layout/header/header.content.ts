@@ -1,5 +1,7 @@
 export const NAVIGATION = [
-  { href: "#sites-vitrines", label: "Sites vitrines" },
-  { href: "#saas-mobile", label: "SaaS & mobile" },
-  { href: "#le-studio", label: "Le studio" },
+  { href: "#garanties-timeline", label: "Garanties" },
+  { href: "#offres", label: "Offres" },
+  { href: "#realisations", label: "Réalisations" },
+  { href: "#la-methode", label: "Méthode" },
+  { href: "#le-studio", label: "Studio" },
 ]

@@ -1,4 +1,5 @@
 import { CONTACT } from "@/lib/contact"
+import type { Dictionary } from "@/lib/i18n/types"
 import styles from "./TopBar.module.css"
 
 function MailIcon() {
@@ -28,12 +29,12 @@ function ClockIcon() {
   )
 }
 
-export function TopBar() {
+export function TopBar({ copy }: { copy: Dictionary["topbar"] }) {
   return (
     <div id="hero-topbar" className={styles.bar}>
       <div className={styles.surface} data-topbar-surface>
         <div className={styles.inner}>
-          <span className={styles.availability}>Missions ponctuelles ou accompagnement continu</span>
+          <span className={styles.availability}>{copy.availability}</span>
           <div className={styles.group}>
             <a className={styles.link} href={CONTACT.whatsappHref} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp : ${CONTACT.whatsapp}`}>
               <WhatsAppIcon />
@@ -43,7 +44,7 @@ export function TopBar() {
               <MailIcon />
               <span>{CONTACT.email}</span>
             </a>
-            <span className={styles.response}><ClockIcon />Réponse sous 24h</span>
+            <span className={styles.response}><ClockIcon />{copy.response}</span>
           </div>
         </div>
       </div>

@@ -1,5 +1,26 @@
 # Structure et pied de page
 
+Le layout `app/[lang]/(site)/layout.tsx` transmet les textes traduits au header et
+au footer. Le header dessert cinq sections communes aux trois langues, avec un
+CTA Contact. Les ancres natives sont interceptées par `SectionNavigation` dans
+`smooth-scroll.tsx`, puis animées par Lenis. Le fragment d’URL et le focus suivent
+la navigation ; les clics modifiés et les liens externes gardent leur comportement.
+`--scroll-padding-top` réserve l’espace nécessaire sous le header fixe.
+La destination tient compte de l’espace déjà présent avant le titre de chaque
+section : le décalage du header n’est pas ajouté une seconde fois. Pour Garanties,
+le haut de la section rejoint le haut du viewport, avec le titre sous le header.
+Les clics utilisent une courbe sinusoïdale ease-in-out et une durée de 0,9 à 1,5 s
+selon la distance, indépendamment du lissage de la molette. Les accès directs
+par fragment utilisent le même calcul d’arrivée, sans animation initiale.
+Le menu mobile ferme sa disclosure après un clic. Il est utilisé sous 1280 px
+pour laisser la place aux cinq entrées et au sélecteur de langue.
+
+`LanguageSwitcher` propose `/fr`, `/en` et `/es` et ajoute l’ancre de la section
+consultée. Ses liens sont présents dans le HTML serveur ; aucun cookie ni
+changement automatique de langue n’est nécessaire. Les écouteurs de défilement
+sont regroupés par frame et retirés au démontage. Le changement de langue charge
+un nouveau document avec le bon `html lang` et réinitialise les animations.
+
 `PageFrame` compose le contenu et `SiteFooter`. Les colonnes du pied de page
 partagent un `data-reveal-group`, limité aux voisins visibles pour respecter
 leur empilement sur tablette et téléphone. La ligne finale (copyright et

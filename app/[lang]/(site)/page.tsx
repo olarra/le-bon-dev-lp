@@ -1,4 +1,6 @@
-import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { isLocale } from "@/lib/i18n/config"
+import { getDictionary } from "@/lib/i18n/dictionaries"
 import { SectionTransitions } from "@/components/atoms/SectionTransitions"
 import { HeroSection } from "@/components/sections/hero/HeroSection"
 import { GuaranteesTimelineSection } from "@/components/sections/guarantees-timeline/GuaranteesTimelineSection"
@@ -11,26 +13,25 @@ import { ContactSection } from "@/components/sections/contact/ContactSection"
 import { ContactFormSection } from "@/components/sections/contact/ContactFormSection"
 import styles from "./page.module.css"
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-}
-
 const SECTION_TARGETS = ["statistics", "garanties-timeline"] as const
 
-export default function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  if (!isLocale(lang)) notFound()
+  const copy = await getDictionary(lang)
   return (
     <>
-      <HeroSection />
+      <HeroSection copy={copy.hero} topbar={copy.topbar} />
       <div id="page-body" className={styles.sections}>
-        <GuaranteesTimelineSection />
-        <OffersSection />
+        <GuaranteesTimelineSection copy={copy.guarantees} />
+        <OffersSection copy={copy.offers} />
         <ShowcaseSection>
-          <ShowcaseContent />
+          <ShowcaseContent copy={copy.showcase} />
         </ShowcaseSection>
-        <MethodSection />
-        <StudioSection />
-        <ContactSection />
-        <ContactFormSection />
+        <MethodSection copy={copy.method} />
+        <StudioSection copy={copy.studio} />
+        <ContactSection copy={copy.estimate} />
+        <ContactFormSection locale={lang} copy={copy.contact} />
       </div>
       <SectionTransitions targetIds={SECTION_TARGETS} forwardOnly />
     </>

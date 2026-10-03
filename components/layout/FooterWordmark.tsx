@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 /** A short drift adds depth to the whole logo; its child owns the once-only
  * fade/rise. The stationary frame measures scroll without cropping either. */
-export function FooterWordmark() {
+export function FooterWordmark({ label }: { label: string }) {
   const motionRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const wordmarkRef = useRef<HTMLAnchorElement>(null)
@@ -105,7 +105,7 @@ export function FooterWordmark() {
     <div ref={frameRef} className={styles.wordmarkFrame} data-wordmark-frame>
       <noscript><style>{"[data-footer-wordmark] { opacity: 1 !important; transform: none !important; }"}</style></noscript>
       <div ref={motionRef} className={styles.wordmarkMotion}>
-        <a ref={wordmarkRef} className={styles.wordmark} href="#statistics" aria-label="Le bon dev — retour à l’accueil" data-footer-wordmark>
+        <a ref={wordmarkRef} className={styles.wordmark} href="#statistics" aria-label={label} data-footer-wordmark>
           <BrandLogo placement="footer" />
         </a>
       </div>

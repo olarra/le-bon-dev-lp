@@ -20,3 +20,9 @@ servie par `app/globals.css` ; `SCROLL_REVEAL` dans `lib/motion.ts` règle le ry
 Les transformations et opacités inline sont retirées à la fin. Le contenu reste
 visible sans mouvement avec la préférence de mouvement réduit, y compris si
 elle change pendant une animation, et sans JavaScript.
+
+## Traductions
+
+MethodSection reçoit ses titres et descriptions via `copy`. Les identifiants, numéros et icônes des étapes restent dans method.content.ts.
+Les dictionnaires sont chargés côté serveur depuis `lib/i18n/` pour `/fr`, `/en`
+et `/es`, puis seule la langue active est transmise à la section.

@@ -124,7 +124,7 @@ export function useHeader() {
   }, [])
 
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 1100px)")
+    const desktop = window.matchMedia("(min-width: 1280px)")
     const closeOnDesktop = () => {
       if (desktop.matches) setMenuOpen(false)
     }
