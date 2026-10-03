@@ -38,6 +38,7 @@
   ],
   "exclude": [
     "node_modules",
-    "holographic-card"
+    "holographic-card",
+    "fluid"
   ]
 }

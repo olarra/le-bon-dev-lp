@@ -4,6 +4,7 @@ import Image from "next/image"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { useHeroMotion } from "./use-hero-motion"
 import { WaveBrandCard } from "./WaveBrandCard"
+import { HeroFluid } from "./HeroFluid"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { Breakpoint } from "@/components/atoms/Breakpoint"
 import { HalftoneBackground } from "@/components/atoms/HalftoneBackground"
@@ -12,7 +13,7 @@ import { ShimmerHalftone } from "@/components/atoms/ShimmerHalftone"
 import { Ticker } from "@/components/atoms/Ticker"
 import { TopBar } from "@/components/layout/TopBar"
 import styles from "./hero.module.css"
-import { HERO_DOTS_ANIMATED, HERO_HALFTONE, HERO_SHIMMER, HERO_STATIC_DOT_COLOR } from "./hero.background"
+import { HERO_DOTS_ANIMATED, HERO_FLUID_ENABLED, HERO_HALFTONE, HERO_SHIMMER, HERO_STATIC_DOT_COLOR } from "./hero.background"
 import type { Breakpoint as Bp } from "@/lib/breakpoints"
 import {
   CTA_HINT,
@@ -54,6 +55,7 @@ export function HeroSection() {
       </div>
       {/* The existing gradient and artwork scroll together with the hero. */}
       <div className={styles.stage}>
+        {HERO_FLUID_ENABLED && <HeroFluid />}
         <div className={styles.artwork}>
           {HERO_DOTS_ANIMATED ? (
             <ShimmerHalftone {...HERO_HALFTONE} shimmer={HERO_SHIMMER} pausedRef={dotsPausedRef} className={styles.dotGrid} />

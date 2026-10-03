@@ -30,6 +30,8 @@ vérifications visuelles ne sont exécutés que sur demande explicite.
 - `public/images/`, `public/fonts/`, `public/logos/` : assets locaux.
 - `holographic-card/` : source de référence vgpu conservée ; l’adaptation aux
   blobs est documentée dans `components/sections/guarantees-timeline/README.md`.
+- `fluid/` : source officielle de l’exemple Interactive Fluid ; l’essai de fond
+  WebGPU du Hero est documenté dans `components/sections/hero/README.md`.
 - `tests/` : tests existants de progression, géométrie et nettoyage des animations.
 
 L’export Framer, ses chunks, styles, adaptations de runtime et assets obsolètes

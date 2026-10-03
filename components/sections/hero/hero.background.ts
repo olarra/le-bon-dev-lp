@@ -1,6 +1,9 @@
 import type { HalftoneField } from "@/components/atoms/HalftoneBackground"
 import type { ShimmerSettings } from "@/components/atoms/ShimmerHalftone"
 
+/** Trial of the vgpu Interactive Fluid background; false restores the static backdrop. */
+export const HERO_FLUID_ENABLED = true
+
 /**
  * Keep the designed dot composition still so the copy and CTA lead.
  * The radial ripple remains available by switching this to true.
