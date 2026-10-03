@@ -40,7 +40,7 @@ la section ni le sticky des cartes mobiles.
 - `guarantees-entrance.ts` orchestre les entrées de lecture, indépendamment
   du morphing et des transformations des cartes mobiles.
 - `morph-progress.ts` et `mobile-stack-layout.ts` contiennent les calculs purs.
-- `morph-renderer.ts` gère les illustrations, avec des images de repli.
+- `morph-renderer.ts` gère le morphing des illustrations sur desktop, avec des images de repli.
 - `blob-foil-renderer.ts` pilote le reflet et l'inclinaison selon le scroll.
 - `blob-foil.wgsl` adapte la matière de l'exemple vgpu aux grands blobs :
   gravures fines, éclairage du plan incliné, nacre et reflet argenté.
@@ -51,7 +51,8 @@ la section ni le sticky des cartes mobiles.
 Les trois blobs ont des fonds sombres distincts : vert forêt (`#174b38`) pour
 le budget, bleu pétrole (`#1b3d56`) pour le suivi et vert mousse (`#34521c`)
 pour la livraison. Chaque teinte possède un dégradé assorti, des reflets clairs
-aux ombres profondes. Leurs couleurs suivent toujours le morphing.
+aux ombres profondes. Sur desktop, leurs couleurs suivent le morphing ; sur
+mobile, chaque carte conserve sa propre forme et sa propre palette.
 Leur surface est agrandie de 18 % sur desktop/tablette
 et d'environ 17 % sur mobile par rapport à la première version holographique ;
 les illustrations conservent leur taille. Un canvas transparent dans un
@@ -60,7 +61,7 @@ et sous les illustrations. Il réutilise le
 clip qui référence le tracé maître animé : la réflexion reste dans le blob à
 chaque forme, tandis que le contour et les ombres restent en SVG.
 
-La lumière traverse le blob en diagonale selon la progression de la timeline.
+Sur desktop, la lumière traverse le blob en diagonale selon la progression de la timeline.
 Le SVG s'incline jusqu'à ±9,2° horizontalement et ±6,9° verticalement, avec
 la même orientation dans le calcul de lumière du shader. La gravure reste
 attachée au matériau ; sa densité reprend la valeur 142 de l'exemple.
@@ -68,9 +69,8 @@ Une large nappe nacrée et un
 reflet argenté plus étroit illuminent aussi l'espace entre les lignes.
 L'effet se stabilise après un court amortissement exponentiel (coefficient
 10,5 s⁻¹, soit une réponse légèrement plus lente) et revient en arrière avec
-le scroll. Sur la
-pile mobile, elle suit cette même progression. Dans le repli mobile sans pile,
-chaque blob s'éclaire selon sa position dans le viewport. Aucun suivi du curseur
+le scroll. Sur mobile, avec ou sans empilement, chaque blob s'éclaire selon
+la position de son illustration dans le viewport. Aucun suivi du curseur
 ni animation autonome n'est ajouté. Le moteur partage un contexte et les
 pipelines entre les surfaces, limite la résolution à un DPR de 2 et dessine
 seulement les blobs visibles lors d'un scroll, du court amortissement ou
@@ -96,14 +96,25 @@ attendent chacun leur position de lecture. Pendant le snap Hero → Garanties,
 la première composition attend aussi que le haut de la section atteigne
 12 % du viewport (`snapStart`), près de l'arrivée du snap.
 
-Sous 810 px, illustration et premier texte ont leurs propres déclenchements
-à 76 % du viewport, avec une montée de 18 px. Le contrôleur anime le conteneur
-de l'illustration partagée et celui de son repli statique ; leurs enfants
-restent gérés par le morphing. Les cartes suivantes conservent leur mouvement
+Sous 810 px, chaque carte contient son illustration et son blob holographique.
+L'illustration de la première carte et son texte ont leurs propres déclenchements
+à 76 % du viewport, avec une montée de 18 px. Les cartes suivantes conservent leur mouvement
 d'empilement et leur texte visible, y compris lorsque la hauteur disponible
 impose le repli sans empilement. La pastille commence à 80 % du viewport ;
 le sous-titre attend son propre seuil de lecture. `AnimatedHeading` et ses
 paramètres de lettres sont conservés.
+
+Dans la pile mobile, les cartes arrivent complètes avec 24 px d'écart. Chacune
+emporte son illustration en recouvrant la précédente, qui recule légèrement.
+Leur hauteur reste fixe, adaptée à l'espace disponible sous le header.
+La réserve de défilement se termine dès l'arrivée de la dernière carte :
+la section suivante remonte avec elle, puis la pile quitte le viewport sans
+palier de lecture supplémentaire ni grand espace blanc sous les cartes.
+L'illustration commune est réservée au desktop et le moteur de morphing WebGL
+n'est pas démarré sur mobile. Le reflet WebGPU reste indépendant pour chaque
+blob. L'empilement suit le scroll dans les deux sens ; son contexte GSAP restaure
+les styles au changement de disposition ou au démontage. Le repli sans
+empilement, notamment en mouvement réduit, garde les cartes complètes.
 
 `GUARANTEE_ENTRANCE` centralise les distances et les durées. Seules opacité
 et transformations sont animées, sans modifier la géométrie de la section.

@@ -129,7 +129,7 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
       // On phones the illustration and text occupy different reading positions.
       // Later cards already enter through the stack: keep their copy readable.
       if (mobileArt) stage(mobileArt, [], {
-        artwork: art ? [art, mobileArt] : [mobileArt], waitForSnap: true,
+        artwork: [mobileArt], waitForSnap: true,
       })
       if (copies[0]) stage(copies[0], Array.from(copies[0].children) as HTMLElement[])
     }

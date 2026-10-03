@@ -90,18 +90,15 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     mobileStack = true
     stickyTop = fit.stickyTop
     const stackInset = fit.shadowSpace + (steps.length - 1) * fit.layerGap
-    // Keep the next card just below the current card, rather than below the
-    // viewport. The waiting cards form a continuous column with a 24px gap.
-    // Their travel still follows the scroll one pixel at a time.
+    // Each complete card carries its own artwork and follows the previous
+    // card with a 24px gap. Its arrival tracks scroll one pixel at a time.
     const entryDistance = fit.cardHeight + 24
     const transitionLength = MOBILE_STACK_TRANSITIONS[0].end - MOBILE_STACK_TRANSITIONS[0].start
     stackDistance = Math.ceil(entryDistance / transitionLength)
-    // Restore the last card's reading interval before the sticky scene
-    // releases. This is scroll travel with a stationary stack, not padding
-    // between cards or a gesture lock; the 24px card gaps stay unchanged.
+    // End the reservation at the last arrival, so the following section
+    // rises with that card and the stack releases as soon as it is complete.
     const lastArrival = MOBILE_STACK_TRANSITIONS[MOBILE_STACK_TRANSITIONS.length - 1].end
-    const finalReadingDistance = Math.max(160, Math.round(fit.cardHeight / 2))
-    const reservedDistance = Math.ceil(stackDistance * lastArrival) + finalReadingDistance
+    const reservedDistance = Math.ceil(stackDistance * lastArrival)
     const dimensions = {
       "--mobile-card-height": fit.cardHeight,
       "--mobile-scene-height": fit.sceneHeight,
@@ -115,11 +112,11 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     Object.entries(dimensions).forEach(([property, value]) => root.style.setProperty(property, `${value}px`))
     root.dataset.mobileStack = "true"
 
-    // One normalized scroll playhead drives the real cards and the morph.
-    // Empty intervals at the start, middle and end are stationary reading time.
+    // One normalized scroll playhead drives the card stack.
+    // Reading intervals precede arrivals; the completed stack scrolls away.
     stackContext = gsap.context(() => {
-      // Set the resting initial state outside the timeline so seeking back
-      // to exactly zero keeps the incoming cards below the scene.
+      // Set the resting state outside the timeline so seeking back to zero
+      // restores the complete incoming cards below the scene.
       gsap.set(steps, { y: (index: number) => index * entryDistance, scale: 1, transformOrigin: "50% 0" })
       stackTimeline = gsap.timeline({ paused: true }).to({}, { duration: 1 }, 0)
       MOBILE_STACK_TRANSITIONS.forEach(({ start, end }, pair) => {
@@ -156,16 +153,19 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     if (disposed) return
     const state = mobileStack ? getStackMorphState(value) : getMorphState(value, reduced.matches)
     current = state.progress
-    morphs[state.pair].progress(state.blend)
-    const path = state.blend === 0 ? MORPH_BLOBS[state.pair]
-      : state.blend === 1 ? MORPH_BLOBS[state.pair + 1]
-      : shapes[state.pair].getAttribute("d")!
-    // The fill, foil clip and rim all follow this same live path.
-    blob.setAttribute("d", path)
-    colorStops.forEach((stop, index) => {
-      stop.setAttribute("stop-color", colors[state.pair][index](state.blend))
-    })
-    fill.style.transform = `scaleY(${state.progress})`
+    if (desktop.matches) {
+      morphs[state.pair].progress(state.blend)
+      const path = state.blend === 0 ? MORPH_BLOBS[state.pair]
+        : state.blend === 1 ? MORPH_BLOBS[state.pair + 1]
+        : shapes[state.pair].getAttribute("d")!
+      // The shared desktop fill, foil clip and rim follow this live path.
+      blob.setAttribute("d", path)
+      colorStops.forEach((stop, index) => {
+        stop.setAttribute("stop-color", colors[state.pair][index](state.blend))
+      })
+      fill.style.transform = `scaleY(${state.progress})`
+      renderer?.render(state.pair, state.blend, 1)
+    }
     root.dataset.progress = state.progress.toFixed(4)
     root.dataset.active = String(state.active)
     steps.forEach((step, index) => {
@@ -173,7 +173,6 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
       else step.removeAttribute("aria-current")
     })
     stackTimeline?.progress(state.progress, true)
-    renderer?.render(state.pair, state.blend, 1)
     foil?.render(state.progress)
   }
 
@@ -193,8 +192,8 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
 
   function startRenderer() {
     stopRenderer()
-    // Short/mobile fallback and reduced motion allocate no GPU scene.
-    if (disposed || (!desktop.matches && !mobileStack) || reduced.matches) return
+    // Mobile cards use their own images; only desktop needs the morph renderer.
+    if (disposed || !desktop.matches || reduced.matches) return
     const load = new AbortController()
     rendererLoad = load
     void createRenderer(canvas, assets, {
@@ -242,9 +241,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     refreshFrame = requestAnimationFrame(() => {
       refreshFrame = 0
       if (disposed) return
-      const wasStacked = mobileStack
       configureLayout()
-      if (wasStacked !== mobileStack) startRenderer()
       trigger?.refresh()
       trigger?.update()
       update(trigger?.progress ?? current)

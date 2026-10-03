@@ -95,7 +95,7 @@ export function GuaranteeBlob({ path = MORPH_BLOBS[0], palette = MORPH_PALETTES[
   )
 }
 
-/** Static per-card artwork also covers no-JS and reduced-motion mobile layouts. */
+/** Each mobile card owns its illustration and a fixed blob with scroll-driven foil. */
 export function GuaranteeArt({ step }: { step: GuaranteeStep }) {
   const index = indexByKind[step.kind]
   return (

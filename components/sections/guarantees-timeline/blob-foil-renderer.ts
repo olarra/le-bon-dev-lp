@@ -46,7 +46,7 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
   function draw(now: number) {
     pendingFrame = 0
     if (disposed || !gpu || !visible || document.hidden) return
-    const shared = desktop.matches || root.dataset.mobileStack === "true"
+    const shared = desktop.matches
     const viewportHeight = window.innerHeight
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const blend = 1 - Math.exp(-10.5 * (lastFrame ? Math.min((now - lastFrame) / 1000, 0.1) : 1 / 60))
@@ -70,8 +70,8 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
         if (blob.output!.size[0] !== width || blob.output!.size[1] !== height) {
           blob.output!.resize([width, height])
         }
-        // The sticky blob uses timeline travel, not its stationary viewport
-        // position. In the unstacked layout each card passes the same lamp.
+        // The shared desktop blob follows timeline travel. On mobile, each
+        // card's own blob catches the light as its illustration moves on screen.
         const target = blob.shared ? progress : clamp(
           (viewportHeight * 0.9 - (rect.top + rect.height / 2)) / (viewportHeight * 0.75),
         )
