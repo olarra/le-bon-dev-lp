@@ -168,6 +168,20 @@
   pointer-events: none;
 }
 
+.blobFoil {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .blobFoil {
+    display: none;
+  }
+}
+
 .illustration {
   position: absolute;
   inset: 0;
@@ -179,19 +193,28 @@
 }
 
 .blob {
-  --guarantee-blob-scale: 1;
+  --guarantee-blob-scale: 1.18;
   position: absolute;
   top: 50%;
   left: 50%;
   display: block;
-  /* Compensate the new assets' transparent margins, preserving their 600:420
-     proportions and the illustration's existing square slot. */
+  /* Expose more foil around the illustration without changing its square slot.
+     The SVG and its live clip tilt together, beneath the illustration. */
   width: calc(150% * var(--guarantee-blob-scale));
   height: calc(105% * var(--guarantee-blob-scale));
   overflow: visible;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%)
+    perspective(var(--blob-perspective, 1000px))
+    rotateY(var(--blob-tilt-y, 0rad)) rotateX(var(--blob-tilt-x, 0rad));
+  transform-origin: 50% 50%;
   pointer-events: none;
   user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .blob {
+    transform: translate(-50%, -50%);
+  }
 }
 
 .illustration {
@@ -244,7 +267,7 @@
   }
 
   .blob {
-    --guarantee-blob-scale: 1.06;
+    --guarantee-blob-scale: 1.24;
   }
 
   .timeline {

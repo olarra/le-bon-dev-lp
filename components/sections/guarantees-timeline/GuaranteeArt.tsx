@@ -10,7 +10,7 @@ const indexByKind = {
   handover: 2,
 } as const
 
-/** The assets' satin material follows one master path, including its clip and rim. */
+/** The dark satin surface and holographic layer share the morph's master path. */
 export function GuaranteeBlob({ path = MORPH_BLOBS[0], palette = MORPH_PALETTES[0], morphing = false }: {
   path?: string
   palette?: (typeof MORPH_PALETTES)[number]
@@ -32,10 +32,10 @@ export function GuaranteeBlob({ path = MORPH_BLOBS[0], palette = MORPH_PALETTES[
     >
       <defs>
         <linearGradient id={`${id}-fill`} data-blob-fill x1=".18" y1="0" x2=".8" y2="1" gradientUnits="objectBoundingBox">
-          <stop stopColor={palette[0]} stopOpacity=".9" />
-          <stop offset=".36" stopColor={palette[1]} stopOpacity=".65" />
-          <stop offset=".7" stopColor={palette[2]} stopOpacity=".64" />
-          <stop offset="1" stopColor={palette[3]} stopOpacity=".8" />
+          <stop stopColor={palette[0]} stopOpacity=".98" />
+          <stop offset=".36" stopColor={palette[1]} stopOpacity=".96" />
+          <stop offset=".7" stopColor={palette[2]} stopOpacity=".96" />
+          <stop offset="1" stopColor={palette[3]} stopOpacity=".98" />
         </linearGradient>
         <linearGradient id={`${id}-rim`} x1=".12" y1=".05" x2=".8" y2="1">
           <stop stopColor="#fffef4" stopOpacity=".84" />
@@ -45,7 +45,7 @@ export function GuaranteeBlob({ path = MORPH_BLOBS[0], palette = MORPH_PALETTES[
           <stop offset="1" stopColor="#f2ffde" stopOpacity=".72" />
         </linearGradient>
         <radialGradient id={`${id}-light`} cx=".29" cy=".12" r=".8">
-          <stop stopColor="#fffef4" stopOpacity=".24" />
+          <stop stopColor="#fffef4" stopOpacity=".12" />
           <stop offset=".42" stopColor="#fffef4" stopOpacity=".05" />
           <stop offset="1" stopColor="#fffef4" stopOpacity="0" />
         </radialGradient>
@@ -81,6 +81,14 @@ export function GuaranteeBlob({ path = MORPH_BLOBS[0], palette = MORPH_PALETTES[
       <use xlinkHref={shape} fill={`url(#${id}-fill)`} filter={`url(#${id}-inset)`} />
       <g clipPath={`url(#${id}-clip)`}>
         <rect x="80" y="30" width="450" height="360" fill={`url(#${id}-light)`} />
+        <foreignObject x="0" y="0" width="600" height="420">
+          <canvas
+            className={styles.blobFoil}
+            data-blob-foil={morphing ? "shared" : "static"}
+            width={600}
+            height={420}
+          />
+        </foreignObject>
       </g>
       <use xlinkHref={shape} fill="none" stroke={`url(#${id}-rim)`} strokeWidth="3" />
     </svg>

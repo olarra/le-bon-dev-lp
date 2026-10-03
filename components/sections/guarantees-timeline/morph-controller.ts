@@ -5,6 +5,7 @@ import { MORPH_BLOBS, MORPH_PALETTES } from "./morph-content"
 import { getMorphState, getStackMorphState, MOBILE_STACK_TRANSITIONS } from "./morph-progress"
 import { createRenderer, type MorphRenderer } from "./morph-renderer"
 import { fitMobileStack, MOBILE_STACK_SPACING } from "./mobile-stack-layout"
+import type { BlobFoilRenderer } from "./blob-foil-renderer"
 
 /** Adapted from the approved POC controller; owns only this section's resources. */
 export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[]) {
@@ -27,6 +28,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   const header = document.querySelector<HTMLElement>("header[data-scrolled]")
   const desktop = window.matchMedia("(min-width: 810px)")
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+  const contrast = window.matchMedia("(forced-colors: active)")
   let disposed = false
   let current = 0
   let frame = 0
@@ -34,6 +36,8 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   let trigger: ScrollTrigger | undefined
   let renderer: MorphRenderer | undefined
   let rendererLoad: AbortController | undefined
+  let foil: BlobFoilRenderer | undefined
+  let foilRevision = 0
   let morphs: gsap.core.Tween[] = []
   let stackContext: gsap.Context | undefined
   let stackTimeline: gsap.core.Timeline | undefined
@@ -156,7 +160,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     const path = state.blend === 0 ? MORPH_BLOBS[state.pair]
       : state.blend === 1 ? MORPH_BLOBS[state.pair + 1]
       : shapes[state.pair].getAttribute("d")!
-    // Every material layer references this path; the lighting stays fixed.
+    // The fill, foil clip and rim all follow this same live path.
     blob.setAttribute("d", path)
     colorStops.forEach((stop, index) => {
       stop.setAttribute("stop-color", colors[state.pair][index](state.blend))
@@ -170,6 +174,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     })
     stackTimeline?.progress(state.progress, true)
     renderer?.render(state.pair, state.blend, 1)
+    foil?.render(state.progress)
   }
 
   function schedule(value: number) {
@@ -213,6 +218,25 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     })
   }
 
+  function stopFoil() {
+    ++foilRevision
+    foil?.dispose()
+    foil = undefined
+  }
+
+  function startFoil() {
+    stopFoil()
+    if (disposed || reduced.matches || contrast.matches || !navigator.gpu) return
+    const revision = foilRevision
+    void import("./blob-foil-renderer").then(({ createBlobFoilRenderer }) => {
+      if (disposed || revision !== foilRevision) return
+      foil = createBlobFoilRenderer(root)
+      foil.render(current)
+      // The dark SVG surface remains the fallback if WebGPU cannot start.
+      return foil.ready
+    }).catch(() => {})
+  }
+
   function refresh() {
     if (disposed || refreshFrame) return
     refreshFrame = requestAnimationFrame(() => {
@@ -229,6 +253,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   function onPreference() {
     configureLayout()
     startRenderer()
+    startFoil()
     update(current)
     refresh()
   }
@@ -249,6 +274,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   })
   update(trigger.progress)
   startRenderer()
+  startFoil()
   const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(refresh) : undefined
   observer?.observe(root)
   // Natural copy height detects text enlargement even inside a fixed-height card.
@@ -259,6 +285,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   if (section) observer?.observe(section)
   desktop.addEventListener("change", onPreference)
   reduced.addEventListener("change", onPreference)
+  contrast.addEventListener("change", startFoil)
   window.addEventListener("pageshow", refresh)
   window.addEventListener("resize", refresh)
   window.visualViewport?.addEventListener("resize", refresh)
@@ -274,9 +301,11 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     trigger?.kill()
     stackContext?.revert()
     stopRenderer()
+    stopFoil()
     context.revert()
     desktop.removeEventListener("change", onPreference)
     reduced.removeEventListener("change", onPreference)
+    contrast.removeEventListener("change", startFoil)
     window.removeEventListener("pageshow", refresh)
     window.removeEventListener("resize", refresh)
     window.visualViewport?.removeEventListener("resize", refresh)

@@ -16,9 +16,10 @@ Provenance renvoyée par le téléchargement du 3 octobre 2026 :
 - 5 fichiers, 57 833 octets.
 
 L’adaptation utilisée par le site se trouve dans
-`components/sections/hero/wave-foil-renderer.ts` et `wave-foil.wgsl`.
-Elle conserve la lumière de proximité, la gravure et la diffraction, en les
-appliquant aux logos animés existants avec un contexte GPU partagé.
+`components/sections/guarantees-timeline/blob-foil-renderer.ts` et `blob-foil.wgsl`.
+Elle conserve la gravure, la diffraction et la nacre, en les appliquant aux
+blobs animés de « Nos garanties ». Le scroll pilote la lumière et l’inclinaison,
+avec un contexte GPU partagé entre les surfaces.
 
 Ce dossier de référence est exclu du périmètre TypeScript de l’application.
 La source d’origine et les portions adaptées relèvent de la licence MIT jointe.

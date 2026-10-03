@@ -6,12 +6,12 @@ export const MORPH_BLOBS = [
   "M302 60 C376 70 399 140 440 208 C492 295 400 351 303 348 C213 346 123 323 149 235 C181 162 195 45 302 60 Z",
 ] as const
 
-// Lime for budget, eucalyptus for follow-up, sage for handover.
-// Only these base colours blend during the morph; the satin lighting is fixed.
+// Forest green, petrol blue and moss green, in reading order.
+// Only the base colours blend with the shape; the foil light follows scroll.
 export const MORPH_PALETTES = [
-  ["#e1efb5", "#cbdc92", "#bad078", "#95b25f"],
-  ["#cbe6df", "#a8cfc4", "#94c1b5", "#74a395"],
-  ["#d7e5cf", "#b9d1aa", "#a4bf94", "#819f74"],
+  ["#27614c", "#174b38", "#10382a", "#0a271d"],
+  ["#2b526e", "#1b3d56", "#122c40", "#0b1e2e"],
+  ["#486b2b", "#34521c", "#253d13", "#192b0c"],
 ] as const
 
 export const ILLUSTRATION_SCALES = [0.98, 0.88, 0.90] as const

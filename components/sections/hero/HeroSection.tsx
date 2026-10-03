@@ -3,7 +3,6 @@
 import Image from "next/image"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { useHeroMotion } from "./use-hero-motion"
-import { useWaveHologram } from "./use-wave-hologram"
 import { WaveBrandCard } from "./WaveBrandCard"
 import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
 import { Breakpoint } from "@/components/atoms/Breakpoint"
@@ -47,7 +46,6 @@ const TICKER_BREAKPOINTS: readonly [Bp, keyof typeof TICKER_CONFIG][] = [
 
 export function HeroSection() {
   const { heroRef, headingRef, spiralRef, ribbonPausedRef, dotsPausedRef } = useHeroMotion()
-  useWaveHologram(heroRef)
 
   return (
     <section ref={heroRef} className={styles.hero} id="statistics">

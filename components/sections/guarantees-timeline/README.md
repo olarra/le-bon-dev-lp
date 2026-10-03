@@ -2,21 +2,29 @@
 
 Le fond de section, la pastille et les cartes mobiles sont blancs, via
 `--timeline-paper: #fff`. L'aurore utilise une palette douce lime (`#d6fa7a`),
-menthe (`#b5dfc4`) et sauge (`#c6dbad`), avec une opacité de 50 % à toutes
-les tailles. Le mélange et l'animation de la référence sont conservés.
+menthe (`#b5dfc4`) et sauge (`#c6dbad`), avec une opacité de 55 % à toutes
+les tailles. Le mélange de la référence est conservé ; les deux dégradés de
+la seconde couche se déplacent sur 60 s, au rythme lent de la référence.
+Les bandes se répètent tous les 13 % au lieu de 16 %, avec des plages blanches
+réduites, pour rapprocher les faisceaux. Le décor est limité à une hauteur de viewport (`100svh`,
+repli `100vh`) au début de la section. Un fondu blanc ferme ses bords haut et
+bas : le fond général et la suite de la timeline restent blancs, sans teinte
+verte étalée sur toute la section.
 Le masque radial part du coin supérieur droit (opaque à 10 %, transparent
 à 70 %). Le décor SVG du coin inférieur droit reste retiré.
 
 `components/ui/aurora-background.tsx` adapte le composant AuroraBackground
 aux CSS Modules du projet : pas de dépendance Tailwind, de second paquet
 Motion, de hauteur imposée ni de nouveau landmark `main`. Le rendu clair
-reprend les dégradés à 100°, leurs arrêts et tailles d'origine, le flou de
-10 px, `invert(1)` et la seconde couche en `mix-blend-mode: difference`.
+reprend les dégradés à 100°, avec des bandes légèrement rapprochées, le flou de
+8 px pour des faisceaux un peu plus lisibles, `invert(1)` et la seconde
+couche en `mix-blend-mode: difference`.
 Comme dans la référence, seule la seconde couche anime sa
 `background-position` de 50 % à 350 % sur 60 s, en boucle linéaire.
-Cette animation de fond remplace la dérive par transformations pour retrouver
-l'effet demandé. Le fond de cette couche est fixe sur desktop, avec un
-repli `scroll` sur les appareils tactiles.
+Ses tailles de fond sont de 200 % et 150 % : contrairement à une couche de
+100 %, chacune peut réellement se déplacer horizontalement. Les fonds restent
+attachés à leur couche (`scroll`) sur desktop comme sur mobile, avec le même
+espace d'animation dans Firefox.
 Un `IntersectionObserver` met le mouvement en pause hors écran et se
 déconnecte au démontage. Avec `prefers-reduced-motion`, l'animation est
 désactivée et le fond défile avec la section ; le décor disparaît en
@@ -33,13 +41,45 @@ la section ni le sticky des cartes mobiles.
   du morphing et des transformations des cartes mobiles.
 - `morph-progress.ts` et `mobile-stack-layout.ts` contiennent les calculs purs.
 - `morph-renderer.ts` gère les illustrations, avec des images de repli.
+- `blob-foil-renderer.ts` pilote le reflet et l'inclinaison selon le scroll.
+- `blob-foil.wgsl` adapte la matière de l'exemple vgpu aux grands blobs :
+  gravures fines, éclairage du plan incliné, nacre et reflet argenté.
 - `GuaranteeArt` rend les blobs inline : identifiants uniques, tracé maître
   `data-morph-path` et couches qui le réutilisent avec `use`.
 - `morph-content.ts` centralise les tracés, palettes et échelles des illustrations.
 
-Les couleurs suivent le morphing ; éclairage et filtres restent fixes.
-Chaque carte statique utilise le matériau et le tracé correspondant à son contenu.
-Les ombres peuvent dépasser le SVG.
+Les trois blobs ont des fonds sombres distincts : vert forêt (`#174b38`) pour
+le budget, bleu pétrole (`#1b3d56`) pour le suivi et vert mousse (`#34521c`)
+pour la livraison. Chaque teinte possède un dégradé assorti, des reflets clairs
+aux ombres profondes. Leurs couleurs suivent toujours le morphing.
+Leur surface est agrandie de 18 % sur desktop/tablette
+et d'environ 17 % sur mobile par rapport à la première version holographique ;
+les illustrations conservent leur taille. Un canvas transparent dans un
+`foreignObject` SVG ajoute la nacre et les fines gravures, au-dessus du fond
+et sous les illustrations. Il réutilise le
+clip qui référence le tracé maître animé : la réflexion reste dans le blob à
+chaque forme, tandis que le contour et les ombres restent en SVG.
+
+La lumière traverse le blob en diagonale selon la progression de la timeline.
+Le SVG s'incline jusqu'à ±9,2° horizontalement et ±6,9° verticalement, avec
+la même orientation dans le calcul de lumière du shader. La gravure reste
+attachée au matériau ; sa densité reprend la valeur 142 de l'exemple.
+Une large nappe nacrée et un
+reflet argenté plus étroit illuminent aussi l'espace entre les lignes.
+L'effet se stabilise après un court amortissement exponentiel (coefficient
+10,5 s⁻¹, soit une réponse légèrement plus lente) et revient en arrière avec
+le scroll. Sur la
+pile mobile, elle suit cette même progression. Dans le repli mobile sans pile,
+chaque blob s'éclaire selon sa position dans le viewport. Aucun suivi du curseur
+ni animation autonome n'est ajouté. Le moteur partage un contexte et les
+pipelines entre les surfaces, limite la résolution à un DPR de 2 et dessine
+seulement les blobs visibles lors d'un scroll, du court amortissement ou
+d'un changement de dimensions. La taille GPU est calculée avant inclinaison
+pour ne pas réallouer la texture à chaque mouvement.
+Le mouvement réduit, les couleurs forcées ou l'absence de WebGPU conservent
+les blobs sombres sans reflet ni inclinaison. Les ressources GPU, observateurs et écouteurs
+sont libérés au démontage ; une perte du GPU masque la surcouche. Les filtres
+SVG restent fixes et les ombres peuvent dépasser le SVG.
 
 Les entrées reprennent le principe des groupes courts de la page
 [iPhone Air](https://www.apple.com/iphone-air/) : une composition arrive,
