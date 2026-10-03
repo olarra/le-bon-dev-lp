@@ -44,6 +44,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   let mobileStack = false
   let stickyTop = 0
   let stackDistance = 1
+  const lastArrival = MOBILE_STACK_TRANSITIONS[MOBILE_STACK_TRANSITIONS.length - 1].end
   const mobileProperties = [
     "--mobile-card-height", "--mobile-scene-height", "--mobile-art-size",
     "--mobile-card-padding", "--mobile-art-gap", "--mobile-sticky-top",
@@ -90,14 +91,13 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     mobileStack = true
     stickyTop = fit.stickyTop
     const stackInset = fit.shadowSpace + (steps.length - 1) * fit.layerGap
-    // Each complete card carries its own artwork and follows the previous
-    // card with a 24px gap. Its arrival tracks scroll one pixel at a time.
+    // One pixel of scroll moves an incoming card by one pixel. Keeping the
+    // same distance for the layout and transforms avoids a gap below the last card.
     const entryDistance = fit.cardHeight + 24
     const transitionLength = MOBILE_STACK_TRANSITIONS[0].end - MOBILE_STACK_TRANSITIONS[0].start
     stackDistance = Math.ceil(entryDistance / transitionLength)
     // End the reservation at the last arrival, so the following section
     // rises with that card and the stack releases as soon as it is complete.
-    const lastArrival = MOBILE_STACK_TRANSITIONS[MOBILE_STACK_TRANSITIONS.length - 1].end
     const reservedDistance = Math.ceil(stackDistance * lastArrival)
     const dimensions = {
       "--mobile-card-height": fit.cardHeight,
@@ -179,7 +179,10 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   function schedule(value: number) {
     if (disposed) return
     current = value
-    if (!frame) frame = requestAnimationFrame(() => { frame = 0; update(current) })
+    if (!frame) frame = requestAnimationFrame(() => {
+      frame = 0
+      update(current)
+    })
   }
 
   function stopRenderer() {
@@ -231,7 +234,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
       if (disposed || revision !== foilRevision) return
       foil = createBlobFoilRenderer(root)
       foil.render(current)
-      // The dark SVG surface remains the fallback if WebGPU cannot start.
+      // The dark SVG/CSS material remains visible if WebGPU cannot start.
       return foil.ready
     }).catch(() => {})
   }
@@ -251,7 +254,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     configureLayout()
     startRenderer()
     startFoil()
-    update(current)
+    update(trigger?.progress ?? current)
     refresh()
   }
   function onVisibility() {

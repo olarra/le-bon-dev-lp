@@ -14,10 +14,10 @@ export function getMorphState(value: number, reducedMotion = false) {
   return stateForWindows(value, reducedMotion, [0.18, 0.64], 0.20)
 }
 
-/** Three reading plateaus with enough scroll distance for unhurried arrivals. */
+/** Short reading gaps let a natural scroll start moving the next card sooner. */
 export const MOBILE_STACK_TRANSITIONS = [
-  { start: 0.10, end: 0.44 },
-  { start: 0.56, end: 0.90 },
+  { start: 0.06, end: 0.46 },
+  { start: 0.50, end: 0.90 },
 ] as const
 
 function smoothstep(value: number) {

@@ -1,3 +1,6 @@
+/** Mobile exploration; disable to restore the white cards and their blobs. */
+export const MOBILE_METAL_CARDS_ENABLED = true
+
 /** Entrance timing in seconds; independent of the scroll-driven morph. */
 export const GUARANTEE_ENTRANCE = {
   badgeDelay: 0.08,

@@ -95,12 +95,12 @@ export function GuaranteeBlob({ path = MORPH_BLOBS[0], palette = MORPH_PALETTES[
   )
 }
 
-/** Each mobile card owns its illustration and a fixed blob with scroll-driven foil. */
-export function GuaranteeArt({ step }: { step: GuaranteeStep }) {
+/** The metallic mobile variant puts the foil on the card instead of a blob. */
+export function GuaranteeArt({ step, withBlob = true }: { step: GuaranteeStep; withBlob?: boolean }) {
   const index = indexByKind[step.kind]
   return (
     <div className={styles.art} data-kind={step.kind} aria-hidden="true">
-      <GuaranteeBlob path={MORPH_BLOBS[index]} palette={MORPH_PALETTES[index]} />
+      {withBlob && <GuaranteeBlob path={MORPH_BLOBS[index]} palette={MORPH_PALETTES[index]} />}
       <Image
         className={styles.illustration}
         src={`/images/guarantees-timeline/png/${step.image}`}

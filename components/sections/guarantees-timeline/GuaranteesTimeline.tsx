@@ -5,7 +5,7 @@ import { useLenis } from "lenis/react"
 import type { Dictionary } from "@/lib/i18n/types"
 import layout from "./guarantees-layout.module.css"
 import { GuaranteeArt, GuaranteeBlob } from "./GuaranteeArt"
-import { GUARANTEE_STEPS } from "./guarantees-timeline.content"
+import { GUARANTEE_STEPS, MOBILE_METAL_CARDS_ENABLED } from "./guarantees-timeline.content"
 import { ILLUSTRATION_SCALES } from "./morph-content"
 import { mountGuaranteesMorph } from "./morph-controller"
 import { mountGuaranteesEntrance } from "./guarantees-entrance"
@@ -36,6 +36,7 @@ export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; ste
       data-active="0"
       data-renderer="static"
       data-mobile-stack="false"
+      data-mobile-material={MOBILE_METAL_CARDS_ENABLED ? "metal" : "paper"}
     >
       {heading}
       <div className={morph.scrollSpace} data-guarantee-scroll>
@@ -80,7 +81,12 @@ export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; ste
                   style={{ "--card-index": index } as CSSProperties}
                 >
                   <div data-guarantee-card>
-                    <div className={layout.mobileArt} data-guarantee-mobile-art><GuaranteeArt step={step} /></div>
+                    {MOBILE_METAL_CARDS_ENABLED && (
+                      <canvas className={morph.cardFoil} data-card-foil aria-hidden="true" />
+                    )}
+                    <div className={layout.mobileArt} data-guarantee-mobile-art>
+                      <GuaranteeArt step={step} withBlob={!MOBILE_METAL_CARDS_ENABLED} />
+                    </div>
                     <div className={layout.copy} data-guarantee-copy>
                       <p className={styles.phase}>{steps[index].phase}</p>
                       <h3 className={styles.stepTitle}>{steps[index].title}</h3>

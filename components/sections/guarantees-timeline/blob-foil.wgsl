@@ -1,7 +1,7 @@
 // Adapted from vgpu's Holographic Card (MIT, Copyright 2025 Vercel, Inc.).
 // Original source and license: /holographic-card.
-// The SVG owns the silhouette and projects the entire surface. Shade that same
-// tilted plane here, keeping the engraving fixed to the material coordinates.
+// SVG owns the blob silhouette. Mobile metal cards use card-foil.wgsl.
+// The illuminated material keeps its engraving fixed in local coordinates.
 struct Params {
   resolution: vec2f,
   tilt: vec2f,

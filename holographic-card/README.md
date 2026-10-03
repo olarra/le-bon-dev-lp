@@ -7,6 +7,11 @@ Les cinq fichiers d’origine (`index.tsx`, `renderer.ts`, `scene.ts`,
 npx vgpu examples pull holographic-card --out ./holographic-card
 ```
 
+La référence a été récupérée à nouveau le 3 octobre 2026 avec `--force`,
+après sauvegarde du dossier existant, car la CLI refuse une destination
+déjà présente. Les cinq fichiers de l'exemple restent sans modification ;
+ce README et la licence locale ont été conservés.
+
 Source : <https://vgpu.sh/examples/holographic-card/source.md>
 
 Provenance renvoyée par le téléchargement du 3 octobre 2026 :
@@ -16,10 +21,22 @@ Provenance renvoyée par le téléchargement du 3 octobre 2026 :
 - 5 fichiers, 57 833 octets.
 
 L’adaptation utilisée par le site se trouve dans
-`components/sections/guarantees-timeline/blob-foil-renderer.ts` et `blob-foil.wgsl`.
-Elle conserve la gravure, la diffraction et la nacre, en les appliquant aux
-blobs animés de « Nos garanties ». Le scroll pilote la lumière et l’inclinaison,
-avec un contexte GPU partagé entre les surfaces.
+`components/sections/guarantees-timeline/` :
+
+- `card-foil.wgsl` reprend les fonctions de gravure, diffraction et nacre,
+  l'écho spectral et le grain de la référence pour les cartes mobiles entières.
+  La teinte du métal vient du CSS du site ; quelques éclats en étoile complètent
+  le reflet. Le triangle et les libellés de démonstration sont remplacés par
+  les illustrations et textes HTML traduits du site.
+- `blob-foil.wgsl` conserve la surcouche transparente des blobs du desktop.
+- `blob-foil-renderer.ts` remplace le suivi du curseur par un trajet de lumière
+  lié au scroll. Le trajet des cartes se termine avant leur recouvrement et
+  s'adapte à leur hauteur. Le contexte GPU est partagé et ne dessine que lors
+  du scroll, de l'amortissement ou d'un changement de dimensions.
+
+`vgpu` est déjà installé. Le montage asynchrone, la compilation des shaders,
+le nettoyage des ressources, des observateurs et des écouteurs sont conservés,
+avec un repli CSS en cas d'indisponibilité ou de perte du GPU.
 
 Ce dossier de référence est exclu du périmètre TypeScript de l’application.
 La source d’origine et les portions adaptées relèvent de la licence MIT jointe.
