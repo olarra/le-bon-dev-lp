@@ -453,6 +453,14 @@
     --ticker-height: 170px;
     --content-gap: 40px;
   }
+  .tickerContainer {
+    /* A wider, cropped path keeps the wave broad and its percentage-based
+       speed from dropping on narrow screens. */
+    left: 50%;
+    right: auto;
+    width: max(100%, 640px);
+    translate: -50% 0;
+  }
   .stage {
     /* Keep both colour bands wide, with the green lower on the phone. */
     background-image:

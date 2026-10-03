@@ -6,9 +6,12 @@
 
 ## Ruban de logos
 
-Le `Ticker` garde son parcours, sa rotation, sa vitesse et ses variantes desktop,
-tablette et téléphone. `pauseOnHover={false}` conserve le mouvement quand le
-pointeur approche. La pause hors écran et le mouvement réduit restent prioritaires.
+Le `Ticker` suit un tracé SVG avec rotation des cartes et variantes desktop,
+tablette et téléphone. Sur téléphone, son conteneur conserve au moins 640 px de
+large, centré et recadré par le hero : l’onde reste ample et la vitesse calculée
+en pourcentage du tracé ne diminue plus avec les écrans étroits.
+`pauseOnHover={false}` conserve le mouvement quand le pointeur approche.
+La pause hors écran et le mouvement réduit restent prioritaires.
 
 Chaque `WaveBrandCard` conserve son fond, ses dimensions, ses coins arrondis et
 son logo SVG masqué, avec les couleurs définies dans `hero.content.ts`.
