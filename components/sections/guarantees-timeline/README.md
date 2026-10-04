@@ -90,11 +90,24 @@ clip qui référence le tracé maître animé : la réflexion reste dans le blob
 chaque forme, tandis que le contour et les ombres restent en SVG.
 
 Sur desktop, la lumière traverse le blob en diagonale selon la progression de la timeline.
+Son parcours commence quand le centre du premier item atteint le centre de
+l'écran et se termine quand le bas du troisième y arrive. Il est indépendant
+de la progression du morphing, qui se termine au centre du dernier item :
+le reflet continue ainsi pendant la lecture de la troisième garantie au lieu
+de partir trop tôt vers le bord du blob. Les dimensions des lignes définissent
+ce parcours sans ajouter de hauteur ni modifier le scroll.
 Le SVG s'incline jusqu'à ±9,2° horizontalement et ±6,9° verticalement, avec
 la même orientation dans le calcul de lumière du shader. La gravure reste
 attachée au matériau ; sa densité reprend la valeur 142 de l'exemple.
 Une large nappe nacrée et un
 reflet argenté plus étroit illuminent aussi l'espace entre les lignes.
+Le shader des blobs reprend les intensités du matériau des cartes : gravures
+plus contrastées, écho spectral, grain éclairé, micro-points et trois petits
+éclats à quatre branches sur les bords exposés. La nappe et le reflet argenté
+ont les mêmes largeurs que sur les cartes. L'atténuation supplémentaire du
+reflet selon l'angle et le mélange nacré blanchi sont retirés. L'alpha
+prémultiplié suit le canal lumineux maximal, pour préserver l'éclat des
+couleurs sur le dégradé SVG qui continue de suivre le morphing.
 L'effet se stabilise après un court amortissement exponentiel (coefficient
 10,5 s⁻¹, soit une réponse légèrement plus lente) et revient en arrière avec
 le scroll. La variante mobile avec blobs conserve son éclairage lié à la

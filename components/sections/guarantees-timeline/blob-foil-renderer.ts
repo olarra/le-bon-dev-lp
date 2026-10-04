@@ -19,7 +19,7 @@ type FoilSurface = {
 
 export type BlobFoilRenderer = {
   ready: Promise<void>
-  render(progress: number): void
+  render(): void
   dispose(): void
 }
 
@@ -49,10 +49,18 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
   let initialized = false
   let disposed = false
   let visible = false
-  let progress = 0
   let pendingFrame = 0
   let lastFrame = 0
   let removeGpuError = () => {}
+
+  function sharedBlobTravel(viewportHeight: number) {
+    const first = steps[0].getBoundingClientRect()
+    const last = steps[steps.length - 1].getBoundingClientRect()
+    const start = first.top + first.height / 2
+    // The morph ends at the last row's centre; keep the light moving through
+    // the rest of that row, until its bottom reaches the reading position.
+    return clamp((viewportHeight / 2 - start) / Math.max(1, last.bottom - start))
+  }
 
   function cardTravel(index: number, rect: DOMRect, viewportHeight: number) {
     if (root.dataset.mobileStack !== "true" || !scrollSpace) {
@@ -112,7 +120,7 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
           item.output!.resize([width, height])
         }
         const target = item.isCard ? cardTravel(item.index, rect, viewportHeight)
-          : item.shared ? progress : clamp(
+          : item.shared ? sharedBlobTravel(viewportHeight) : clamp(
             (viewportHeight * 0.9 - (rect.top + rect.height / 2)) / (viewportHeight * 0.75),
           )
         let travel = item.travel ?? target
@@ -228,7 +236,7 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
 
   return {
     ready,
-    render(value) { progress = clamp(value); requestDraw() },
+    render: requestDraw,
     dispose,
   }
 }

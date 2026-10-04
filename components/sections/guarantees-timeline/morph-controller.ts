@@ -173,7 +173,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
       else step.removeAttribute("aria-current")
     })
     stackTimeline?.progress(state.progress, true)
-    foil?.render(state.progress)
+    foil?.render()
   }
 
   function schedule(value: number) {
@@ -233,7 +233,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     void import("./blob-foil-renderer").then(({ createBlobFoilRenderer }) => {
       if (disposed || revision !== foilRevision) return
       foil = createBlobFoilRenderer(root)
-      foil.render(current)
+      foil.render()
       // The dark SVG/CSS material remains visible if WebGPU cannot start.
       return foil.ready
     }).catch(() => {})
