@@ -1,7 +1,7 @@
 import { gsap } from "gsap"
 import { CustomEase } from "gsap/CustomEase"
 import { FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED } from "@/lib/feature-flags"
-import { mountOfferShimmer, type OfferShimmerVariant } from "./offers-shimmer"
+import { mountOfferShimmer } from "./offers-shimmer"
 
 // The recorded reference keeps the fade and rise visible through the same beat.
 // Distances grow with the viewport so a large display does not swallow the rise.
@@ -35,9 +35,6 @@ export function mountOffersEntrance(section: HTMLElement) {
   const application = find('[data-offer-kind="applications"]')
   const applicationPlane = find("[data-offers-ivory]")
   const landingShadow = find("[data-offers-landing-shadow]")
-  const replay = section.querySelector<HTMLButtonElement>("[data-offers-replay]")!
-  const preview = find("[data-offers-preview]")
-  const shimmerSelect = section.querySelector<HTMLSelectElement>("[data-offers-shimmer]")
   const media = gsap.matchMedia()
   let headingSeen = false
   let sectionSeen = false
@@ -50,7 +47,6 @@ export function mountOffersEntrance(section: HTMLElement) {
   }, context => {
     if (context.conditions!.reduced) {
       headingSeen = sectionSeen = applicationSeen = true
-      preview.hidden = true
       section.setAttribute("data-offers-ready", "")
       return
     }
@@ -91,17 +87,9 @@ export function mountOffersEntrance(section: HTMLElement) {
     let active = true
     let ready = false
     let restoreFrame = 0
-    const defaultShimmer = FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED ? "metal" : "original"
-    const selectedShimmer = (): OfferShimmerVariant => shimmerSelect ? (shimmerSelect.value === "metal" ? "metal" : "original") : defaultShimmer
-    const shimmer = mountOfferShimmer(application, selectedShimmer())
+    const shimmer = mountOfferShimmer(application, FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED ? "metal" : "original")
     // The reflection has its own clock and begins only after the card is settled.
     card.eventCallback("onComplete", shimmer.play)
-    const compareShimmer = () => {
-      shimmer.setVariant(selectedShimmer())
-      // Compare on the settled card; an entrance in progress keeps its own timing.
-      if (card.progress() === 1) shimmer.play(true)
-    }
-    shimmerSelect?.addEventListener("change", compareShimmer)
     const pending = new Set<{ observe: () => void; check: () => void; disconnect: () => void }>()
     const clearPending = () => {
       pending.forEach(entrance => entrance.disconnect())
@@ -171,39 +159,16 @@ export function mountOffersEntrance(section: HTMLElement) {
       scene.progress(1, true).pause()
       card.progress(1, true).pause()
     }
-    const replayEntrance = () => {
-      shimmer.cancel()
-      clearPending()
-      ready = true
-      headingSeen = sectionSeen = true
-      title.restart()
-      scene.restart()
-      if (mobile) {
-        // Keep the lower offer ready to reveal on scroll if it is still offscreen.
-        applicationSeen = false
-        card.pause(0, true)
-        reveal(applicationPlane, card, false, () => { applicationSeen = true })
-      } else applicationSeen = true
-    }
-    const replayVisibility = new IntersectionObserver(([entry]) => {
-      preview.hidden = !entry.isIntersecting
-    }, { rootMargin: "-80px 0px -80px 0px" })
-    replayVisibility.observe(entry)
-    replay.addEventListener("click", replayEntrance)
     section.addEventListener("focusin", finish)
     section.setAttribute("data-offers-ready", "")
 
     return () => {
       active = false
       shimmer.dispose()
-      shimmerSelect?.removeEventListener("change", compareShimmer)
       clearPending()
       cancelAnimationFrame(restoreFrame)
       window.removeEventListener("pageshow", afterRestoration)
       window.removeEventListener("resize", resize)
-      replayVisibility.disconnect()
-      replay.removeEventListener("click", replayEntrance)
-      preview.hidden = true
       section.removeEventListener("focusin", finish)
     }
   }, section)

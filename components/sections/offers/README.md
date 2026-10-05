@@ -43,8 +43,9 @@ L’ombre finale reste définie en CSS. Une couche décorative supplémentaire s
 la carte et s’efface pendant la pose ; seul son alpha est animé, sans recalculer
 un grand flou à chaque image. Le titre conserve sa courte entrée indépendante.
 
-Une fois Applications posée, `offers-shimmer.ts` lance le **reflet métallique vert**.
-Le sélecteur de comparaison est désactivé ; l’effet conserve sa vitesse et ses couleurs.
+Une fois Applications posée, `offers-shimmer.ts` lance le **reflet métallique vert** :
+un reflet fini, légèrement courbe, qui traverse la carte du coin supérieur gauche
+au coin inférieur droit, comme une lampe de studio passant sur un métal poli.
 L’essai de reflet diagonal reste inactif dans le code : une nappe émeraude et vert pétrole,
 un sommet sauge/péridot et une courte ombre juste après l’éclat. Cette rupture
 plus nette reprend le principe de la crête et des valeurs sombres des stickers.
@@ -72,18 +73,29 @@ interception du scroll ou déclenchement supplémentaire au survol.
 
 Le **reflet métallique vert** est activé par
 `FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED` dans `lib/feature-flags.ts`.
-Ce flag vaut `true` pour conserver le métal vert. La variante métallique garde sa durée de 0,65 s.
-`offers-metal-renderer.ts` réutilise
-`../guarantees-timeline/blob-foil.wgsl` avec `engraving: 0`, `green: 1` et `spread: 0.42` :
-la face reçoit le reflet et ses éclats, sans ondes gravées ni trame de points.
-La palette passe de l’émeraude au vert vif, avec une crête citron.
-La trajectoire de la lampe, les angles de la normale et l’intensité maximale
-de 0,95 viennent du contrôleur des blobs. Le déplacement utilise une courbe
-`ease-out sine` dans `offers-metal.ts`, avec un départ rapide et une sortie
-adoucie. La bande lumineuse, sa crête et le passage sur les facettes sont
-resserrés à 42 % de leur largeur d’origine pour produire un shimmer bref.
-La durée de cette variante est réglable dans `METAL_DURATION`, dans `offers-shimmer.ts`.
-Les garanties sélectionnent `engraving: 1`, `green: 0` et `spread: 1` pour garder leur matière.
+Ce flag vaut `true` pour conserver le métal vert. `offers-metal-renderer.ts` réutilise
+`../guarantees-timeline/blob-foil.wgsl`, la matière des blobs, avec `engraving: 0`,
+`green: 1` et `spread: 0.42` : la nappe lumineuse, sa crête, la nacre verte
+(émeraude, vert feuille, citron) et les paillettes des blobs, sans ondes gravées,
+trame de points ni facettes étoilées. La branche `offerFinish` du shader mesure
+cette lumière en unités de largeur de carte : une bande haute inclinée de 45°,
+large, avec un cœur doux à la place de la crête fine des blobs, légèrement bombée,
+et adoucie seulement au-delà du haut et du bas de la carte ; la lumière diffuse est
+ramenée à 90 % et la sortie à 85 %. Les blobs des garanties (`engraving: 1`,
+`green: 0`, `spread: 1`) ne passent pas par cette branche.
+
+Le mouvement reprend celui du reflet de résine du commit `751e86b`, dont la vitesse
+convenait : `offers-metal-sweep.ts` fait glisser la bande de gauche à droite, le
+balayage allant donc du coin supérieur gauche au coin inférieur droit, en **1,45 s**
+(`METAL_DURATION`, dans `offers-shimmer.ts`) sur la courbe `cubic-bezier(.28,.1,.28,1)` :
+entrée rapide, sortie adoucie. Une bande à 45° couvrant toute la hauteur s’étend
+horizontalement d’une demi-hauteur de part et d’autre de son centre : le trajet
+vaut `1 + hauteur/largeur + 0,5` largeurs, soit environ 3,5 largeurs sur
+546 × 1104 px et 4,8 sur 334 × 1109 px, pour la même durée. La lumière monte
+pendant les premiers 12 %, tient, puis s’éteint sur les derniers 18 %, sur la même
+courbe. Les angles de la normale viennent du contrôleur des blobs ; le rendu inverse
+leur projection pour placer la lampe sur ce trajet. Le texte reste lisible sous la
+passe. Les réglages sont regroupés dans `SWEEP`.
 
 La couche transparente reste sous le texte HTML et à l’intérieur des coins
 arrondis. Le fond vert réapparaît lorsque la lumière s’éteint. Le shader dessine
@@ -93,20 +105,17 @@ l’échelle animée de la carte. L’exemple Holographic Card et sa licence d�
 sont conservés dans `/holographic-card`.
 
 Sans WebGPU, ou si son initialisation n’est pas terminée au début de la passe,
-`MetalFinish` réutilise les trois couches CSS de `MetalSticker` dans leur
-variante sombre avec `palette="green"` : nacre conique verte, éclat citron
-et grain. La nacre est limitée à une bande mobile, et les arrêts de l’éclat
-sont rapprochés pour conserver un reflet fin. Les mélanges et intensités
-viennent des stickers ; cette palette remplace les nuances bleues et violettes par du vert.
-`lib/sticker-light.ts` centralise les coordonnées lumineuses déjà
-utilisées par `useStickerMotion`, avec les mêmes valeurs. La carte fournit sa
-forme et son fond ; le repli reçoit une lumière animée pendant cette passe.
-Le moteur est choisi au début de la lecture. Pour une comparaison déclenchée
-par le sélecteur, l’initialisation GPU est attendue avant de lancer la passe ;
-un navigateur sans WebGPU ou un échec d’initialisation utilise le repli.
-Une perte du GPU fait passer au repli au temps courant, sans recommencer
-l’animation. Le reflet diagonal ne crée aucun contexte GPU. Il conserve la clé
-interne `original` du sélecteur de comparaison.
+`MetalFinish` avec `palette="green"` joue le même reflet en CSS : une seule bande
+dégradée (corps émeraude, lèvre sombre, crête citron pâle, épaule vert frais) dans
+un cadre tourné de −45°, limitée par un masque elliptique qui termine la lumière
+le long de sa longueur. `offers-metal.ts` place son centre dans ce cadre avec la même
+géométrie, la même courbe de vitesse et la même durée ; la couche nacre des stickers
+est masquée et le grain conservé. La carte fournit sa forme et son fond.
+Le moteur est choisi au début de la lecture : un navigateur sans WebGPU ou un
+échec d’initialisation utilise le repli. Une perte du GPU fait passer au repli
+au temps courant, sans recommencer l’animation. Le reflet diagonal (variante
+`original`, sélectionnée quand `FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED` vaut
+`false`) ne crée aucun contexte GPU.
 
 Les stickers `OfferSticker` sont les seules illustrations affichées.
 `useStickerMotion` conserve leur matière métallique et leurs reflets au scroll
@@ -129,26 +138,11 @@ toucher, ni filtre Lenis. L’ancien dépliage depuis le bouton et le contrôleu
 à deux gestes ont été retirés.
 
 Le fond blanc → `#eaf7d6`, les couleurs des cartes, les textes FR/EN/ES, les liens
-et les deux boutons résine de 58 px sont conservés. Le bouton Applications reste
+et les deux boutons résine de 58 px sont conservés. Sous 810 px, le fond de section
+part de la sauge (`#f3f8ea` → `#e3f0cf`) et le support blanc reçoit un liseré de
+1 px (`rgb(199 218 174 / 55%)`) et une ombre plus courte : la carte claire se
+détache au lieu de flotter sur du blanc. Le bouton Applications reste
 citron avec une face uniforme.
-
-## Rejouer
-
-Un bouton fixe en bas à droite apparaît tant que les cartes sont à l’écran.
-Il relance l’entrée à la position de défilement actuelle, y compris si une
-lecture est déjà en cours, puis le reflet à la fin. Un reflet en cours est
-annulé avant le redémarrage. Sur mobile, si Applications est encore sous l’écran,
-elle reste prête à jouer à son arrivée. Les libellés sont traduits en FR/EN/ES.
-Les contrôles sont masqués avec réduction des animations ou sans JavaScript.
-
-`FEATURE_FLAG_OFFERS_SHIMMER_COMPARISON_ENABLED` affiche temporairement un
-sélecteur **Reflet diagonal / Métal vert** à côté du bouton. Il vaut désormais `false` :
-seul le bouton **Rejouer** est affiché. Si la comparaison est réactivée, changer la sélection joue uniquement le reflet sur
-la carte posée ; si l’entrée est encore en cours, le choix s’applique à sa fin.
-Le bouton **Rejouer** utilise également ce choix. La sélection reste locale
-à la page et revient au défaut du feature flag au rechargement.
-Mettre le flag de comparaison à `false` retire le sélecteur et conserve
-la variante définie par `FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED`.
 
 ## Accessibilité et cycle de vie
 
@@ -161,24 +155,20 @@ au-dessus de la fenêtre prennent leur état final. Le franchissement d’un
 breakpoint conserve les entrées déjà déclenchées.
 
 Un focus dans une offre termine immédiatement les fondus pour rendre les liens
-visibles. Le focus sur la section lors d’une navigation par ancre, ainsi que le
-bouton Rejouer, laissent l’entrée se jouer. `prefers-reduced-motion`
-montre les états finaux directement. Sans
+visibles. Le focus sur la section lors d’une navigation par ancre laisse
+l’entrée se jouer. `prefers-reduced-motion` montre les états finaux directement. Sans
 JavaScript, le contenu final est visible grâce au repli `noscript`.
 Les couches du reflet restent masquées sans animation, en réduction des
 animations et en couleurs forcées. Un passage direct à l’état final (focus,
 changement de breakpoint ou contenu déjà dépassé) ne déclenche pas de reflet.
 
 Au démontage, `gsap.matchMedia().revert()` restaure les styles et supprime les
-timelines. Les observateurs d’entrée et de visibilité du bouton, le cadre de
-restauration et les écouteurs de chargement, resize, focus et replay sont nettoyés. Les effets
-métalliques utilisent le nettoyage existant de `useStickerMotion`.
+timelines. Les observateurs d’entrée, le cadre de restauration et les écouteurs
+de chargement, resize et focus sont nettoyés. Les effets métalliques utilisent
+le nettoyage existant de `useStickerMotion`.
 Le reflet s’arrête lorsque la carte quitte la fenêtre ou que l’onglet est masqué.
 Un changement des dimensions de la carte annule la passe ; la suivante mesure
 sa nouvelle géométrie. Les dimensions de la bande sont nettoyées au démontage.
-Un changement de variante annule la passe précédente et libère le moteur GPU
-en revenant au reflet diagonal. Une préparation asynchrone annulée ne relance pas
-de reflet après un changement de sélection ou un replay.
 Au démontage et aux changements de breakpoint, ses animations, son cadre de
 rendu, ses observateurs et ses écouteurs sont annulés ; le contexte WebGPU et
 ses ressources sont libérés. En réduction des animations, le moteur n’est pas

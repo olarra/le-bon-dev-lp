@@ -146,33 +146,49 @@
   mix-blend-mode: multiply;
 }
 
-/* Green card shimmer: keep the foil and bright ridge inside one narrow sweep. */
+/* Offers fallback without WebGPU: the same finite highlight as the shader,
+   drawn as one gradient band inside a frame rotated to the light's travel.
+   The controller sets that frame's size and the centre in its coordinates;
+   the elliptical mask ends the light along its length. */
 .finish[data-palette="green"] .stickerFoil {
-  --sticker-mask: linear-gradient(
-    var(--sticker-gloss-angle, 110deg),
-    transparent 45.5%, #000 49%, #000 51%, transparent 54.5%
-  );
-  -webkit-mask-size: 220% 160%;
-  mask-size: 220% 160%;
-  -webkit-mask-position: var(--sticker-gloss-x, 50%) var(--sticker-gloss-y, 50%);
-  mask-position: var(--sticker-gloss-x, 50%) var(--sticker-gloss-y, 50%);
-  background: conic-gradient(
-    from var(--sticker-foil-angle, 210deg) at var(--sticker-foil-x, 50%) var(--sticker-foil-y, 42%),
-    #d7ffad 0deg, #b5f587 26deg, #74d855 52deg, #30b76a 76deg,
-    #0c8847 102deg, #086b3c 124deg, #15983e 146deg, #79d844 168deg,
-    #c9f881 190deg, #e0ffae 212deg, #b4ef73 238deg, #67d557 266deg,
-    #26a85b 292deg, #0e813c 318deg, #7de573 342deg, #d7ffad 360deg
-  );
+  display: none;
 }
 
 .finish[data-palette="green"] .stickerGloss {
-  background-image: linear-gradient(
-    var(--sticker-gloss-angle, 110deg),
-    transparent 46%, rgb(64 210 112 / 28%) 48.5%,
-    rgb(161 240 75 / 30%) 49.2%, rgb(182 248 100 / 50%) 49.65%,
-    rgb(210 255 142 / 58%) 50%, rgb(182 248 100 / 50%) 50.35%,
-    rgb(161 240 75 / 30%) 50.8%, rgb(74 213 98 / 28%) 51.5%, transparent 54%
-  );
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: var(--finish-span, 200%);
+  height: var(--finish-span, 200%);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  /* Top to bottom runs from behind the light to ahead of it: a faint emerald
+     tail, the short dark lip, a crisp pale-lime crest, then the fresh shoulder
+     and the emerald body. The second layer varies the tone along the band. */
+  background-image:
+    linear-gradient(180deg,
+      transparent 0%,
+      rgb(10 70 42 / 10%) 20%,
+      rgb(16 90 54 / 18%) 38%,
+      rgb(6 30 20 / 20%) 42.2%,
+      rgb(40 130 80 / 22%) 46.8%,
+      rgb(120 200 110 / 34%) 48.8%,
+      rgb(190 235 140 / 44%) 50%,
+      rgb(140 210 100 / 36%) 52.5%,
+      rgb(90 185 85 / 30%) 56.7%,
+      rgb(30 120 70 / 20%) 64%,
+      rgb(14 80 48 / 10%) 75%,
+      transparent 86%),
+    linear-gradient(90deg,
+      rgb(0 60 34 / 22%) 0%,
+      transparent 32%,
+      rgb(140 235 100 / 12%) 58%,
+      rgb(0 60 34 / 22%) 100%);
+  background-size: 100% var(--finish-band, 60%);
+  background-position: 0 calc(var(--finish-y, 50%) - var(--finish-band, 60%) / 2);
+  background-repeat: no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse var(--finish-length, 50%) calc(var(--finish-band, 60%) / 2) at var(--finish-x, 50%) var(--finish-y, 50%), #000 25%, transparent 100%);
+  mask-image: radial-gradient(ellipse var(--finish-length, 50%) calc(var(--finish-band, 60%) / 2) at var(--finish-x, 50%) var(--finish-y, 50%), #000 25%, transparent 100%);
+  opacity: var(--finish-light, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {

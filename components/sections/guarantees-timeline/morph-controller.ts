@@ -2,7 +2,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { MorphSVGPlugin } from "gsap/MorphSVGPlugin"
 import { MORPH_BLOBS, MORPH_PALETTES } from "./morph-content"
-import { getMorphState, getStackMorphState, MOBILE_STACK_TRANSITIONS } from "./morph-progress"
+import { getMorphState, getStackState } from "./morph-progress"
 import { createRenderer, type MorphRenderer } from "./morph-renderer"
 import { fitMobileStack, MOBILE_STACK_SPACING } from "./mobile-stack-layout"
 import type { BlobFoilRenderer } from "./blob-foil-renderer"
@@ -22,7 +22,6 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   const shapes = Array.from(root.querySelectorAll<SVGPathElement>("[data-morph-shape]"))
   const steps = Array.from(root.querySelectorAll<HTMLElement>("[data-guarantee-step]"))
   const list = find<HTMLElement>("[data-guarantee-cards]")
-  const scrollSpace = find<HTMLElement>("[data-guarantee-scroll]")
   const copies = Array.from(root.querySelectorAll<HTMLElement>("[data-guarantee-copy]"))
   const heading = find<HTMLElement>("[data-guarantee-heading]")
   const header = document.querySelector<HTMLElement>("header[data-scrolled]")
@@ -39,26 +38,23 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   let foil: BlobFoilRenderer | undefined
   let foilRevision = 0
   let morphs: gsap.core.Tween[] = []
-  let stackContext: gsap.Context | undefined
-  let stackTimeline: gsap.core.Timeline | undefined
   let mobileStack = false
   let stickyTop = 0
+  let entryDistance = 1
   let stackDistance = 1
-  const lastArrival = MOBILE_STACK_TRANSITIONS[MOBILE_STACK_TRANSITIONS.length - 1].end
   const mobileProperties = [
-    "--mobile-card-height", "--mobile-scene-height", "--mobile-art-size",
-    "--mobile-card-padding", "--mobile-art-gap", "--mobile-sticky-top",
-    "--mobile-stack-inset", "--mobile-scroll-distance",
+    "--mobile-card-height", "--mobile-art-size", "--mobile-card-padding",
+    "--mobile-art-gap", "--mobile-sticky-top", "--mobile-layer-gap",
+    "--mobile-card-gap", "--mobile-stack-tail",
   ]
 
   function resetMobileLayout() {
     mobileProperties.forEach((property) => root.style.removeProperty(property))
+    gsap.set(steps, { clearProps: "transform" })
+    steps.forEach((step) => { delete step.dataset.arrival })
   }
 
   function configureLayout() {
-    stackContext?.revert()
-    stackContext = undefined
-    stackTimeline = undefined
     mobileStack = false
     if (desktop.matches || reduced.matches) {
       root.dataset.mobileStack = "false"
@@ -90,49 +86,26 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
 
     mobileStack = true
     stickyTop = fit.stickyTop
-    const stackInset = fit.shadowSpace + (steps.length - 1) * fit.layerGap
-    // One pixel of scroll moves an incoming card by one pixel. Keeping the
-    // same distance for the layout and transforms avoids a gap below the last card.
-    const entryDistance = fit.cardHeight + 24
-    const transitionLength = MOBILE_STACK_TRANSITIONS[0].end - MOBILE_STACK_TRANSITIONS[0].start
-    stackDistance = Math.ceil(entryDistance / transitionLength)
-    // End the reservation at the last arrival, so the following section
-    // rises with that card and the stack releases as soon as it is complete.
-    const reservedDistance = Math.ceil(stackDistance * lastArrival)
+    // Sticky cards in normal flow, each pinned one layer gap below the
+    // previous one. The flow gap keeps one scrolled pixel moving an incoming
+    // card by one pixel; the stack releases as soon as the last card has pinned.
+    entryDistance = fit.cardHeight + fit.cardGap
+    stackDistance = (steps.length - 1) * entryDistance + MOBILE_STACK_SPACING.tail
     const dimensions = {
       "--mobile-card-height": fit.cardHeight,
-      "--mobile-scene-height": fit.sceneHeight,
       "--mobile-art-size": fit.artSize,
       "--mobile-card-padding": fit.padding,
       "--mobile-art-gap": fit.artGap,
       "--mobile-sticky-top": stickyTop,
-      "--mobile-stack-inset": stackInset,
-      "--mobile-scroll-distance": reservedDistance,
+      "--mobile-layer-gap": fit.layerGap,
+      "--mobile-card-gap": fit.cardGap,
+      "--mobile-stack-tail": MOBILE_STACK_SPACING.tail,
     }
     Object.entries(dimensions).forEach(([property, value]) => root.style.setProperty(property, `${value}px`))
     root.dataset.mobileStack = "true"
-
-    // One normalized scroll playhead drives the card stack.
-    // Reading intervals precede arrivals; the completed stack scrolls away.
-    stackContext = gsap.context(() => {
-      // Set the resting state outside the timeline so seeking back to zero
-      // restores the complete incoming cards below the scene.
-      gsap.set(steps, { y: (index: number) => index * entryDistance, scale: 1, transformOrigin: "50% 0" })
-      stackTimeline = gsap.timeline({ paused: true }).to({}, { duration: 1 }, 0)
-      MOBILE_STACK_TRANSITIONS.forEach(({ start, end }, pair) => {
-        const duration = end - start
-        steps.slice(pair + 1).forEach((step, index) => {
-          stackTimeline!.to(step, { y: index * entryDistance, duration, ease: "none" }, start)
-        })
-        steps.slice(0, pair + 1).forEach((step, index) => {
-          const depth = pair + 1 - index
-          stackTimeline!.to(step, {
-            y: -fit.layerGap * depth, scale: 1 - 0.035 * depth,
-            duration, ease: (t: number) => t * t * (3 - 2 * t),
-          }, start)
-        })
-      })
-    }, root)
+    // Sticky positioning owns every card's place: clear any translation GSAP
+    // may still cache for these elements, so only the recession is applied.
+    gsap.set(steps, { x: 0, y: 0, scale: 1, transformOrigin: "50% 0" })
   }
 
   // Each pair owns a separate, hidden path. Returning to a previously used
@@ -151,28 +124,43 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
 
   function update(value: number) {
     if (disposed) return
-    const state = mobileStack ? getStackMorphState(value) : getMorphState(value, reduced.matches)
-    current = state.progress
-    if (desktop.matches) {
-      morphs[state.pair].progress(state.blend)
-      const path = state.blend === 0 ? MORPH_BLOBS[state.pair]
-        : state.blend === 1 ? MORPH_BLOBS[state.pair + 1]
-        : shapes[state.pair].getAttribute("d")!
-      // The shared desktop fill, foil clip and rim follow this live path.
-      blob.setAttribute("d", path)
-      colorStops.forEach((stop, index) => {
-        stop.setAttribute("stop-color", colors[state.pair][index](state.blend))
+    let progress: number
+    let active: number
+    if (mobileStack) {
+      const stack = getStackState(value, { entryDistance, distance: stackDistance, cardCount: steps.length })
+      progress = stack.progress
+      active = stack.active
+      // Covered cards recede from their top edge as the next card slides over
+      // them; the foil reads each arrival to carry its light off the metal.
+      steps.forEach((step, index) => {
+        gsap.set(step, { scale: stack.scales[index] })
+        step.dataset.arrival = stack.arrivals[index].toFixed(4)
       })
-      fill.style.transform = `scaleY(${state.progress})`
-      renderer?.render(state.pair, state.blend, 1)
+    } else {
+      const state = getMorphState(value, reduced.matches)
+      progress = state.progress
+      active = state.active
+      if (desktop.matches) {
+        morphs[state.pair].progress(state.blend)
+        const path = state.blend === 0 ? MORPH_BLOBS[state.pair]
+          : state.blend === 1 ? MORPH_BLOBS[state.pair + 1]
+          : shapes[state.pair].getAttribute("d")!
+        // The shared desktop fill, foil clip and rim follow this live path.
+        blob.setAttribute("d", path)
+        colorStops.forEach((stop, index) => {
+          stop.setAttribute("stop-color", colors[state.pair][index](state.blend))
+        })
+        fill.style.transform = `scaleY(${state.progress})`
+        renderer?.render(state.pair, state.blend, 1)
+      }
     }
-    root.dataset.progress = state.progress.toFixed(4)
-    root.dataset.active = String(state.active)
+    current = progress
+    root.dataset.progress = progress.toFixed(4)
+    root.dataset.active = String(active)
     steps.forEach((step, index) => {
-      if (index === state.active) step.setAttribute("aria-current", "step")
+      if (index === active) step.setAttribute("aria-current", "step")
       else step.removeAttribute("aria-current")
     })
-    stackTimeline?.progress(state.progress, true)
     foil?.render()
   }
 
@@ -262,8 +250,9 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   }
 
   configureLayout()
-  // Measure the scroll reservation, never the sticky scene or moving cards.
-  const stackStart = () => scrollSpace.getBoundingClientRect().top + window.scrollY - stickyTop
+  // The list's own box ignores its sticky children: progress starts when the
+  // first card pins below the header.
+  const stackStart = () => list.getBoundingClientRect().top + window.scrollY - stickyTop
   const anchor = () => desktop.matches ? "center" : "70%"
   trigger = ScrollTrigger.create({
     trigger: list,
@@ -299,7 +288,6 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     cancelAnimationFrame(refreshFrame)
     observer?.disconnect()
     trigger?.kill()
-    stackContext?.revert()
     stopRenderer()
     stopFoil()
     context.revert()

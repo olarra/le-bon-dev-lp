@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { test } from "node:test"
 
 const progressURL = new URL("../components/sections/guarantees-timeline/morph-progress.ts", import.meta.url)
-const { getMorphState, getStackMorphState, MOBILE_STACK_TRANSITIONS } = await import(progressURL.href) as typeof import(
+const { getMorphState, getStackState, MOBILE_STACK_DEPTH_SCALE } = await import(progressURL.href) as typeof import(
   "../components/sections/guarantees-timeline/morph-progress"
 )
 
@@ -48,60 +48,59 @@ test("reduced motion only selects complete shapes and illustrations", () => {
   assert.equal(getMorphState(Number.NaN).progress, 0)
 })
 
-test("mobile cards and artwork are stationary on all three reading plateaus", () => {
-  for (const progress of [0, 0.05, 0.10]) {
-    assert.deepEqual(getStackMorphState(progress), { progress, pair: 0, active: 0, blend: 0, arrivals: [0, 0] })
-  }
-  for (const progress of [0.44, 0.47, 0.49, 0.5, 0.53, 0.56]) {
-    const state = getStackMorphState(progress)
-    assert.equal(state.active, 1)
-    assert.equal(state.pair + state.blend, 1)
-    assert.deepEqual(state.arrivals, [1, 0])
-  }
-  for (const progress of [0.90, 0.95, 1]) {
-    assert.deepEqual(getStackMorphState(progress), { progress, pair: 1, active: 2, blend: 1, arrivals: [1, 1] })
-  }
-})
+const pile = { entryDistance: 500, distance: 1000, cardCount: 3 }
 
-test("mobile morphing waits until a card approaches, then finishes with its arrival", () => {
-  MOBILE_STACK_TRANSITIONS.forEach(({ start, end }, pair) => {
-    const duration = end - start
-    const early = getStackMorphState(start + duration * 0.4)
-    assert.ok(early.arrivals[pair] > 0)
-    assert.equal(early.blend, 0)
-    assert.equal(early.active, pair)
-
-    const halfway = getStackMorphState(start + duration * 0.775)
-    assert.ok(Math.abs(halfway.blend - 0.5) < 1e-12)
-    assert.ok(halfway.arrivals[pair] > halfway.blend)
-    assert.equal(getStackMorphState(start + duration * 0.75).active, pair)
-    assert.equal(getStackMorphState(start + duration * 0.8).active, pair + 1)
-
-    const landed = getStackMorphState(end)
-    assert.equal(landed.arrivals[pair], 1)
-    assert.equal(landed.pair + landed.blend, pair + 1)
-    assert.equal(landed.active, pair + 1)
+test("mobile cards arrive one after another, each pinning after one entry distance of scroll", () => {
+  assert.deepEqual(getStackState(0, pile), { progress: 0, arrivals: [1, 0, 0], scales: [1, 1, 1], active: 0 })
+  assert.deepEqual(getStackState(0.5, pile), { progress: 0.5, arrivals: [1, 1, 0], scales: [1 - MOBILE_STACK_DEPTH_SCALE, 1, 1], active: 1 })
+  assert.deepEqual(getStackState(1, pile), {
+    progress: 1, arrivals: [1, 1, 1],
+    scales: [1 - 2 * MOBILE_STACK_DEPTH_SCALE, 1 - MOBILE_STACK_DEPTH_SCALE, 1], active: 2,
   })
 })
 
-test("mobile reverse scrolling and jumps restore identical cards and artwork", () => {
+test("covered cards recede linearly from their top edge with the arrival above them", () => {
+  const quarter = getStackState(0.25, pile)
+  assert.deepEqual(quarter.arrivals, [1, 0.5, 0])
+  assert.ok(Math.abs(quarter.scales[0] - (1 - MOBILE_STACK_DEPTH_SCALE * 0.5)) < 1e-12)
+  assert.deepEqual(quarter.scales.slice(1), [1, 1])
+  assert.equal(quarter.active, 1)
+  assert.equal(getStackState(0.249, pile).active, 0)
+
+  const later = getStackState(0.75, pile)
+  assert.deepEqual(later.arrivals, [1, 1, 0.5])
+  assert.ok(Math.abs(later.scales[0] - (1 - MOBILE_STACK_DEPTH_SCALE * 1.5)) < 1e-12)
+  assert.ok(Math.abs(later.scales[1] - (1 - MOBILE_STACK_DEPTH_SCALE * 0.5)) < 1e-12)
+  assert.equal(later.scales[2], 1)
+  assert.equal(later.active, 2)
+})
+
+test("a tail keeps the completed pile pinned without changing the cards", () => {
+  const withTail = { ...pile, distance: 1400 }
+  const pinned = getStackState(1000 / 1400, withTail)
+  assert.deepEqual(pinned.arrivals, [1, 1, 1])
+  assert.deepEqual(getStackState(1, withTail).scales, pinned.scales)
+})
+
+test("mobile reverse scrolling and jumps restore identical cards", () => {
   const positions = [0, 0.1, 0.26, 0.36, 0.44, 0.5, 0.56, 0.7, 0.9, 1]
-  const forward = new Map(positions.map((value) => [value, getStackMorphState(value)]))
+  const forward = new Map(positions.map((value) => [value, getStackState(value, pile)]))
   for (const progress of [...positions].reverse().concat([0.7, 0, 1, 0.26, 0.5])) {
-    assert.deepEqual(getStackMorphState(progress), forward.get(progress))
+    assert.deepEqual(getStackState(progress, pile), forward.get(progress))
   }
 })
 
-test("mobile progress is bounded and reduced motion selects complete artwork", () => {
+test("mobile progress and geometry are bounded", () => {
   for (const value of [-1, Number.NaN, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY]) {
-    assert.deepEqual(getStackMorphState(value), getStackMorphState(0))
+    assert.deepEqual(getStackState(value, pile), getStackState(0, pile))
   }
-  assert.deepEqual(getStackMorphState(2), getStackMorphState(1))
-
+  assert.deepEqual(getStackState(2, pile), getStackState(1, pile))
   for (let step = 0; step <= 100; step++) {
-    const state = getStackMorphState(step / 100, true)
-    assert.ok(state.blend === 0 || state.blend === 1)
-    assert.equal(state.active, state.pair + state.blend)
+    const state = getStackState(step / 100, pile)
     for (const arrival of state.arrivals) assert.ok(arrival >= 0 && arrival <= 1)
+    for (const scale of state.scales) assert.ok(scale > 0 && scale <= 1)
+    assert.ok(state.active >= 0 && state.active < pile.cardCount)
   }
+  assert.deepEqual(getStackState(0.5, { ...pile, cardCount: 0 }), { progress: 0.5, arrivals: [], scales: [], active: 0 })
+  assert.deepEqual(getStackState(0.5, { ...pile, cardCount: 1 }), { progress: 0.5, arrivals: [1], scales: [1], active: 0 })
 })

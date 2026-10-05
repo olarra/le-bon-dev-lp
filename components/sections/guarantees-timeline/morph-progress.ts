@@ -14,25 +14,30 @@ export function getMorphState(value: number, reducedMotion = false) {
   return stateForWindows(value, reducedMotion, [0.18, 0.64], 0.20)
 }
 
-/** Short reading gaps let a natural scroll start moving the next card sooner. */
-export const MOBILE_STACK_TRANSITIONS = [
-  { start: 0.06, end: 0.46 },
-  { start: 0.50, end: 0.90 },
-] as const
+/** Each card beneath the top of the pile recedes by this much per covering card. */
+export const MOBILE_STACK_DEPTH_SCALE = 0.08
 
-function smoothstep(value: number) {
-  const t = Math.max(0, Math.min(1, value))
-  return t * t * (3 - 2 * t)
+export type StackGeometry = {
+  /** Scroll between two consecutive cards pinning: card height plus the flow gap. */
+  entryDistance: number
+  /** Whole scroll range of the pile, from the first pin to the last one plus any tail. */
+  distance: number
+  cardCount: number
 }
 
-/** Keep the old artwork through the beginning of an arrival, then morph with it. */
-export function getStackMorphState(value: number, reducedMotion = false) {
+/** Sticky cards in normal flow: a card's arrival follows the scroll linearly
+ * from the previous card's pin to its own, and every card beneath it recedes
+ * from its top edge by the same amount. Nothing depends on earlier frames. */
+export function getStackState(value: number, { entryDistance, distance, cardCount }: StackGeometry) {
   const progress = Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0
-  const localProgress = MOBILE_STACK_TRANSITIONS.map(({ start, end }) => (progress - start) / (end - start))
-  const arrivals = localProgress.map((value) => Math.max(0, Math.min(1, value))) as [number, number]
-  const pair: MorphPair = progress < 0.5 ? 0 : 1
-  const blend = smoothstep((localProgress[pair] - 0.55) / 0.45)
-  const next = blend >= 0.5 ? 1 : 0
-
-  return { progress, pair, active: pair + next, blend: reducedMotion ? next : blend, arrivals }
+  const count = Number.isInteger(cardCount) && cardCount > 0 ? cardCount : 0
+  const scroll = progress * Math.max(0, distance)
+  const spacing = Math.max(1, entryDistance)
+  const arrivals = Array.from({ length: count }, (_, index) => index === 0
+    ? 1
+    : Math.max(0, Math.min(1, (scroll - (index - 1) * spacing) / spacing)))
+  const scales = arrivals.map((_, index) => 1 - MOBILE_STACK_DEPTH_SCALE
+    * arrivals.slice(index + 1).reduce((depth, arrival) => depth + arrival, 0))
+  const active = Math.max(0, arrivals.filter(arrival => arrival >= 0.5).length - 1)
+  return { progress, arrivals, scales, active }
 }

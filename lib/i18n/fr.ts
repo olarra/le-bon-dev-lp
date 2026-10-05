@@ -27,8 +27,6 @@ const fr: Dictionary = {
   },
   offers: {
     eyebrow: "Les offres", title: "Votre projet prend forme.", audience: "Pour vous si", included: "Ce qui est compris", from: "À partir de",
-    replay: "Rejouer", replayLabel: "Rejouer l’animation des offres",
-    shimmer: { label: "Comparer les reflets de la carte Applications", original: "Reflet diagonal", metal: "Métal vert" },
     items: OFFERS,
   },
   showcase: {

@@ -35,7 +35,7 @@ export function createOfferMetalRenderer(canvas: HTMLCanvasElement, card: HTMLEl
     onFailure()
   }
 
-  function render(travel: number, intensity: number) {
+  function render(center: readonly [number, number], travel: number, light: number) {
     if (disposed || !initialized || !gpu || !output || !shader) return false
     try {
       if (needsMeasure) {
@@ -47,12 +47,20 @@ export function createOfferMetalRenderer(canvas: HTMLCanvasElement, card: HTMLEl
         output.resize([Math.max(1, Math.round(width * dpr)), Math.max(1, Math.round(height * dpr))])
         needsMeasure = false
       }
-      // Retain the blob's lamp path and reflection, with no engraved pattern.
+      // The measured path is in card-width units; the shader's frame spans
+      // ±1 over the height. The normal rocks as on the blobs, and the lamp is
+      // placed by inverting that projection so the light follows the path.
+      const aspect = output.size[0] / output.size[1]
+      const lightCenter = [(center[0] - 0.5) * 2 * aspect, (center[1] * aspect - 0.5) * 2]
+      const tilt = [(travel - 0.5) * 0.32, (0.5 - travel) * 0.24]
+      const sx = Math.sin(tilt[1]), cx = Math.cos(tilt[1]), sy = Math.sin(tilt[0]), cy = Math.cos(tilt[0])
+      const px = (lightCenter[0] + 1.2 * sy) / cy
+      const py = (lightCenter[1] - px * sy * sx - 1.2 * cy * sx) / cx
       shader.set({ params: {
         resolution: output.size,
-        tilt: [(travel - 0.5) * 0.32, (0.5 - travel) * 0.24],
-        pointer: [-1.15 + travel * 2.3, -0.7 + travel * 1.4],
-        intensity: 0.95 * intensity,
+        tilt,
+        pointer: [px, py],
+        intensity: 0.95 * light,
         engraving: 0,
         green: 1,
         spread: 0.42,
@@ -80,7 +88,7 @@ export function createOfferMetalRenderer(canvas: HTMLCanvasElement, card: HTMLEl
     shader = effect(context, foil, {
       label: "offer-green-metal",
       set: { params: {
-        resolution: [1, 1], tilt: [0, 0], pointer: [-1.15, -0.7],
+        resolution: [1, 1], tilt: [0, 0], pointer: [-10, -10],
         intensity: 0, engraving: 0, green: 1, spread: 0.42,
       } },
     })

@@ -3,50 +3,31 @@ import { animateOfferReflection, clearOfferReflection } from "./offers-reflectio
 
 export type OfferShimmerVariant = "original" | "metal"
 
-const METAL_DURATION = 650
+// The resin sheen's 1.45 s pass, kept for the metal light (offers-metal-sweep.ts).
+const METAL_DURATION = 1450
 
-/** Select one reflection after landing, without changing the entrance or scroll. */
-export function mountOfferShimmer(card: HTMLElement, initialVariant: OfferShimmerVariant) {
+/** Play one reflection after landing, without changing the entrance or scroll. */
+export function mountOfferShimmer(card: HTMLElement, variant: OfferShimmerVariant) {
   const layers = Array.from(card.querySelectorAll<HTMLElement>("[data-offers-sheen], [data-offers-rim-sheen]"))
   const forcedColors = window.matchMedia("(forced-colors: active)")
-  let variant = initialVariant
-  let metal = variant === "metal" ? mountOfferMetal(card) : undefined
+  // The diagonal reflection never creates a GPU context.
+  const metal = variant === "metal" ? mountOfferMetal(card) : undefined
   let animations: Animation[] = []
   let disposed = false
-  let playRequest = 0
 
   const cancel = () => {
-    playRequest += 1
     animations.forEach(animation => animation.cancel())
     animations = []
     metal?.cancel()
   }
 
-  const setVariant = (next: OfferShimmerVariant) => {
-    if (disposed || next === variant) return
-    cancel()
-    metal?.dispose()
-    variant = next
-    // The diagonal reflection never creates a GPU context.
-    metal = variant === "metal" ? mountOfferMetal(card) : undefined
-  }
-
-  const play = (prepareMetal = false) => {
+  const play = () => {
     cancel()
     if (disposed || document.hidden || forcedColors.matches) return
     const bounds = card.getBoundingClientRect()
     if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) return
-    if (variant === "metal" && metal) {
-      const current = metal
-      const request = playRequest
-      if (prepareMetal) {
-        // A first comparison should show the GPU material when available,
-        // instead of racing its initialization and always selecting the fallback.
-        void current.prepare().then(() => {
-          if (!disposed && request === playRequest) current.play(METAL_DURATION)
-        })
-      } else current.play(METAL_DURATION)
-    } else animations = animateOfferReflection(card, layers)
+    if (metal) metal.play(METAL_DURATION)
+    else animations = animateOfferReflection(card, layers)
   }
 
   const visibility = new IntersectionObserver(([entry]) => {
@@ -61,7 +42,7 @@ export function mountOfferShimmer(card: HTMLElement, initialVariant: OfferShimme
     if (width === measuredWidth && height === measuredHeight) return
     measuredWidth = width
     measuredHeight = height
-    // A resize ends the current pass; the next play measures the new projection.
+    // A resize ends the current pass; the next play measures the new geometry.
     cancel()
   })
   resize.observe(card)
@@ -73,7 +54,6 @@ export function mountOfferShimmer(card: HTMLElement, initialVariant: OfferShimme
   return {
     play,
     cancel,
-    setVariant,
     dispose() {
       disposed = true
       cancel()

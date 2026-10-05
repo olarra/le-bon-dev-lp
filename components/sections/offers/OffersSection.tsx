@@ -6,7 +6,6 @@ import type { Dictionary } from "@/lib/i18n/types"
 import { OfferSticker } from "@/components/offer-icons/OfferSticker"
 import { MetalFinish } from "@/components/ui/metal-sticker"
 import { useStickerMotion } from "@/hooks/use-sticker-motion"
-import { FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED, FEATURE_FLAG_OFFERS_SHIMMER_COMPARISON_ENABLED } from "@/lib/feature-flags"
 import { mountOffersEntrance } from "./offers-entrance"
 import styles from "./offers.module.css"
 
@@ -39,24 +38,6 @@ export function OffersSection({ copy }: { copy: Dictionary["offers"] }) {
             </div>
           </div>
         </div>
-      </div>
-      <div className={styles.previewControls} data-offers-preview hidden>
-        {FEATURE_FLAG_OFFERS_SHIMMER_COMPARISON_ENABLED && (
-          <select className={styles.shimmerSelect} data-offers-shimmer
-            defaultValue={FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED ? "metal" : "original"}
-            aria-label={copy.shimmer.label} aria-controls="saas-mobile">
-            <option value="original">{copy.shimmer.original}</option>
-            <option value="metal">{copy.shimmer.metal}</option>
-          </select>
-        )}
-        <button type="button" className={styles.replay} data-offers-replay
-          aria-label={copy.replayLabel} title={copy.replayLabel} aria-controls="offres">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-            <path d="M3 10a9 9 0 1 1 2.6 8.4M3 4v6h6" />
-          </svg>
-          {copy.replay}
-        </button>
       </div>
     </section>
   )

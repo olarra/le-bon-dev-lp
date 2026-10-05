@@ -25,8 +25,6 @@ const es: Dictionary = {
   },
   offers: {
     eyebrow: "Los servicios", title: "Tu proyecto toma forma.", audience: "Para ti si", included: "Qué incluye", from: "Desde",
-    replay: "Repetir", replayLabel: "Repetir la animación de los servicios",
-    shimmer: { label: "Comparar los reflejos de la tarjeta Aplicaciones", original: "Reflejo diagonal", metal: "Metal verde" },
     items: [
       {
         id: "sites-vitrines", kind: "website", title: "Sitios web", promise: "Un sitio que explica lo que haces y te ayuda a recibir consultas.",

@@ -109,14 +109,25 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
   let engraving = clamp(params.engraving, 0.0, 1.0);
   let green = clamp(params.green, 0.0, 1.0);
   let spread = max(params.spread, 0.05);
+  let offerFinish = green > 0.5 && engraving < 0.5;
+  // The offer card keeps this same light as a tall band leaning 45° (as in
+  // offers-metal-sweep.ts), measured in units of its width so it glides across
+  // phones and desktops alike. The band is wide, with a soft core in place of
+  // the blobs' thin glint; it bows a little and softens only past the card.
+  let localLight = delta / max(aspect, 0.2);
+  let along = dot(localLight, vec2f(0.7071, -0.7071));
+  let acrossOffer = dot(localLight, vec2f(0.7071, 0.7071)) + along * along * 0.025 + sin(along * 1.3 + p.x * 2.0) * 0.04;
   let sweep = sweepDistance(p, lightCenter);
-  let bandDistance = sweep / (0.36 * spread);
-  let glintDistance = sweep / (0.085 * spread);
+  let bandDistance = select(sweep / (0.36 * spread), acrossOffer / (1.3 * spread), offerFinish);
+  let glintDistance = select(sweep / (0.085 * spread), acrossOffer / (0.65 * spread), offerFinish);
   let lightBand = exp(-bandDistance * bandDistance);
   let glint = exp(-glintDistance * glintDistance);
   let spotDelta = delta * vec2f(0.9, 0.68);
-  let spotlight = exp(-dot(spotDelta, spotDelta) * 1.1);
-  let light = lightBand * spotlight * intensity;
+  let tallAlong = along * aspect;
+  let reach = tallAlong * tallAlong / (1.8 * 1.8);
+  let offerSpot = exp(-reach * reach * reach) * (0.8 + 0.2 * exp(-tallAlong * tallAlong / 0.4));
+  let spotlight = select(exp(-dot(spotDelta, spotDelta) * 1.1), offerSpot, offerFinish);
+  let light = lightBand * spotlight * intensity * select(1.0, 0.9, offerFinish);
 
   let contour = etchedPhase(p);
   let dx = dpdx(p);
@@ -153,11 +164,12 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
     + starReflection(p, vec2f(0.70, 0.14), lightCenter, aa)
     + starReflection(p, vec2f(-0.14, 0.60), lightCenter, aa);
   let facetTint = mix(vec3f(1.0, 0.98, 0.9), vec3f(0.78, 1.0, 0.42), green);
-  reflection += mix(facetTint, pearl, 0.2) * stars * intensity * 0.65;
+  // The card keeps no fixed facets: its stickers already carry their own glints.
+  reflection += mix(facetTint, pearl, 0.2) * stars * intensity * 0.65 * select(1.0, 0.0, offerFinish);
 
   // Premultiplied alpha follows the light's peak channel, preserving spectral
   // contrast instead of muting the entire reflection with a translucent wash.
-  let color = clamp(reflection, vec3f(0), vec3f(1));
+  let color = clamp(reflection * select(1.0, 0.85, offerFinish), vec3f(0), vec3f(1));
   let alpha = max(color.r, max(color.g, color.b));
   return vec4f(color, alpha);
 }

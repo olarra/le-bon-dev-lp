@@ -6,7 +6,7 @@ import type Lenis from "lenis"
 import { GUARANTEE_ENTRANCE as entrance } from "./guarantees-timeline.content"
 
 /** Layout coordinates exclude both the entrance transforms and the mobile
- * scene's sticky offset, including when a refresh happens halfway through it. */
+ * cards' sticky offset, including when a refresh happens halfway through it. */
 function layoutTop(element: HTMLElement, section: HTMLElement) {
   let top = section.getBoundingClientRect().top + window.scrollY
   for (let node: HTMLElement | null = element; node && node !== section; node = node.offsetParent as HTMLElement | null) {

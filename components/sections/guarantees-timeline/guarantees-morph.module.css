@@ -68,7 +68,9 @@
     --mobile-card-padding: 20px;
     --mobile-art-gap: 8px;
     --mobile-sticky-top: 96px;
-    --mobile-stack-inset: 44px;
+    --mobile-layer-gap: 16px;
+    --mobile-card-gap: 24px;
+    --mobile-stack-tail: 0px;
     width: 100%;
     max-width: 480px;
     margin-inline: auto;
@@ -190,18 +192,18 @@
     display: flow-root;
   }
 
+  /* Sticky cards in normal flow: the first card scrolls in at full size and
+     pins below the header; each next card slides over it from below and pins
+     one layer gap lower, so the covered cards keep their top edge visible
+     while they recede from it. The list's padding is the only tail. */
   .track[data-mobile-stack="true"] .scrollSpace {
     position: relative;
     display: block;
-    height: calc(var(--mobile-scene-height) + var(--mobile-scroll-distance));
     margin-top: 32px;
   }
 
   .track[data-mobile-stack="true"] .stackScene {
-    position: sticky;
-    top: var(--mobile-sticky-top);
     display: block;
-    height: var(--mobile-scene-height);
   }
 
   .track[data-mobile-stack="true"] [data-guarantee-body] {
@@ -209,30 +211,31 @@
     display: block;
     width: 100%;
     max-width: none;
-    height: 100%;
     margin: 0;
-    /* Let the next card follow directly below the active one. Preserve its
-       visible leading edge, rounded corners and soft shadow. */
     overflow: visible;
   }
 
   .track[data-mobile-stack="true"] [data-guarantee-cards] {
-    position: absolute;
-    top: var(--mobile-stack-inset);
-    right: 0;
-    left: 0;
-    height: var(--mobile-card-height);
+    position: relative;
     margin: 0;
+    padding-bottom: var(--mobile-stack-tail);
   }
 
   .track[data-mobile-stack="true"] [data-guarantee-step] {
-    position: absolute;
-    inset: 0;
+    position: sticky;
+    top: calc(var(--mobile-sticky-top) + var(--card-index) * var(--mobile-layer-gap));
     z-index: calc(1 + var(--card-index));
+    height: var(--mobile-card-height);
     min-height: 0;
     margin: 0;
     padding: 0;
     transform-origin: 50% 0;
+  }
+
+  .track[data-mobile-stack="true"] [data-guarantee-step] + [data-guarantee-step] {
+    /* Pinned one layer gap lower, the next card still arrives after exactly
+       one card height plus the flow gap of scroll. */
+    margin-top: calc(var(--mobile-card-gap) + var(--mobile-layer-gap));
   }
 
   .track[data-mobile-stack="true"] [data-guarantee-card] {

@@ -115,23 +115,16 @@ le scroll. La variante mobile avec blobs conserve son éclairage lié à la
 position de chaque illustration dans le viewport.
 
 Pour les cartes métalliques empilées, la lumière et les cartes partagent
-la même progression de scroll, sans rattrapage retardé.
-Le premier balayage commence pendant l'entrée de la première carte et
-conserve sa fin à 2 % du parcours. Les suivants gardent cette même distance
-de scroll, mais sont décalés pour que la lumière atteigne le bas du métal
-au moment où chaque carte termine sa montée (46 % et 90 %). Le calcul tient
-compte de la hauteur réelle du métal et du dépassement de la lampe : le
-reflet ne finit plus de sortir avant que la carte soit posée, et la troisième
-carte ne révèle plus sa lumière aussi tôt. À geste égal, la vitesse du
-balayage reste la même. Sa disparition se poursuit après l'arrivée ; pour
-la dernière carte, elle accompagne la sortie naturelle de la pile sans
-allonger la réserve de scroll.
-La lumière dépasse le haut et le bas de la hauteur réelle de chaque carte
-pour traverser aussi les coins. Aucun second amortissement du reflet n'est
-ajouté dans la pile : il accompagne le mouvement visible des cartes.
-En disposition sans empilement, le balayage va de l'entrée du haut de la carte
-à l'arrivée de son bas dans la zone de lecture. La réserve de défilement et
-la sortie de pile ne sont pas allongées.
+la même progression de scroll, sans rattrapage retardé. Chaque carte balaie
+sa lumière avec sa propre arrivée (`data-arrival`, exposé par le contrôleur) :
+rien tant que la carte précédente s'empile encore, la lampe entre par le haut
+dès que celle-ci est épinglée et atteint le bord inférieur du métal au moment
+où la carte s'épingle à son tour. La première carte balaie pendant sa montée
+jusqu'à son épinglage. La fin du balayage suit l'arrivée de la carte suivante ;
+pour la dernière carte, elle accompagne la sortie de la pile complète. La
+lumière dépasse le haut et le bas de la hauteur réelle de chaque carte pour
+traverser aussi les coins. Aucun amortissement supplémentaire n'est ajouté
+dans la pile : le reflet accompagne le mouvement visible.
 
 Le reflet n'utilise ni suivi du curseur ni animation autonome.
 Le moteur partage un contexte GPU entre les surfaces, limite le DPR à 2 sur desktop et 1,5 sur mobile,
@@ -199,31 +192,28 @@ conservent leur mouvement d'empilement et leur texte visible, y compris
 lorsque la hauteur disponible impose le repli sans empilement. La pastille
 commence à 80 % du viewport ; le sous-titre attend son propre seuil de lecture.
 
-Dans la pile mobile, les cartes arrivent complètes avec 24 px d'écart. Chacune
-emporte son illustration en recouvrant la précédente, qui recule légèrement.
-Leur hauteur reste fixe, adaptée à l'espace disponible sous le header.
-Les gestes restent libres, sans seuil, capture de l'inertie ni arrêt imposé
-entre les cartes. Les transitions occupent 6–46 % puis 50–90 % du parcours :
-les intervalles immobiles sont raccourcis pour faire démarrer la montée plus
-facilement et réduire la réserve de scroll.
-La montée suit directement le scroll avec une interpolation linéaire :
-un pixel défilé correspond à un pixel de montée, sans tween de rattrapage.
-La même distance pilote le déplacement et l'espace réservé. La dernière
-carte et la section suivante remontent ainsi ensemble, sans vide créé par
-une carte qui arrive plus vite que le reste de la page. Seul le léger recul
-des cartes recouvertes conserve sa courbe douce. Le reflet suit la même
-progression que la montée ; aucun temps de lecture ou geste supplémentaire
-n'est imposé.
-La réserve de défilement se termine dès l'arrivée de la dernière carte :
-la section suivante remonte avec elle, puis la pile quitte le viewport sans
-palier de lecture supplémentaire ni grand espace blanc sous les cartes.
-L'illustration commune est réservée au desktop et le moteur de morphing WebGL
-n'est pas démarré sur mobile. Le reflet WebGPU reste indépendant pour chaque
-carte. L'empilement suit le scroll dans les deux sens ; son contexte GSAP restaure
-les styles au changement de disposition ou au démontage. Aucun tween de suivi
-temporel ni contrôle supplémentaire des gestes n'est utilisé pour la pile.
-Le repli sans
-empilement, notamment en mouvement réduit, garde les cartes complètes.
+Dans la pile mobile, chaque carte est `position: sticky` dans le flux normal,
+d'après le comportement de la StickyCard_001 de Skiper UI (réécrit ici sans
+framer-motion, dans le contrôleur existant). La première carte monte à sa
+taille normale avec l'entrée de son illustration, puis s'épingle sous le header.
+Chaque carte suivante glisse par-dessus depuis le bas et s'épingle 16 px plus bas
+(`layerGap`), ce qui laisse visible le bord supérieur des cartes recouvertes ;
+celles-ci reculent depuis ce bord, de 8 % d'échelle par carte qui les recouvre
+(`MOBILE_STACK_DEPTH_SCALE`), linéairement avec l'arrivée. Leur hauteur reste
+fixe, adaptée à l'espace disponible sous le header (`fitMobileStack`).
+L'écart de flux entre deux cartes vaut `cardGap + layerGap` : un pixel défilé
+correspond à un pixel de montée, et une carte s'épingle après exactement une
+hauteur de carte plus 24 px de scroll (`getStackState`, dans `morph-progress.ts`,
+calcule arrivées, échelles et carte active sans dépendre des images précédentes).
+Les gestes restent libres, sans seuil ni capture de l'inertie.
+La liste des cartes se termine avec la dernière arrivée (`tail: 0`) : la pile
+quitte le viewport avec la page, sans palier de lecture supplémentaire ni espace
+blanc sous les cartes. Un `tail` positif garderait la pile épinglée sur cette
+distance. L'illustration commune est réservée au desktop et le moteur de morphing
+WebGL n'est pas démarré sur mobile. Le reflet WebGPU reste indépendant pour chaque
+carte. L'empilement suit le scroll dans les deux sens ; les transformations et les
+variables sont retirées au changement de disposition ou au démontage. Le repli
+sans empilement, notamment en mouvement réduit, garde les cartes complètes.
 
 `GUARANTEE_ENTRANCE`, dans `guarantees-timeline.content.ts`, centralise les
 réglages : `startViewport` / `mobileStartViewport` pour le déclenchement,

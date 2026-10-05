@@ -25,8 +25,6 @@ const en: Dictionary = {
   },
   offers: {
     eyebrow: "Our services", title: "Your project takes shape.", audience: "For you if", included: "What’s included", from: "From",
-    replay: "Replay", replayLabel: "Replay the services animation",
-    shimmer: { label: "Compare reflections on the Applications card", original: "Diagonal reflection", metal: "Green metal" },
     items: [
       {
         id: "sites-vitrines", kind: "website", title: "Websites", promise: "A website that explains what you do and brings you enquiries.",

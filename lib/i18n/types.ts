@@ -18,8 +18,7 @@ export type Dictionary = {
     steps: readonly (Item & { phase: string })[]
   }
   offers: {
-    eyebrow: string; title: string; audience: string; included: string; from: string; replay: string; replayLabel: string
-    shimmer: { label: string; original: string; metal: string }
+    eyebrow: string; title: string; audience: string; included: string; from: string
     items: readonly Offer[]
   }
   showcase: {
