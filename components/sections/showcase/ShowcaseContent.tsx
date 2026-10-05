@@ -55,7 +55,7 @@ export function ShowcaseContent({ copy }: { copy: Dictionary["showcase"] }) {
                 <PhoneImage src={PROJECT_IMAGES.map} alt={copy.phones[0]} />
               </div>
               <div className={`${styles.phone} ${styles.authPhone}`} data-phone="auth">
-                <PhoneImage src={PROJECT_IMAGES.auth} alt={copy.phones[1]} />
+                <PhoneImage src={PROJECT_IMAGES.auth} alt={copy.phones[1]} width={895} height={1757} />
               </div>
               <div className={`${styles.phone} ${styles.orionPhone}`} data-phone="orion" data-phone-side>
                 <PhoneImage src={PROJECT_IMAGES.orion} alt={copy.phones[2]} />
@@ -79,8 +79,8 @@ export function ShowcaseContent({ copy }: { copy: Dictionary["showcase"] }) {
   )
 }
 
-function PhoneImage({ src, alt }: { src: string; alt: string }) {
-  return <Image src={src} alt={alt} width={740} height={1458} quality={90} sizes="(max-width: 899px) 45vw, (max-width: 1376px) 29vw, 344px" draggable={false} />
+function PhoneImage({ src, alt, width = 740, height = 1458 }: { src: string; alt: string; width?: number; height?: number }) {
+  return <Image src={src} alt={alt} width={width} height={height} quality={90} sizes="(max-width: 899px) 45vw, (max-width: 1376px) 29vw, 344px" draggable={false} />
 }
 
 function ProjectCopy({ project, id, copy }: { project: Realisation; id: string; copy: Dictionary["showcase"] }) {

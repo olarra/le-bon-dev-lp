@@ -35,7 +35,7 @@ export const REALISATIONS: Record<"miau" | "studio", Realisation> = {
 
 export const PROJECT_IMAGES = {
   map: "/images/realisations/miau-map.webp",
-  auth: "/images/realisations/miau-auth.webp",
+  auth: "/images/realisations/miau-auth-orange.png",
   orion: "/images/realisations/miau-orion.webp",
 } as const
 

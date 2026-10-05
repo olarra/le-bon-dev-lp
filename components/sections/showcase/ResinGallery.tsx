@@ -115,9 +115,9 @@ export function ResinGallery({ brand, artworks, label }: ResinGalleryProps) {
         <div className={styles.frameViewport} aria-hidden="true">
           <Image
             className={styles.frame}
-            src="/images/realisations/french-pixel/resin-monitor.png"
-            width={1536}
-            height={1024}
+            src="/images/realisations/french-pixel/resin-monitor-wide.png"
+            width={1448}
+            height={1086}
             alt=""
             unoptimized
             draggable={false}

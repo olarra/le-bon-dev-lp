@@ -14,12 +14,12 @@
   pointer-events: none;
 }
 
-/* Fade the decorative light back into the section's pure white surface. */
+/* Start at the section's top edge; fade only the lower edge back to white. */
 .backdrop::after {
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(to bottom, #fff, transparent 12%, transparent 70%, #fff);
+  background: linear-gradient(to bottom, transparent 70%, #fff);
 }
 
 .radial {

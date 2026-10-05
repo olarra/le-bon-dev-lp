@@ -2,11 +2,15 @@
 // Original source and license: /holographic-card.
 // SVG owns the blob silhouette. Mobile metal cards use card-foil.wgsl.
 // The illuminated material keeps its engraving fixed in local coordinates.
+// Offers select the smooth green finish; guarantees keep the engraved spectrum.
 struct Params {
   resolution: vec2f,
   tilt: vec2f,
   pointer: vec2f,
   intensity: f32,
+  engraving: f32,
+  green: f32,
+  spread: f32,
 }
 @group(0) @binding(0) var<uniform> params: Params;
 
@@ -38,6 +42,15 @@ fn pearlColor(phase: f32) -> vec3f {
     * cos(6.2831853 * (phase + vec3f(0.05, 0.38, 0.63)));
 }
 
+fn greenMetalColor(phase: f32) -> vec3f {
+  // Emerald, fresh green and lime highlights across the same moving light.
+  let response = 0.5 + 0.5 * cos(6.2831853 * phase);
+  let emerald = vec3f(0.045, 0.62, 0.22);
+  let leaf = vec3f(0.27, 0.88, 0.10);
+  let lime = vec3f(0.72, 1.0, 0.25);
+  return mix(mix(emerald, leaf, smoothstep(0.0, 0.6, response)), lime, smoothstep(0.55, 1.0, response));
+}
+
 fn grain(point: vec2f) -> f32 {
   let p = vec2u(abs(point) * 2400.0);
   var n = (p.x * 1597334677u) ^ (p.y * 3812015801u);
@@ -66,7 +79,7 @@ fn starReflection(p: vec2f, center: vec2f, lightCenter: vec2f, aa: f32) -> f32 {
   let width = max(aa * 0.55, 0.0015);
   let arms = width / (min(q.x, q.y) + width);
   let shape = arms * arms * (1.0 - smoothstep(0.002, 0.065, length(q)));
-  let distance = sweepDistance(center, lightCenter) / 0.075;
+  let distance = sweepDistance(center, lightCenter) / (0.075 * max(params.spread, 0.05));
   let delta = (center - lightCenter) * vec2f(0.9, 0.68);
   return shape * exp(-distance * distance - dot(delta, delta) * 1.1);
 }
@@ -93,9 +106,12 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
   let lightCenter = vec2f(dot(lamp, right), dot(lamp, down));
   let delta = p - lightCenter;
   let intensity = clamp(params.intensity, 0.0, 1.0);
+  let engraving = clamp(params.engraving, 0.0, 1.0);
+  let green = clamp(params.green, 0.0, 1.0);
+  let spread = max(params.spread, 0.05);
   let sweep = sweepDistance(p, lightCenter);
-  let bandDistance = sweep / 0.36;
-  let glintDistance = sweep / 0.085;
+  let bandDistance = sweep / (0.36 * spread);
+  let glintDistance = sweep / (0.085 * spread);
   let lightBand = exp(-bandDistance * bandDistance);
   let glint = exp(-glintDistance * glintDistance);
   let spotDelta = delta * vec2f(0.9, 0.68);
@@ -110,32 +126,34 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
   let spectral = diffraction(across, lightAndView, 1.65) * illumination;
   let contours = stroke(sin(contour), 0.06, min(fwidth(contour), 1.0));
   let reveal = intensity * (0.18 * spotlight + light * 1.25);
-  let pearlPhase = dot(lightAndView, vec2f(0.48, -0.32)) + p.y * 0.32 + contour * 0.003;
-  let pearl = pearlColor(pearlPhase);
+  let pearlPhase = dot(lightAndView, vec2f(0.48, -0.32)) + p.y * 0.32 + contour * 0.003 * engraving;
+  let pearl = mix(pearlColor(pearlPhase), greenMetalColor(pearlPhase), green);
   let foilPhase = etchedPhase(p - vec2f(0.007, -0.004) - params.tilt * 0.012);
   let echo = stroke(sin(foilPhase), 0.025, min(fwidth(foilPhase), 1.0));
   let noise = grain(p + vec2f(2));
   let sparkle = pow(max(noise + 0.5, 0.0), 24.0) * glint * spotlight * intensity;
 
   // Match the cards' metal response while leaving the morphing SVG base visible.
-  let tint = vec3f(0.72, 0.76, 0.8);
+  let tint = mix(vec3f(0.72, 0.76, 0.8), vec3f(0.38, 0.92, 0.22), green);
   var reflection = light * (vec3f(0.045) + tint * 0.065);
   reflection += noise * light * 0.085;
   reflection += pearl * light * 0.24;
-  reflection += (pearl * 0.5 + vec3f(0.5)) * glint * spotlight * intensity * 0.20;
+  let highlight = mix(vec3f(0.5), vec3f(0.40, 0.66, 0.20), green);
+  reflection += (pearl * 0.5 + highlight) * glint * spotlight * intensity * 0.20;
   reflection += pearl * sparkle * 0.22;
   let etchedFoil = vec3f(0.12, 0.14, 0.18) + pearl * 0.65 + spectral * 0.12;
-  reflection += contours * 0.65 * etchedFoil * reveal;
-  reflection += echo * 0.65 * (pearl + spectral * 0.2) * reveal * 0.22;
+  reflection += contours * 0.65 * etchedFoil * reveal * engraving;
+  reflection += echo * 0.65 * (pearl + spectral * 0.2) * reveal * 0.22 * engraving;
 
   let grid = (fract((p + 1.0) * 20.0) - 0.5) / 20.0;
   let dots = stroke(length(grid), 0.0008, aa * 0.4);
-  reflection += dots * reveal * 0.12;
+  reflection += dots * reveal * 0.12 * engraving;
   // Facets near the exposed edges catch the same scroll-driven lamp.
   let stars = starReflection(p, vec2f(-0.68, 0.05), lightCenter, aa)
     + starReflection(p, vec2f(0.70, 0.14), lightCenter, aa)
     + starReflection(p, vec2f(-0.14, 0.60), lightCenter, aa);
-  reflection += mix(vec3f(1.0, 0.98, 0.9), pearl, 0.2) * stars * intensity * 0.65;
+  let facetTint = mix(vec3f(1.0, 0.98, 0.9), vec3f(0.78, 1.0, 0.42), green);
+  reflection += mix(facetTint, pearl, 0.2) * stars * intensity * 0.65;
 
   // Premultiplied alpha follows the light's peak channel, preserving spectral
   // contrast instead of muting the entire reflection with a translucent wash.

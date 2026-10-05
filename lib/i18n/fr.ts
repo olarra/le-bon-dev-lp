@@ -25,7 +25,12 @@ const fr: Dictionary = {
     eyebrow: "Nos garanties", titleBefore: "Un ", titleHighlight: "cadre clair", titleAfter: ",", titleEnd: "du début à la fin.", subtitle: "Trois principes, valables pour chaque projet.",
     steps: GUARANTEE_STEPS.map(({ phase, title, description }) => ({ phase, title, description })),
   },
-  offers: { eyebrow: "Les offres", title: "Votre projet prend forme.", audience: "Pour vous si", included: "Ce qui est compris", from: "À partir de", items: OFFERS },
+  offers: {
+    eyebrow: "Les offres", title: "Votre projet prend forme.", audience: "Pour vous si", included: "Ce qui est compris", from: "À partir de",
+    replay: "Rejouer", replayLabel: "Rejouer l’animation des offres",
+    shimmer: { label: "Comparer les reflets de la carte Applications", original: "Reflet diagonal", metal: "Métal vert" },
+    items: OFFERS,
+  },
   showcase: {
     eyebrow: "Les réalisations", titleLines: ["Des idées", "devenues concrètes."], subtitle: "Deux projets, deux besoins. Découvrez ce qu’on a réalisé.", context: "Contexte", offer: "Offre", projects: REALISATIONS,
     phones: ["Miau : carte de Paris et chats à proximité, cadre sauge.", "Écran de connexion Miau, au premier plan dans un cadre vert forêt.", "Miau : fiche du chat Orion et contact du propriétaire, cadre lime."],

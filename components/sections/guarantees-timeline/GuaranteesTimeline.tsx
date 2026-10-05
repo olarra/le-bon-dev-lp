@@ -14,6 +14,17 @@ import styles from "./guarantees-timeline.module.css"
 
 const assets = GUARANTEE_STEPS.map((step) => `/images/guarantees-timeline/png/${step.image}`)
 
+/** The entrance transforms the complete artwork independently of its float. */
+function ArtworkEntrance({ children }: { children: ReactNode }) {
+  return (
+    <div className={morph.artFloat} data-guarantee-art-float>
+      <div className={`${morph.artEntrance} ${morph.scene}`} data-guarantee-art-entrance>
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; steps: Dictionary["guarantees"]["steps"] }) {
   const ref = useRef<HTMLDivElement>(null)
   const lenis = useLenis()
@@ -44,22 +55,24 @@ export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; ste
           <div className={`${layout.layout} ${styles.timeline}`} data-guarantee-body>
             <div className={layout.visualColumn} data-guarantee-visual aria-hidden="true">
               <div className={layout.stickyVisual} data-guarantee-sticky>
-                <div className={`${layout.visualMedia} ${morph.scene}`} data-guarantee-art-entrance>
-                  <GuaranteeBlob morphing />
-                  {assets.map((src, index) => (
-                    <img
-                      key={src}
-                      className={morph.fallback}
-                      data-fallback={index}
-                      src={src}
-                      alt=""
-                      width={1254}
-                      height={1254}
-                      draggable={false}
-                      style={{ transform: `scale(${ILLUSTRATION_SCALES[index]})` }}
-                    />
-                  ))}
-                  <canvas className={morph.canvas} data-guarantee-canvas />
+                <div className={layout.visualMedia} data-guarantee-art-slot>
+                  <ArtworkEntrance>
+                    <GuaranteeBlob morphing />
+                    {assets.map((src, index) => (
+                      <img
+                        key={src}
+                        className={morph.fallback}
+                        data-fallback={index}
+                        src={src}
+                        alt=""
+                        width={1254}
+                        height={1254}
+                        draggable={false}
+                        style={{ transform: `scale(${ILLUSTRATION_SCALES[index]})` }}
+                      />
+                    ))}
+                    <canvas className={morph.canvas} data-guarantee-canvas />
+                  </ArtworkEntrance>
                 </div>
               </div>
             </div>
@@ -85,7 +98,9 @@ export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; ste
                       <canvas className={morph.cardFoil} data-card-foil aria-hidden="true" />
                     )}
                     <div className={layout.mobileArt} data-guarantee-mobile-art>
-                      <GuaranteeArt step={step} withBlob={!MOBILE_METAL_CARDS_ENABLED} />
+                      <ArtworkEntrance>
+                        <GuaranteeArt step={step} withBlob={!MOBILE_METAL_CARDS_ENABLED} />
+                      </ArtworkEntrance>
                     </div>
                     <div className={layout.copy} data-guarantee-copy>
                       <p className={styles.phase}>{steps[index].phase}</p>

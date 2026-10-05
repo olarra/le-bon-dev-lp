@@ -28,9 +28,10 @@ export const OFFERS = [
     audience: "vous n’avez pas encore de site, si le vôtre ne vous ressemble plus, ou s’il n’apporte pas de demandes.",
     features: [
       "Design sur mesure, adapté au mobile",
-      "Pages et textes définis avec vous",
-      "Rendez-vous, paiement, devis et contact en ligne",
+      "Chaque page construite autour de votre message",
+      "Prise de rendez-vous, demande de devis et paiement en ligne, reliés à vos outils",
       "Référencement local et fiche Google",
+      "Statistiques des visites et des demandes reçues",
       "Domaine, hébergement, mise en ligne et prise en main",
     ],
     aftercare: {
@@ -53,9 +54,11 @@ export const OFFERS = [
     audience: "vous lancez un service en ligne, si vous voulez outiller votre équipe, ou si une application existante doit être terminée ou reprise.",
     features: [
       "Parcours et fonctionnalités adaptés à votre métier, définis au cadrage",
-      "Choix techniques expliqués simplement",
+      "Création de compte, connexion sécurisée, droits selon le rôle",
+      "Paiement, réservations, notifications… reliés à vos outils",
+      "Espace d'administration, selon le projet",
       "Développement, tests et déploiement",
-      "Paiement, agenda, notifications, selon le projet",
+      "Votre application publiée sur l'App Store et Google Play",
       "Documentation et sources remises",
     ],
     aftercare: {

@@ -17,7 +17,11 @@ export type Dictionary = {
     eyebrow: string; titleBefore: string; titleHighlight: string; titleAfter: string; titleEnd: string; subtitle: string
     steps: readonly (Item & { phase: string })[]
   }
-  offers: { eyebrow: string; title: string; audience: string; included: string; from: string; items: readonly Offer[] }
+  offers: {
+    eyebrow: string; title: string; audience: string; included: string; from: string; replay: string; replayLabel: string
+    shimmer: { label: string; original: string; metal: string }
+    items: readonly Offer[]
+  }
   showcase: {
     eyebrow: string; titleLines: string[]; subtitle: string; context: string; offer: string
     projects: Record<"miau" | "studio", Realisation>; phones: string[]; artworks: string[]; gallery: string; newTab: string

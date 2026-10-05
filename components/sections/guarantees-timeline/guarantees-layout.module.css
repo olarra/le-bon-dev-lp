@@ -21,7 +21,9 @@
 }
 
 .mobileArt {
+  position: relative;
   width: min(100%, 280px);
+  aspect-ratio: 1;
   margin: 0 auto 20px;
 }
 

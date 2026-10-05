@@ -1,14 +1,9 @@
 "use client"
 
 import { useEffect, type RefObject } from "react"
+import { setStickerLight, STICKER_LIGHT_PROPERTIES } from "@/lib/sticker-light"
 
 const MATERIAL = {
-  angle: 210,
-  angleRangeX: 140,
-  angleRangeY: 75,
-  originX: 50,
-  originY: 42,
-  originRange: 30,
   tilt: 10,
   travelX: 1.25,
   travelY: 1,
@@ -48,11 +43,9 @@ const smoothstep = (edge0: number, edge1: number, x: number) => {
 }
 
 const MATERIAL_PROPERTIES = [
-  "--sticker-foil-angle", "--sticker-foil-x", "--sticker-foil-y",
-  "--sticker-gloss-x", "--sticker-gloss-y", "--sticker-gloss-angle",
+  ...STICKER_LIGHT_PROPERTIES,
   "--sticker-rx", "--sticker-ry",
   "--sticker-x", "--sticker-y",
-  "--sticker-activity",
 ] as const
 
 type StickerMotionOptions = {
@@ -200,17 +193,11 @@ export function useStickerMotion(
         else settled = false
 
         const { x, y, lx, ly, element } = sticker
-        element.style.setProperty("--sticker-foil-angle", `${MATERIAL.angle + lx * MATERIAL.angleRangeX + ly * MATERIAL.angleRangeY}deg`)
-        element.style.setProperty("--sticker-foil-x", `${MATERIAL.originX + lx * MATERIAL.originRange}%`)
-        element.style.setProperty("--sticker-foil-y", `${MATERIAL.originY + ly * MATERIAL.originRange}%`)
-        element.style.setProperty("--sticker-gloss-x", `${50 + lx * 60}%`)
-        element.style.setProperty("--sticker-gloss-y", `${50 + ly * 45}%`)
-        element.style.setProperty("--sticker-gloss-angle", `${110 + lx * 12 + ly * 8}deg`)
+        setStickerLight(element, lx, ly, sticker.activity)
         element.style.setProperty("--sticker-rx", `${-y * MATERIAL.tilt}deg`)
         element.style.setProperty("--sticker-ry", `${x * MATERIAL.tilt}deg`)
         element.style.setProperty("--sticker-x", `${x * MATERIAL.travelX}px`)
         element.style.setProperty("--sticker-y", `${y * MATERIAL.travelY}px`)
-        element.style.setProperty("--sticker-activity", String(sticker.activity))
       }
 
       frame = settled && !scrolling ? 0 : requestAnimationFrame(draw)

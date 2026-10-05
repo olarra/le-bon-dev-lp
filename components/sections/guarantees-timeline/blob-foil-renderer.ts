@@ -220,7 +220,9 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
         label: item.isCard ? "holographic-guarantee-card" : "holographic-foil",
         set: { params: {
           resolution: [600, 420], tilt: [0, 0], pointer: [0, 0], intensity: 0.95,
-          ...(item.isCard ? { material: [(metal >> 16 & 255) / 255, (metal >> 8 & 255) / 255, (metal & 255) / 255], radius: 0.1 } : {}),
+          ...(item.isCard
+            ? { material: [(metal >> 16 & 255) / 255, (metal >> 8 & 255) / 255, (metal & 255) / 255], radius: 0.1 }
+            : { engraving: 1, green: 0, spread: 1 }),
         } },
       })
     }

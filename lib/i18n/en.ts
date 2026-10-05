@@ -25,18 +25,35 @@ const en: Dictionary = {
   },
   offers: {
     eyebrow: "Our services", title: "Your project takes shape.", audience: "For you if", included: "What’s included", from: "From",
+    replay: "Replay", replayLabel: "Replay the services animation",
+    shimmer: { label: "Compare reflections on the Applications card", original: "Diagonal reflection", metal: "Green metal" },
     items: [
       {
         id: "sites-vitrines", kind: "website", title: "Websites", promise: "A website that explains what you do and brings you enquiries.",
         audience: "you don’t have a website yet, yours no longer reflects your business, or it isn’t bringing in enquiries.",
-        features: ["Bespoke design, built for mobile too", "Pages and copy defined with you", "Online bookings, payments, quotes and contact", "Local SEO and your Google Business Profile", "Domain, hosting, launch and guidance"],
+        features: [
+          "Bespoke design, built for mobile too",
+          "Every page built around your message",
+          "Appointment bookings, quote requests and online payments, connected to your tools",
+          "Local SEO and your Google Business Profile",
+          "Statistics on visits and enquiries received",
+          "Domain, hosting, launch and guidance",
+        ],
         aftercare: { title: "After launch", description: "One month of fixes included, then further changes quoted individually or covered by ongoing support." },
         price: { amount: "€2,500 excl. VAT", detail: "five pages, content supplied" }, cta: "Get a website estimate", href: "#contact",
       },
       {
         id: "saas-mobile", kind: "applications", title: "Applications", detail: "Web or mobile", promise: "An application that does exactly what your business needs.",
         audience: "you’re launching an online service, equipping your team with better tools, or finishing or taking over an existing application.",
-        features: ["User journeys and features tailored to your business, agreed during planning", "Technical choices explained clearly", "Development, testing and deployment", "Payments, calendars and notifications, as your project requires", "Documentation and source code handed over"],
+        features: [
+          "User journeys and features tailored to your business, agreed during planning",
+          "Account creation, secure sign-in and role-based access",
+          "Payments, bookings, notifications… connected to your tools",
+          "An admin area, depending on the project",
+          "Development, testing and deployment",
+          "Your app published on the App Store and Google Play",
+          "Documentation and source code handed over",
+        ],
         aftercare: { title: "After deployment", description: "Bugs fixed during the warranty period specified in your quote. Optional monthly maintenance after that: iOS and Android compatibility, app stores and improvements." },
         cta: "Get an app estimate", href: "#contact",
       },

@@ -1,117 +1,80 @@
 "use client"
 
-import { useLayoutEffect, useRef, useState } from "react"
-import { useAnimationControls } from "motion/react"
-import { AnimatedHeading } from "@/components/atoms/AnimatedHeading"
-import { OfferIcon, OfferSticker, type OfferIconHandle } from "@/components/offer-icons"
-import { useStickerMotion } from "@/hooks/use-sticker-motion"
-import { FEATURE_FLAG_RESINE_ICON_ENABLED } from "@/lib/feature-flags"
-import { HEADING_REVEAL } from "@/lib/motion"
+import { useLayoutEffect, useRef } from "react"
 import type { Offer } from "./offers.content"
 import type { Dictionary } from "@/lib/i18n/types"
-import { mountOffersReveal, type OfferIconPhase } from "./offers-reveal"
-import { mountOffersContentEntrance } from "./offers-content-entrance"
+import { OfferSticker } from "@/components/offer-icons/OfferSticker"
+import { MetalFinish } from "@/components/ui/metal-sticker"
+import { useStickerMotion } from "@/hooks/use-sticker-motion"
+import { FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED, FEATURE_FLAG_OFFERS_SHIMMER_COMPARISON_ENABLED } from "@/lib/feature-flags"
+import { mountOffersEntrance } from "./offers-entrance"
 import styles from "./offers.module.css"
 
 export function OffersSection({ copy }: { copy: Dictionary["offers"] }) {
   const sectionRef = useRef<HTMLElement>(null)
-  const [iconPhase, setIconPhase] = useState<OfferIconPhase>("paused")
-  const headingControls = useAnimationControls()
+  useStickerMotion(sectionRef)
 
   useLayoutEffect(() => {
     if (!sectionRef.current) return
-    const stopCard = mountOffersReveal(sectionRef.current, setIconPhase)
-    const stopContent = mountOffersContentEntrance(sectionRef.current, headingControls)
-    return () => {
-      stopContent()
-      stopCard()
-    }
-  }, [headingControls])
+    const entrance = mountOffersEntrance(sectionRef.current)
+    return () => entrance.dispose()
+  }, [copy])
 
   return (
-    <section ref={sectionRef} className={styles.section} id="offres" aria-labelledby="offres-title" data-header-theme="dark">
+    <section ref={sectionRef} className={styles.section} id="offres" aria-labelledby="offres-title" data-header-theme="light">
       <noscript><style>{"#offres { --offers-pending-opacity: 1; }"}</style></noscript>
-      <div className={styles.light} data-offers-light aria-hidden="true" />
+      <div className={styles.light} aria-hidden="true" />
       <div className={styles.inner}>
-        <header className={styles.header}>
+        <header className={styles.header} data-offers-heading>
           <p className={styles.eyebrow}>{copy.eyebrow}</p>
-          <AnimatedHeading
-            as="h2"
-            id="offres-title"
-            text={copy.title}
-            effect={HEADING_REVEAL}
-            controls={headingControls}
-            className={styles.titleWrapper}
-            textClassName={styles.title}
-          />
+          <h2 id="offres-title" className={styles.title}>{copy.title}</h2>
         </header>
 
         <div className={styles.entry} data-offers-entry>
-          <div className={styles.surfacePlane} data-offers-surface>
-            <div className={styles.surface} data-offers-support>
-              <OfferCard offer={copy.items[0]} copy={copy} phase={iconPhase === "mobile-pending" ? "viewport" : iconPhase} />
-              <div className={styles.ivoryPlane} data-offers-ivory>
-                <OfferCard offer={copy.items[1]} copy={copy} phase={iconPhase === "mobile-pending" ? "paused" : iconPhase} />
-              </div>
+          <div className={styles.surface} data-offers-support>
+            <div className={styles.surfaceBackdrop} data-offers-shell aria-hidden="true" />
+            <OfferCard offer={copy.items[0]} copy={copy} />
+            <div className={styles.ivoryPlane} data-offers-ivory>
+              <OfferCard offer={copy.items[1]} copy={copy} />
             </div>
           </div>
         </div>
+      </div>
+      <div className={styles.previewControls} data-offers-preview hidden>
+        {FEATURE_FLAG_OFFERS_SHIMMER_COMPARISON_ENABLED && (
+          <select className={styles.shimmerSelect} data-offers-shimmer
+            defaultValue={FEATURE_FLAG_OFFERS_METAL_SHIMMER_ENABLED ? "metal" : "original"}
+            aria-label={copy.shimmer.label} aria-controls="saas-mobile">
+            <option value="original">{copy.shimmer.original}</option>
+            <option value="metal">{copy.shimmer.metal}</option>
+          </select>
+        )}
+        <button type="button" className={styles.replay} data-offers-replay
+          aria-label={copy.replayLabel} title={copy.replayLabel} aria-controls="offres">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+            <path d="M3 10a9 9 0 1 1 2.6 8.4M3 4v6h6" />
+          </svg>
+          {copy.replay}
+        </button>
       </div>
     </section>
   )
 }
 
-function OfferCard({ offer, phase, copy }: { offer: Offer; phase: OfferIconPhase; copy: Dictionary["offers"] }) {
-  const cardRef = useRef<HTMLElement>(null)
-  const iconRef = useRef<OfferIconHandle>(null)
-  useStickerMotion(cardRef, { enabled: !FEATURE_FLAG_RESINE_ICON_ENABLED })
-  const touch = useRef<{
-    id: number; x: number; y: number; time: number; scrollY: number
-  } | null>(null)
-  const play = () => { void iconRef.current?.play() }
-  const isInteractive = (target: EventTarget) => target instanceof Element
-    && !!target.closest("a, button, input, select, textarea, [role='button'], [contenteditable]")
-
+function OfferCard({ offer, copy }: { offer: Offer; copy: Dictionary["offers"] }) {
+  const application = offer.kind === "applications"
   return (
-    <article
-      ref={cardRef}
-      className={`${styles.offer} ${offer.kind === "website" ? styles.website : styles.ivory}`}
-      id={offer.id}
-      aria-labelledby={`${offer.id}-title`}
-      data-offers-card={offer.kind === "applications" ? "" : undefined}
-      data-offer-kind={offer.kind}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") play()
-      }}
-      onPointerDown={(event) => {
-        touch.current = null
-        if (!FEATURE_FLAG_RESINE_ICON_ENABLED || event.pointerType !== "touch" || !event.isPrimary || isInteractive(event.target)) return
-        touch.current = {
-          id: event.pointerId, x: event.clientX, y: event.clientY,
-          time: event.timeStamp, scrollY: window.scrollY,
-        }
-      }}
-      onPointerMove={(event) => {
-        const start = touch.current
-        if (start && event.pointerId === start.id
-          && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10) touch.current = null
-      }}
-      onPointerUp={(event) => {
-        const start = touch.current
-        touch.current = null
-        if (!start || event.pointerId !== start.id || isInteractive(event.target)) return
-        if (event.timeStamp - start.time > 500
-          || Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10
-          || Math.abs(window.scrollY - start.scrollY) > 4) return
-        play()
-      }}
-      onPointerCancel={() => { touch.current = null }}
-      onLostPointerCapture={() => { touch.current = null }}
-    >
-      {offer.kind === "applications" && (
+    <article className={`${styles.offer} ${application ? styles.ivory : styles.website}`}
+      id={offer.id} aria-labelledby={`${offer.id}-title`} tabIndex={-1}
+      data-offer-kind={offer.kind}>
+      {application && (
         <>
+          <span className={styles.landingShadow} data-offers-landing-shadow aria-hidden="true" />
           <span className={styles.landingSheen} aria-hidden="true">
             <span className={styles.sheenReflection} data-offers-sheen />
+            <MetalFinish className={styles.metalFallback} tone="dark" palette="green" />
+            <canvas className={styles.metalCanvas} data-offers-metal-canvas />
           </span>
           <span className={styles.landingRim} aria-hidden="true">
             <span className={styles.rimReflection} data-offers-rim-sheen />
@@ -119,41 +82,29 @@ function OfferCard({ offer, phase, copy }: { offer: Offer; phase: OfferIconPhase
         </>
       )}
       <div className={styles.offerTopline}>
-        <div className={styles.iconAssembly} data-offers-icon>
-          {FEATURE_FLAG_RESINE_ICON_ENABLED ? (
-            <OfferIcon
-              ref={iconRef}
-              kind={offer.kind}
-              size={88}
-              disabled={phase === "paused"}
-              playOnView={phase !== "paused"}
-              playOnHover={false}
-            />
-          ) : (
-            <OfferSticker kind={offer.kind} className={styles.offerIcon} />
-          )}
-        </div>
-        {offer.detail && <span className={styles.offerBadge} data-offers-badge>{offer.detail}</span>}
+        <OfferSticker kind={offer.kind} className={styles.offerSticker} />
+        {offer.detail && <span className={styles.offerBadge}>{offer.detail}</span>}
       </div>
-      <div className={styles.offerHeading} data-offers-text="intro">
+      <div className={styles.offerHeading}>
         <h3 className={styles.cardTitle} id={`${offer.id}-title`}>{offer.title}</h3>
         <p className={styles.promise}>{offer.promise}</p>
+        <span className={styles.divider} aria-hidden="true" />
       </div>
-      <div className={styles.offerAudience} data-offers-text="details">
-        <p className={styles.audience}><strong>{copy.audience}</strong> {offer.audience}</p>
+      <div className={styles.offerAudience}>
+        <p className={styles.audience}><strong>{copy.audience}</strong>{" "}{offer.audience}</p>
       </div>
-      <div className={styles.offerFeatures} data-offers-text="details">
+      <div className={styles.offerFeatures}>
         <h4 className={styles.featuresTitle}>{copy.included}</h4>
         <FeatureList items={offer.features} />
       </div>
-      <div className={styles.offerClosing} data-offers-text="closing">
-        <div className={styles.offerAftercare} data-offers-aftercare>
+      <div className={styles.offerClosing}>
+        <div className={styles.offerAftercare}>
           <h4 className={styles.featuresTitle}>{offer.aftercare.title}</h4>
           <p className={styles.aftercare}>{offer.aftercare.description}</p>
         </div>
         <div className={styles.offerFooter}>
           {offer.price && (
-            <div className={styles.price} data-offers-price>
+            <div className={styles.price}>
               <p className={styles.priceLabel}>{copy.from}</p>
               <p className={styles.priceSummary}>
                 <strong className={styles.priceAmount}>{offer.price.amount}</strong>
@@ -161,15 +112,7 @@ function OfferCard({ offer, phase, copy }: { offer: Offer; phase: OfferIconPhase
               </p>
             </div>
           )}
-          <a
-            className={styles.offerLink}
-            href={offer.href}
-            data-offers-action
-            data-offers-sheen-replay={offer.kind === "applications" ? "" : undefined}
-            onPointerEnter={(event) => { if (event.pointerType === "mouse") play() }}
-            onFocus={play}
-            onClick={play}
-          >
+          <a className={styles.offerLink} href={offer.href}>
             <span className={styles.offerLinkInner}>
               <span>{offer.cta}</span>
               <Arrow />
@@ -184,21 +127,15 @@ function OfferCard({ offer, phase, copy }: { offer: Offer; phase: OfferIconPhase
 function FeatureList({ items }: { items: readonly string[] }) {
   return (
     <ul className={styles.features}>
-      {items.map((item) => (
+      {items.map(item => (
         <li key={item}>
-          <Check />
+          <svg className={styles.featureCheck} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+            <path d="m5 12 4 4L19 6" />
+          </svg>
           <span>{item}</span>
         </li>
       ))}
     </ul>
-  )
-}
-
-function Check() {
-  return (
-    <svg className={styles.featureCheck} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-      <path d="m5 12 4 4L19 6" />
-    </svg>
   )
 }
 

@@ -9,6 +9,9 @@ Sur mobile, chaque projet présente son texte et son bouton avant son illustrati
   sans délai de lissage ; sur desktop, elle suit l’arrivée des téléphones.
   La section Méthode conserve son fond sombre.
 - `useShowcaseMotion` déroule les téléphones et la coloration du texte.
+- Le téléphone central utilise `miau-auth-orange.png`, le visuel fourni avec
+  le chat blanc et l’accueil orange. Le PNG conserve sa transparence et ses
+  dimensions d’origine (895 × 1757), déclarées dans `PhoneImage`.
 - `AnimatedHeading` partage les réglages de `lib/motion.ts` ; `ResinCta` est
   commun aux projets et au studio.
 - `OfferSticker` partage les SVG métalliques des offres, à 40 px dans les
@@ -32,6 +35,9 @@ Sur mobile, chaque projet présente son texte et son bouton avant son illustrati
   et de titre viennent des tokens partagés de `app/globals.css`.
 - `ResinGallery` superpose galerie, moniteur en résine et reflet. Les réglages
   de mouvement et d’alignement restent dans le composant et son CSS Module.
+  Le cadre fourni `resin-monitor-wide.png` (1448 × 1086) conserve ses pixels et
+  sa transparence ; le CSS recadre ses marges et aligne la galerie ainsi que le
+  masque du reflet sur son ouverture, en gardant les deux pieds visibles.
 - `SvgFollowScroll` suit les deux visuels ; `showcase-thread.ts` définit le tracé
   et la fin automatique du dessin à l’arrivée du moniteur. La ligne est masquée
   sur mobile.

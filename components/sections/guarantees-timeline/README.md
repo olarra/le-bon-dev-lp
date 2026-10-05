@@ -8,9 +8,10 @@ les tailles. Le mélange de la référence est conservé ; les deux dégradés d
 la seconde couche se déplacent sur 60 s, au rythme lent de la référence.
 Les bandes se répètent tous les 13 % au lieu de 16 %, avec des plages blanches
 réduites, pour rapprocher les faisceaux. Le décor est limité à une hauteur de viewport (`100svh`,
-repli `100vh`) au début de la section. Un fondu blanc ferme ses bords haut et
-bas : le fond général et la suite de la timeline restent blancs, sans teinte
-verte étalée sur toute la section.
+repli `100vh`) au début de la section. L'aurore commence au bord supérieur,
+sans voile blanc en haut. Seul le bord inférieur se fond dans le blanc :
+le fond général et la suite de la timeline restent blancs, sans teinte verte
+étalée sur toute la section.
 Le masque radial part du coin supérieur droit (opaque à 10 %, transparent
 à 70 %). Le décor SVG du coin inférieur droit reste retiré.
 
@@ -132,7 +133,7 @@ En disposition sans empilement, le balayage va de l'entrée du haut de la carte
 à l'arrivée de son bas dans la zone de lecture. La réserve de défilement et
 la sortie de pile ne sont pas allongées.
 
-Aucun suivi du curseur ni animation autonome n'est ajouté.
+Le reflet n'utilise ni suivi du curseur ni animation autonome.
 Le moteur partage un contexte GPU entre les surfaces, limite le DPR à 2 sur desktop et 1,5 sur mobile,
 et dessine seulement les surfaces visibles lors d'un scroll, du court amortissement ou
 d'un changement de dimensions. La taille GPU est calculée avant inclinaison
@@ -144,28 +145,59 @@ Les ressources GPU, observateurs et écouteurs
 sont libérés au démontage ; une perte du GPU masque la surcouche. Les filtres
 SVG restent fixes et les ombres peuvent dépasser le SVG.
 
-Les entrées reprennent le principe des groupes courts de la page
-[iPhone Air](https://www.apple.com/iphone-air/) : une composition arrive,
-puis reste disponible pour la lecture. La [référence vidéo](https://www.youtube.com/watch?v=KZ-eAiBW6gA&t=71s)
-met l'accent sur la hiérarchie, l'espace et une découverte au rythme du visiteur.
-Les seuils ci-dessous sont adaptés à cette section, pas copiés d'Apple.
+Les entrées adaptent l'inspiration fournie : dévoilement latéral des titres
+et montée avec zoom du groupe illustration. Elles utilisent GSAP / ScrollTrigger,
+déjà responsables des entrées de cette section. Elles se déclenchent une
+fois au scroll, puis se jouent sur une durée fixe. La courbe `CustomEase`
+reprend les valeurs `[0.25, 0.4, 0.25, 1]` de la référence.
 
-À partir de 810 px, chaque texte commence lorsque son emplacement au repos
-atteint 72 % de la hauteur du viewport. Phase, titre et description se suivent
-à 100 ms d'intervalle : montée de 24 px sur 1 s, opacité sur 650 ms.
-La première illustration accompagne seulement le premier texte : montée de
-28 px, échelle 0,97 → 1 sur 1,15 s, sans rebond. Les deux textes suivants
-attendent chacun leur position de lecture. Pendant le snap Hero → Garanties,
-la première composition attend aussi que le haut de la section atteigne
-12 % du viewport (`snapStart`), près de l'arrivée du snap.
+Le titre de section est un `h2` serveur, avec deux blocs de texte qui gardent
+leurs retours naturels à la ligne dans chaque langue. À 80 % du viewport,
+le premier se dévoile depuis la gauche, le second depuis la droite :
+déplacement de ±48 px et montée de 12 px sur 800 ms, avec des départs à
+100 et 200 ms. Sur mobile, le déplacement horizontal est limité à ±24 px.
+Le surlignage fait partie de la ligne animée. Le masque déborde légèrement
+autour du texte et est retiré en fin d'entrée pour préserver ses ornements.
+Cette entrée remplace l'animation lettre par lettre dans cette section.
 
-Sous 810 px, chaque carte contient son illustration et sa propre surface holographique.
-L'illustration de la première carte et son texte ont leurs propres déclenchements
-à 76 % du viewport, avec une montée de 18 px. Les cartes suivantes conservent leur mouvement
-d'empilement et leur texte visible, y compris lorsque la hauteur disponible
-impose le repli sans empilement. La pastille commence à 80 % du viewport ;
-le sous-titre attend son propre seuil de lecture. `AnimatedHeading` et ses
-paramètres de lettres sont conservés.
+À partir de 810 px, chaque texte de garantie commence lorsque son emplacement
+au repos atteint 72 % du viewport. Phase, titre et description se suivent à
+100 ms d'intervalle. Le `h3` se dévoile de gauche à droite avec un déplacement
+de 32 px sur 800 ms ; les autres textes montent de 12 px. L'opacité évolue
+sur 550 ms. Les deuxième et troisième textes attendent chacun leur propre
+position de lecture.
+
+La composition visuelle possède un emplacement carré stable, puis deux
+wrappers séparés : flottement et entrée du groupe. Le blob, son reflet,
+l'image de repli et le canvas de morphing restent dans le même groupe
+intérieur, sans masque d'entrée ni découpe progressive.
+Après 250 ms, le groupe monte de 70 px, passe de l'échelle 0,82 à 1 et se
+redresse de −6° à 0°. Les trois transformations partagent un ressort de
+raideur 110, amortissement 18 et masse 0,9.
+Les générateurs `spring` de Motion, déjà installé, fournissent les courbes
+et durées à la timeline GSAP ; aucune seconde boucle d'entrée n'est ajoutée.
+L'opacité passe de 0 à 1 sur 450 ms, à partir de 350 ms.
+
+Les dimensions du groupe et le débordement de ses ombres restent libres.
+Le morphing et l'inclinaison du matériau gardent leurs transformations internes.
+Après l'entrée, le parent desktop flotte de 0 à −14 px et de 0 à 1,5°,
+puis revient, sur un cycle de 5,5 s. Ce mouvement s'arrête hors écran ou
+quand l'onglet est masqué. Il n'ajoute pas de parallaxe au scroll.
+Le déclenchement du visuel est indépendant des trois textes : sa plage
+couvre toute la colonne sticky, y compris si la page est rechargée devant
+la deuxième ou la troisième garantie.
+Pendant le snap Hero → Garanties, le titre et la première composition
+attendent aussi que le haut de la section atteigne 12 % du viewport
+(`snapStart`), près de l'arrivée du snap.
+
+Sous 810 px, chaque carte contient son illustration et sa propre surface
+holographique. L'illustration de la première carte et son texte ont leurs
+propres déclenchements à 76 % du viewport. Son illustration reprend la montée
+de 70 px, l'échelle de 0,82 et la rotation de −6°, avec le même ressort et
+le même fondu. Le flottement est réservé au desktop. Les cartes suivantes
+conservent leur mouvement d'empilement et leur texte visible, y compris
+lorsque la hauteur disponible impose le repli sans empilement. La pastille
+commence à 80 % du viewport ; le sous-titre attend son propre seuil de lecture.
 
 Dans la pile mobile, les cartes arrivent complètes avec 24 px d'écart. Chacune
 emporte son illustration en recouvrant la précédente, qui recule légèrement.
@@ -193,15 +225,37 @@ temporel ni contrôle supplémentaire des gestes n'est utilisé pour la pile.
 Le repli sans
 empilement, notamment en mouvement réduit, garde les cartes complètes.
 
-`GUARANTEE_ENTRANCE` centralise les distances et les durées. Seules opacité
-et transformations sont animées, sans modifier la géométrie de la section.
+`GUARANTEE_ENTRANCE`, dans `guarantees-timeline.content.ts`, centralise les
+réglages : `startViewport` / `mobileStartViewport` pour le déclenchement,
+`titleDuration` pour la durée des titres, `titleStagger` / `copyStagger`
+pour la cadence, et `ease` pour la courbe du texte. `artSpring` règle le
+ressort du groupe illustration ; `artDelay`, `artFadeDelay` et
+`artFadeDuration` règlent son départ et son fondu.
+`artFloatDistance`, `artFloatRotation` et `artFloatDuration` règlent le
+flottement desktop. Les distances, échelles et rotations d'entrée se règlent
+dans ce même objet. Le masque du texte est dans `textClip`.
+Seules opacité et transformations animent l'illustration ; le `clip-path`
+d'entrée est réservé au texte, sans modifier la géométrie de la section.
 Les coordonnées de déclenchement ignorent les transformations et le décalage
 sticky. Un `ResizeObserver`, les polices et `pageshow` actualisent les seuils
-locaux. Une entrée commencée reste visible après un changement de breakpoint ;
-une position déjà lue au montage s'affiche directement. Les styles sont retirés
+locaux. Une entrée terminée reste visible après un changement de breakpoint.
+Au rechargement, les éléments présents dans leur plage de lecture jouent
+leur entrée ; seuls les éléments déjà sortis au-dessus du viewport sont
+affichés directement. Le déclenchement et le passage immédiat à l'état final
+attendent `pageshow`, puis une frame de mise en page pour lire la position
+restaurée par le navigateur. Si le composant monte après le chargement,
+cette synchronisation est programmée dès son montage. Les premiers
+recalculs de ScrollTrigger ne peuvent donc pas marquer l'entrée comme
+terminée pendant le chargement. La présence réelle du visuel dans le
+viewport prend priorité sur sa position d'origine lorsqu'il est sticky.
+Le marqueur de fin est posé à la fin de l'animation,
+pour qu'un remontage des effets au démarrage ne supprime pas l'entrée avant
+qu'elle soit visible. Les styles sont retirés
 à la fin de chaque entrée. Sans JavaScript ou avec `prefers-reduced-motion`,
 ces contenus restent visibles. Le contexte GSAP nettoie animations et triggers,
-avec retrait de l'écoute Lenis et des observateurs au démontage.
+avec retrait de l'écoute Lenis, des observateurs et de l'écoute de visibilité
+au démontage. Ces ajustements n'ont pas été vérifiés visuellement ni par des
+commandes automatisées.
 
 ## Traductions
 

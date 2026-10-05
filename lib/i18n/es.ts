@@ -25,18 +25,35 @@ const es: Dictionary = {
   },
   offers: {
     eyebrow: "Los servicios", title: "Tu proyecto toma forma.", audience: "Para ti si", included: "Qué incluye", from: "Desde",
+    replay: "Repetir", replayLabel: "Repetir la animación de los servicios",
+    shimmer: { label: "Comparar los reflejos de la tarjeta Aplicaciones", original: "Reflejo diagonal", metal: "Metal verde" },
     items: [
       {
         id: "sites-vitrines", kind: "website", title: "Sitios web", promise: "Un sitio que explica lo que haces y te ayuda a recibir consultas.",
         audience: "todavía no tienes sitio web, el actual ya no te representa o no te genera consultas.",
-        features: ["Diseño a medida, adaptado a móviles", "Páginas y textos definidos contigo", "Citas, pagos, presupuestos y contacto en línea", "SEO local y Perfil de Empresa en Google", "Dominio, alojamiento, publicación y orientación de uso"],
+        features: [
+          "Diseño a medida, adaptado a móviles",
+          "Cada página construida en torno a tu mensaje",
+          "Reserva de citas, solicitudes de presupuesto y pagos en línea, conectados a tus herramientas",
+          "SEO local y Perfil de Empresa en Google",
+          "Estadísticas de visitas y consultas recibidas",
+          "Dominio, alojamiento, publicación y orientación de uso",
+        ],
         aftercare: { title: "Después del lanzamiento", description: "Un mes de correcciones incluido. Después, mejoras con presupuesto individual o mediante acompañamiento continuo." },
         price: { amount: "2.500 € sin IVA", detail: "cinco páginas, contenido proporcionado" }, cta: "Estimar mi sitio web", href: "#contact",
       },
       {
         id: "saas-mobile", kind: "applications", title: "Aplicaciones", detail: "Web o móvil", promise: "Una aplicación que hace exactamente lo que tu actividad necesita.",
         audience: "vas a lanzar un servicio en línea, necesitas herramientas para tu equipo o quieres terminar o retomar una aplicación existente.",
-        features: ["Flujos de uso y funcionalidades adaptados a tu negocio, definidos al inicio", "Decisiones técnicas explicadas con claridad", "Desarrollo, pruebas y despliegue", "Pagos, agenda y notificaciones, según el proyecto", "Entrega de documentación y código fuente"],
+        features: [
+          "Flujos de uso y funcionalidades adaptados a tu negocio, definidos al inicio",
+          "Creación de cuentas, acceso seguro y permisos según el rol",
+          "Pagos, reservas, notificaciones… conectados a tus herramientas",
+          "Panel de administración, según el proyecto",
+          "Desarrollo, pruebas y despliegue",
+          "Tu aplicación publicada en el App Store y Google Play",
+          "Entrega de documentación y código fuente",
+        ],
         aftercare: { title: "Después del despliegue", description: "Corrección de errores durante la garantía fijada en el presupuesto. Después, mantenimiento mensual opcional: compatibilidad con iOS y Android, tiendas de aplicaciones y mejoras." },
         cta: "Estimar mi aplicación", href: "#contact",
       },

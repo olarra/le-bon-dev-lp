@@ -86,6 +86,10 @@
   text-wrap: balance;
 }
 
+.titleLine {
+  display: block;
+}
+
 .highlight {
   position: relative;
   isolation: isolate;
@@ -310,10 +314,12 @@
   .section [data-guarantee-label] > *,
   .section [data-guarantee-intro] > *,
   .section [data-guarantee-copy] > *,
+  .section [data-guarantee-art-float],
   .section [data-guarantee-art-entrance],
   .section [data-guarantee-mobile-art] {
     opacity: 1 !important;
     transform: none !important;
+    clip-path: none !important;
     transition: none !important;
     animation: none !important;
   }

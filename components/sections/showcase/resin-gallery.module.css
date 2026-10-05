@@ -1,16 +1,16 @@
 .stage {
-  /* Original PNG: 1536 × 1024. Display window: (140, 52, 1256, 932).
-     Only empty margins are cropped; the original pixels stay unchanged.
-     Gallery bounds (187, 94)–(1349, 750) underlap the inside of the bezel. */
-  --resin-ratio: 1256 / 932;
+  /* Original PNG: 1448 × 1086. Display window: (40, 120, 1368, 864).
+     Crop the surrounding margins while keeping the frame and both feet.
+     Gallery bounds (80, 161)–(1368, 872) underlap the inside of the bezel. */
+  --resin-ratio: 1368 / 864;
   --resin-perspective: 1200px;
   --resin-origin: 50% 60%;
-  --resin-screen-inset: calc(100% * 42 / 932) calc(100% * 47 / 1256) calc(100% * 234 / 932);
-  --resin-image-width: calc(100% * 1536 / 1256);
-  --resin-image-height: calc(100% * 1024 / 932);
-  --resin-image-left: calc(-100% * 140 / 1256);
-  --resin-image-top: calc(-100% * 52 / 932);
-  --resin-image: url("/images/realisations/french-pixel/resin-monitor.png");
+  --resin-screen-inset: calc(100% * 41 / 864) calc(100% * 40 / 1368) calc(100% * 112 / 864);
+  --resin-image-width: calc(100% * 1448 / 1368);
+  --resin-image-height: calc(100% * 1086 / 864);
+  --resin-image-left: calc(-100% * 40 / 1368);
+  --resin-image-top: calc(-100% * 120 / 864);
+  --resin-image: url("/images/realisations/french-pixel/resin-monitor-wide.png");
   --resin-screen-mask: url("/images/realisations/french-pixel/monitor-screen-mask.svg");
   position: relative;
   width: 100%;
@@ -41,7 +41,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 2%;
+  border-radius: calc(100% * 10 / 1288) / calc(100% * 10 / 711);
   background: #fff;
 }
 
@@ -140,13 +140,12 @@
   inset: 0;
   overflow: hidden;
   opacity: 0;
-  /* Combine the PNG's actual alpha (bezel + stand) with the filled screen.
-     The reflection crosses all visible surfaces, never the empty margins
-     or the transparent opening in the stand. The mask shares the PNG crop.
-     Background-position is a fraction of the extra image size: 52 / 92. */
+  /* Combine the PNG's alpha (bezel + feet) with the filled screen.
+     The mask shares the PNG crop, leaving the surrounding space transparent.
+     Background-position is a fraction of the extra image size: 120 / 222. */
   mask-image: var(--resin-image), var(--resin-screen-mask);
   mask-size: var(--resin-image-width) var(--resin-image-height), 100% 100%;
-  mask-position: 50% calc(100% * 52 / 92), center;
+  mask-position: 50% calc(100% * 120 / 222), center;
   mask-repeat: no-repeat;
   mask-mode: alpha;
   mask-composite: add;
