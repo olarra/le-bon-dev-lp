@@ -1,0 +1,254 @@
+/* Reuse Studio's panel, lime backing and frosted base; only the layout changes. */
+.card[data-project-copy] {
+  --panel-inset: clamp(24px, 3vw, 40px);
+  --panel-radius: 28px;
+  position: relative;
+  z-index: 2;
+  width: var(--project-width);
+  max-width: none;
+  margin: 0;
+  padding: 32px var(--panel-inset) 0;
+  color: #153f32;
+}
+
+.card,
+.card *,
+.card *::before,
+.card *::after { box-sizing: border-box; }
+
+.introduction {
+  --offer-icon-size: 88px;
+  --offer-icon-width: calc(var(--offer-icon-size) * var(--offer-icon-scale, 1));
+  display: grid;
+  grid-template-columns: var(--offer-icon-width) minmax(0, 1fr) auto;
+  grid-template-areas: "icon identity cta" "icon description cta";
+  align-items: start;
+  column-gap: 28px;
+  row-gap: 10px;
+}
+
+.offerIcon { --sticker-size: var(--offer-icon-width); grid-area: icon; }
+.identity { grid-area: identity; min-width: 0; }
+.nameRow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
+.name {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(32px, 3.5vw, 48px);
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #edf8d9;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a4df21;
+}
+.context {
+  margin: 6px 0 0;
+  color: #747d83;
+  font-size: 20px;
+  line-height: 1.4;
+}
+.description {
+  grid-area: description;
+  max-width: 59ch;
+  margin: 0;
+  color: #747d83;
+  font-size: 18px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.card .cta {
+  --resin-button-width: 252px;
+  --resin-button-hover-transform: translate(2px, -2px) rotate(-45deg);
+  grid-area: cta;
+  border-radius: 22px;
+  box-shadow: 0 14px 30px -14px rgb(160 221 53 / 65%);
+}
+.card .cta > span { min-height: 54px; padding-inline: 18px; gap: 12px; }
+.card .cta svg { color: #f2f8e8; transform: rotate(-45deg); }
+.card .cta:hover svg,
+.card .cta:focus-visible svg { transform: translate(2px, -2px) rotate(-45deg); }
+
+/* Project cards: compact introduction, live illustration, then the Studio-style footer. */
+.withIllustration .introduction { --offer-icon-scale: 0.75; }
+.card.withIllustration .cta {
+  --resin-button-width: 210px;
+  justify-self: start;
+  border-radius: 18px;
+  font-size: 15px;
+}
+.card.withIllustration .cta > span { min-height: 42px; padding: 8px 14px; gap: 10px; }
+.card.withIllustration .cta svg { width: 18px; height: 18px; }
+.illustration {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: clamp(40px, 4vw, 56px) calc(-1 * var(--panel-inset)) 0;
+  overflow-x: clip;
+}
+.illustration > [data-miau-visual] { width: 100%; }
+.withIllustration .footer { margin-top: 20px; }
+.withIllustration .footer::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0 var(--panel-inset) auto;
+  height: 1px;
+  background: rgb(51 84 56 / 12%);
+  pointer-events: none;
+}
+
+.footer {
+  position: relative;
+  isolation: isolate;
+  margin: 36px calc(-1 * var(--panel-inset)) 0;
+  border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+}
+/* Anchor the backing to the footer, so it can never protrude above the glass. */
+.footer .glow {
+  inset: 0 24px -24px;
+  height: auto;
+  background: linear-gradient(180deg, rgb(216 246 161 / 0), #d8f6a1 48%, #b8ed42 80%, #a6df35);
+}
+.card .base { margin: 0; border-top: 0; }
+.services {
+  --service-icon-size: 52px;
+  --service-columns: 4;
+  --service-spacing: clamp(24px, 2.4vw, 36px);
+  display: grid;
+  grid-template-columns: repeat(var(--service-columns), minmax(0, 1fr));
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 28px 0 36px;
+  list-style: none;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+.service {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: var(--service-icon-size);
+  padding-inline: calc(var(--service-spacing) / 2);
+}
+.service { gap: 14px; }
+.service::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: var(--service-icon-size);
+  background: rgb(51 84 56 / 18%);
+  transform: translateY(-50%);
+}
+.services > .service:first-child::before { display: none; }
+.stickerSlot {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--service-icon-size);
+  height: var(--service-icon-size);
+}
+.serviceSticker {
+  --sticker-size: calc(var(--service-icon-size) * var(--asset-scale));
+  transform: translate(var(--asset-x), var(--asset-y));
+}
+.publication, .stores { display: contents; }
+.stores {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stores li { white-space: nowrap; }
+
+@media (max-width: 699px) {
+  .illustration { margin-top: 32px; }
+  .withIllustration .footer { margin-top: 36px; }
+}
+
+@media (max-width: 1299px) {
+  .services { --service-columns: 2; row-gap: 32px; }
+  .services > .service:nth-child(odd)::before,
+  .stores > .service:first-child::before { display: none; }
+}
+
+@media (max-width: 1199px) {
+  .introduction { --offer-icon-size: 76px; column-gap: 24px; }
+  .card .cta { --resin-button-width: 230px; }
+}
+
+@media (max-width: 899px) {
+  .introduction {
+    --offer-icon-size: 72px;
+    grid-template-columns: var(--offer-icon-width) minmax(0, 1fr);
+    grid-template-areas: "icon identity" "icon description" ". cta";
+    gap: 16px 22px;
+  }
+  .card .cta { margin-top: 4px; }
+  .context { font-size: 18px; }
+}
+
+@media (max-width: 599px) {
+  .card[data-project-copy] { --panel-inset: 22px; --panel-radius: 24px; padding-top: 24px; }
+  .introduction {
+    --offer-icon-size: 60px;
+    grid-template-columns: var(--offer-icon-width) minmax(0, 1fr);
+    grid-template-areas: "icon identity" "description description" "cta cta";
+    gap: 20px 18px;
+  }
+  .name { font-size: clamp(24px, 7vw, 32px); }
+  .nameRow { gap: 8px 12px; }
+  .badge { padding: 5px 10px; font-size: 13px; gap: 6px; }
+  .badge::before { width: 6px; height: 6px; }
+  .context { margin-top: 6px; font-size: 17px; }
+  .description { font-size: 17px; }
+  .card .cta { --resin-button-width: 100%; border-radius: 18px; margin-top: 0; }
+  .card .cta > span { min-height: 48px; }
+  .footer { margin-top: 28px; }
+  .footer .glow { inset-inline: 16px; bottom: -20px; }
+  .services {
+    --service-icon-size: 42px;
+    --service-spacing: 20px;
+    align-items: start;
+    row-gap: 32px;
+    padding: 24px 0 36px;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .service { flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  .service::before { height: calc(100% - 8px); }
+  .service > span:last-child { max-width: 16ch; min-height: 2.8em; }
+}
+
+@media (forced-colors: active) {
+  .badge { border: 1px solid; }
+  .card .cta { border: 1px solid ButtonText; }
+  .footer .glow { display: none; }
+  .service::before { background: CanvasText; }
+}

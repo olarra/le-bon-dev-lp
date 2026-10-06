@@ -31,7 +31,9 @@ const fr: Dictionary = {
   },
   showcase: {
     eyebrow: "Les réalisations", titleLines: ["Des idées", "devenues concrètes."], subtitle: "Deux projets, deux besoins. Découvrez ce qu’on a réalisé.", context: "Contexte", offer: "Offre", projects: REALISATIONS,
+    services: { label: "Les prestations réalisées", design: "Conception & design", mobile: "Développement mobile", stores: "Publication sur les stores", copywriting: "Conception & rédaction", responsive: "Design responsive", seo: "Référencement naturel", interactions: "Animations & interactions" },
     phones: ["Miau : carte de Paris et chats à proximité, cadre sauge.", "Écran de connexion Miau, au premier plan dans un cadre vert forêt.", "Miau : fiche du chat Orion et contact du propriétaire, cadre lime."],
+    carousel: { label: "Les écrans de Miau", previous: "Écran précédent", next: "Écran suivant", navigation: "Choisir un écran Miau", screens: ["À proximité", "Bienvenue", "Le profil d’Orion"] },
     artworks: FRENCH_PIXEL_GALLERY.artworks.map(artwork => artwork.alt), gallery: "Aperçu de la galerie French Pixel Studio", newTab: "nouvel onglet",
   },
   method: { eyebrow: METHOD_EYEBROW, title: METHOD_TITLE, steps: METHOD_STEPS.map(({ title, description }) => ({ title, description })) },

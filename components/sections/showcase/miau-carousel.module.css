@@ -1,0 +1,111 @@
+.phoneVisual { position: relative; flex-shrink: 0; display: none; }
+.phoneGroup { position: relative; aspect-ratio: 1.6; }
+.phone { position: absolute; z-index: 1; top: 7.5%; width: 28%; --phone-rotation: 0deg; }
+.mapPhone { left: 14%; }
+/* The active carousel pose and source-margin compensation are defined below. */
+.authPhone { left: 32.5%; top: -4.5%; width: 35%; z-index: 3; }
+.orionPhone { right: 14%; z-index: 2; }
+.phonePose { transform: rotate(var(--phone-rotation)); transform-origin: 50% 65%; }
+.phone img { display: block; width: 100%; height: auto; user-select: none; }
+.phoneControls { display: none; }
+@media (max-width: 699px) {
+  .phoneVisual { display: block; --phone-width: calc(min(70vw, 300px, 34svh) * 0.96); width: 100%; padding-top: 16px; }
+  .phoneGroup {
+    height: calc(var(--phone-width) * 1458 / 740);
+    aspect-ratio: auto;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    touch-action: pan-y pinch-zoom;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+  }
+  .phoneGroup:active { cursor: grabbing; }
+  .phone {
+    inset: 0 auto auto 50%;
+    width: var(--phone-width);
+    margin-left: calc(var(--phone-width) / -2);
+    --phone-rotation: 0deg;
+    transform-style: preserve-3d;
+  }
+  .phoneOrbit { transform-style: preserve-3d; will-change: transform, opacity, filter; }
+  .phonePose { position: relative; aspect-ratio: 740 / 1458; }
+  .phone img {
+    position: absolute;
+    max-width: none;
+  }
+  /* Align the new PNG silhouettes with the existing carousel's device boxes. */
+  .mapPhone img { left: -1.3889%; top: -1.6298%; width: 102.662%; height: 103.2596%; }
+  .authPhone img { left: -2.3557%; top: -1.8724%; width: 104.4759%; height: 103.8034%; }
+  .orionPhone img { left: -2.2327%; top: -1.8724%; width: 104.2303%; height: 103.8034%; }
+  .phoneControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    width: fit-content;
+    max-width: calc(100% - 32px);
+    margin: 32px auto 0;
+  }
+  .phoneArrow {
+    display: grid;
+    place-items: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgb(111 151 80 / 35%);
+    border-radius: 50%;
+    background: linear-gradient(145deg, #2c543a, #123b2b);
+    color: #cbf02e;
+    box-shadow: inset 0 1px 1px rgb(234 255 202 / 18%), 0 4px 12px rgb(86 119 41 / 12%);
+    transition: transform 180ms ease;
+    cursor: pointer;
+  }
+  .phoneArrow:active { transform: scale(0.94); }
+  .phoneDots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 6px;
+    border: 1px solid rgb(111 151 80 / 35%);
+    border-radius: 999px;
+    background: #173f30;
+    box-shadow: inset 0 1px 1px rgb(234 255 202 / 14%), 0 4px 12px rgb(86 119 41 / 10%);
+  }
+  .phoneDot {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+  .phoneDot > span {
+    width: 28px;
+    height: 8px;
+    border-radius: 999px;
+    background: #cbf02e;
+  }
+  .phoneAnnouncement {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .phoneVisual:focus-visible, .phoneControls button:focus-visible { outline: 2px solid #4a6f32; outline-offset: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phoneArrow { transition: none; }
+  .phoneArrow:active { transform: none; }
+}
+@media (forced-colors: active) {
+  .phoneDot > span { background: ButtonText; }
+  .phoneDot[aria-current] { outline: 1px solid Highlight; }
+}

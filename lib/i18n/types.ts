@@ -24,6 +24,8 @@ export type Dictionary = {
   showcase: {
     eyebrow: string; titleLines: string[]; subtitle: string; context: string; offer: string
     projects: Record<"miau" | "studio", Realisation>; phones: string[]; artworks: string[]; gallery: string; newTab: string
+    carousel: { label: string; previous: string; next: string; navigation: string; screens: readonly [string, string, string] }
+    services: { label: string; design: string; mobile: string; stores: string; copywriting: string; responsive: string; seo: string; interactions: string }
   }
   method: { eyebrow: string; title: string; steps: readonly Item[] }
   studio: {

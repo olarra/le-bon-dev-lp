@@ -1,23 +1,13 @@
 .stage {
-  /* Original PNG: 1448 × 1086. Display window: (40, 120, 1368, 864).
-     Crop the surrounding margins while keeping the frame and both feet.
-     Gallery bounds (80, 161)–(1368, 872) underlap the inside of the bezel. */
-  --resin-ratio: 1368 / 864;
-  --resin-perspective: 1200px;
-  --resin-origin: 50% 60%;
-  --resin-screen-inset: calc(100% * 41 / 864) calc(100% * 40 / 1368) calc(100% * 112 / 864);
-  --resin-image-width: calc(100% * 1448 / 1368);
-  --resin-image-height: calc(100% * 1086 / 864);
-  --resin-image-left: calc(-100% * 40 / 1368);
-  --resin-image-top: calc(-100% * 120 / 864);
-  --resin-image: url("/images/realisations/french-pixel/resin-monitor-wide.png");
-  --resin-screen-mask: url("/images/realisations/french-pixel/monitor-screen-mask.svg");
+  /* Keep the original site's proportions inside a flat software window. */
+  --screen-ratio: 1288 / 711;
   position: relative;
   width: 100%;
-  aspect-ratio: var(--resin-ratio);
-  perspective: var(--resin-perspective);
   container-type: inline-size;
   font-family: Arial, Helvetica, sans-serif;
+  transform-origin: 50% 45%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .stage,
@@ -28,24 +18,91 @@
 .device {
   position: relative;
   width: 100%;
-  aspect-ratio: var(--resin-ratio);
-  transform-origin: var(--resin-origin);
   isolation: isolate;
+  overflow: hidden;
+  border: 1px solid #d8dcda;
+  border-radius: clamp(10px, 1.4cqi, 16px);
+  background: #fff;
+  box-shadow: 0 2px 5px rgb(24 35 30 / 5%), 0 20px 40px -24px rgb(24 35 30 / 22%);
+  transform-origin: 50% 92%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
   /* Frontal, visible CSS defaults also serve reduced motion and no JS. */
 }
 
-.screen {
-  position: absolute;
-  z-index: 1;
-  inset: var(--resin-screen-inset);
-  display: flex;
-  flex-direction: column;
+.toolbar {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 8px;
+  height: clamp(30px, 4.1cqi, 44px);
+  padding-inline: clamp(10px, 1.4cqi, 16px);
+  border-bottom: 1px solid #e5e7e5;
+  background: #f5f6f5;
+}
+
+.windowControls { display: flex; align-items: center; gap: clamp(5px, 0.6cqi, 7px); }
+.windowControls i {
+  flex-shrink: 0;
+  width: clamp(7px, 1cqi, 10px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ed827b;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 7%);
+}
+.windowControls i:nth-child(2) { background: #edc267; }
+.windowControls i:nth-child(3) { background: #83bd87; }
+.windowAddress {
+  justify-self: center;
+  display: block;
+  width: min(100%, 320px);
+  padding: 4px 10px;
   overflow: hidden;
-  border-radius: calc(100% * 10 / 1288) / calc(100% * 10 / 711);
+  border: 1px solid #e5e7e5;
+  border-radius: 6px;
+  background: #fff;
+  color: #7b827f;
+  font-size: clamp(9px, 1.1cqi, 12px);
+  line-height: 1.25;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.screen {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: var(--screen-ratio);
+  overflow: hidden;
   background: #fff;
 }
 
+.reflectionMask {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.reflection {
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: 0;
+  width: 40%;
+  opacity: 0;
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
 .nav {
+  position: absolute;
+  inset: 0 0 auto;
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -76,11 +133,12 @@
 }
 
 .prints {
+  position: absolute;
+  inset: 16% 0 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
   gap: 2.6%;
-  height: 84%;
   min-height: 0;
   padding: 2% 2.5% 3%;
 }
@@ -91,74 +149,42 @@
   min-height: 0;
 }
 
-/* These small artwork mounts belong to the gallery UI in the POC.
-   The surrounding lime resin is exclusively the original illustrated PNG. */
+/* The artwork mounts remain part of the illustrated site's own design. */
 .wood {
   height: 100%;
   min-height: 0;
-  padding: 5px;
+  padding: clamp(3px, 0.65cqi, 7px);
   background: linear-gradient(100deg, #ba8d5c, #dfc59d 7%, #cfa575 14%, #e1c39d 49%, #c29c73 97%, #f0d5ad);
   box-shadow: 0 2px 5px #4638292c, inset 0 0 0 1px #a5815266;
 }
 
 .mat {
   height: 100%;
-  padding: 6px;
+  padding: clamp(3px, 0.8cqi, 9px);
   background: #fffefa;
   box-shadow: inset 0 1px 3px #442b2130;
+}
+
+.art {
+  height: 100%;
+  overflow: hidden;
+  background: #fffefa;
 }
 
 .print img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   user-select: none;
 }
 
-.frameViewport {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.frame {
-  position: absolute;
-  top: var(--resin-image-top);
-  left: var(--resin-image-left);
-  width: var(--resin-image-width);
-  height: var(--resin-image-height);
-  max-width: none;
-  user-select: none;
-}
-
-.reflection {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  overflow: hidden;
-  opacity: 0;
-  /* Combine the PNG's alpha (bezel + feet) with the filled screen.
-     The mask shares the PNG crop, leaving the surrounding space transparent.
-     Background-position is a fraction of the extra image size: 120 / 222. */
-  mask-image: var(--resin-image), var(--resin-screen-mask);
-  mask-size: var(--resin-image-width) var(--resin-image-height), 100% 100%;
-  mask-position: 50% calc(100% * 120 / 222), center;
-  mask-repeat: no-repeat;
-  mask-mode: alpha;
-  mask-composite: add;
-  pointer-events: none;
-}
-
-.reflection::before {
-  content: "";
-  position: absolute;
-  inset: -100%;
-  background: linear-gradient(110deg, transparent 42%, #ffffff00 46%, #ffffff48 49%, #ffffff08 53%, transparent 57%);
-  transform: translateX(var(--shine, -20%));
-  opacity: 0.65;
+@media (max-width: 699px) {
+  .device {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 @container (max-width: 480px) {
@@ -169,15 +195,5 @@
   .wood,
   .mat {
     padding: 3px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .device {
-    transform: none !important;
-  }
-
-  .reflection {
-    display: none;
   }
 }

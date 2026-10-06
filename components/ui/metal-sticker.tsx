@@ -22,7 +22,7 @@ export function MetalSticker({ src, className, backing, tone }: MetalStickerProp
       style={{ "--sticker-mask": `url("${backingSrc ?? src}")`, "--sticker-artwork": `url("${src}")` } as CSSProperties}
       aria-hidden="true"
     >
-      <span className={styles.stickerFace}>
+      <span key={`${src}:${backingSrc ?? ""}`} className={styles.stickerFace}>
         {backingSrc && <img src={backingSrc} width={128} height={128} alt="" draggable={false} loading="lazy" decoding="async" />}
         <img className={styles.stickerArtwork} src={src} width={120} height={120} alt="" draggable={false} loading="lazy" decoding="async" />
         <FinishLayers />

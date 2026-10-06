@@ -59,11 +59,13 @@ const en: Dictionary = {
   },
   showcase: {
     eyebrow: "Our work", titleLines: ["Ideas", "brought to life."], subtitle: "Two projects, two different needs. Explore what we’ve built.", context: "Context", offer: "Service",
+    services: { label: "Services delivered", design: "Concept & design", mobile: "Mobile development", stores: "App store publishing", copywriting: "Concept & copywriting", responsive: "Responsive design", seo: "Search engine optimisation", interactions: "Animation & interactions" },
     projects: {
-      miau: { name: "Miau", hook: ["Travel with peace of mind.", "Stay connected."], description: "A service to find the right care for your cat.", context: "Cat sitting", offer: "App", icon: "applications", cta: "Discover Miau", href: "https://miau-app.com/" },
-      studio: { name: "French Pixel Studio", hook: ["Art takes", "centre stage."], description: "An online gallery to explore artworks on desktop and mobile.", context: "Digital art gallery", offer: "Website", icon: "website", cta: "Visit the website", href: "https://www.frenchpixelstudio.fr/" },
+      miau: { name: "Miau", hook: ["Travel with peace of mind.", "Stay connected."], description: "An app to find care for your cat and stay in touch with the person looking after them.", context: "Cat sitting", offer: "App", icon: "applications", cta: "Explore the project", href: "https://miau-app.com/" },
+      studio: { name: "French Pixel Studio", hook: ["Art takes", "centre stage."], description: "A website to explore the studio’s illustrations and visit its online shop.", context: "Digital illustration studio", offer: "Website", icon: "website", cta: "Visit the website", href: "https://www.frenchpixelstudio.fr/" },
     },
     phones: ["Miau: a map of Paris and nearby cats, in a sage frame.", "Miau sign-in screen, in the foreground with a forest-green frame.", "Miau: Orion’s profile and owner contact, in a lime frame."],
+    carousel: { label: "Miau app screens", previous: "Previous screen", next: "Next screen", navigation: "Choose a Miau screen", screens: ["Nearby", "Welcome", "Orion’s profile"] },
     artworks: ["Two cranes among blue lotus flowers", "A sleeping cat on patterned fabrics", "An orange moon above turquoise waves"], gallery: "French Pixel Studio gallery preview", newTab: "new tab",
   },
   method: {

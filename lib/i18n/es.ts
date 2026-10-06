@@ -59,11 +59,13 @@ const es: Dictionary = {
   },
   showcase: {
     eyebrow: "Los proyectos", titleLines: ["Ideas", "hechas realidad."], subtitle: "Dos proyectos, dos necesidades. Descubre lo que hemos creado.", context: "Contexto", offer: "Servicio",
+    services: { label: "Los servicios realizados", design: "Concepto y diseño", mobile: "Desarrollo móvil", stores: "Publicación en las tiendas", copywriting: "Concepto y redacción", responsive: "Diseño adaptable", seo: "Posicionamiento web", interactions: "Animaciones e interacciones" },
     projects: {
-      miau: { name: "Miau", hook: ["Viaja con tranquilidad.", "Mantén el vínculo."], description: "Un servicio para encontrar el cuidado adecuado para tu gato.", context: "Cuidado de gatos", offer: "App", icon: "applications", cta: "Descubrir Miau", href: "https://miau-app.com/" },
-      studio: { name: "French Pixel Studio", hook: ["Las creaciones", "en primer plano."], description: "Una galería web para descubrir obras de arte, tanto en computadora como en móvil.", context: "Galería de arte digital", offer: "Sitio web", icon: "website", cta: "Visitar el sitio", href: "https://www.frenchpixelstudio.fr/" },
+      miau: { name: "Miau", hook: ["Viaja con tranquilidad.", "Mantén el vínculo."], description: "Una app para encontrar a alguien que cuide de tu gato y mantener el contacto con esa persona.", context: "Cuidado de gatos", offer: "App", icon: "applications", cta: "Descubrir el proyecto", href: "https://miau-app.com/" },
+      studio: { name: "French Pixel Studio", hook: ["Las creaciones", "en primer plano."], description: "Un sitio para descubrir las ilustraciones del estudio y acceder a su tienda en línea.", context: "Estudio de ilustración digital", offer: "Sitio web", icon: "website", cta: "Visitar el sitio", href: "https://www.frenchpixelstudio.fr/" },
     },
     phones: ["Miau: mapa de París y gatos cercanos, con marco verde salvia.", "Pantalla de inicio de sesión de Miau, en primer plano con marco verde bosque.", "Miau: perfil del gato Orion y contacto de su dueño, con marco lima."],
+    carousel: { label: "Las pantallas de Miau", previous: "Pantalla anterior", next: "Pantalla siguiente", navigation: "Elegir una pantalla de Miau", screens: ["Cerca de ti", "Bienvenida", "Perfil de Orion"] },
     artworks: ["Dos grullas entre flores de loto azules", "Un gato dormido sobre telas estampadas", "Una luna naranja sobre olas turquesas"], gallery: "Vista previa de la galería French Pixel Studio", newTab: "nueva pestaña",
   },
   method: {

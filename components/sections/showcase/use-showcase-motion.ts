@@ -1,87 +1,167 @@
 "use client"
 
 import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { CustomEase } from "gsap/CustomEase"
 import { useLayoutEffect, type RefObject } from "react"
-import { MIAU_REVEAL } from "./realisations.content"
+import { SHOWCASE_MOTION } from "./realisations.content"
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(CustomEase)
+
+type DeviceMotion = { set: ReturnType<typeof gsap.quickSetter>; factor: number }
+type Reveal = {
+  project: HTMLElement
+  anchor: HTMLElement
+  exitAnchor: HTMLElement
+  timeline: gsap.core.Timeline
+  fraction: number
+  started: boolean
+  completed: boolean
+  exitOrigin: number
+  devices: DeviceMotion[]
+  refresh?: () => void
+  shouldStart?: () => boolean
+}
 
 export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
     const section = sectionRef.current
     if (!section) return
-    const visual = section.querySelector<HTMLElement>("[data-miau-visual]")
-    const group = section.querySelector<HTMLElement>("[data-phone-group]")
-    const sides = Array.from(section.querySelectorAll<HTMLElement>("[data-phone-side]"))
-    const title = section.querySelector<HTMLElement>("[data-project-heading]")
-    const hook = section.querySelector<HTMLElement>("[data-miau-hook]")
-    if (!visual || !group || !title || !hook || sides.length !== 2) return
-
+    const fade = CustomEase.create("showcase-fade", ".25,.1,.25,1")
+    const arrive = CustomEase.create("showcase-arrive", ".16,1,.3,1")
+    const config = SHOWCASE_MOTION
     const media = gsap.matchMedia()
-    media.add({
-      motion: "(prefers-reduced-motion: no-preference)",
-      compact: "(max-width: 899px)",
-    }, context => {
-      if (!context.conditions?.motion) return
-      const config = MIAU_REVEAL
-      const width = () => visual.clientWidth
-      const finalSpread = context.conditions.compact ? config.sides.compactSpread : config.sides.to.spread
-      const colorStart = { "--project-color-reveal": "0%" }
-      const colorEnd = { "--project-color-reveal": "100%" }
 
-      const reveal = gsap.timeline({
-        defaults: { duration: 1, ease: config.ease },
-        scrollTrigger: {
-          trigger: visual,
-          start: () => {
-            const viewport = window.innerHeight
-            const height = visual.offsetHeight
-            const top = Math.max(
-              viewport * config.range.startBottom - height,
-              viewport * (config.range.endCenter + config.range.minimumTravel) - height / 2,
-            )
-            return `top ${top}px`
-          },
-          end: `center ${config.range.endCenter * 100}%`,
-          scrub: config.scrub,
-          invalidateOnRefresh: true,
-        },
+    media.add({
+      desktop: "(min-width: 700px)",
+      mobile: "(max-width: 699px)",
+      reduced: "(prefers-reduced-motion: reduce)",
+    }, context => {
+      if (context.conditions?.reduced) return
+      const mobile = Boolean(context.conditions?.mobile)
+      const heading = section.querySelector<HTMLElement>("[data-showcase-heading]")!
+      const headingReveal = gsap.fromTo(heading, { opacity: 0 }, {
+        opacity: 1, duration: 0.7, ease: fade, paused: true,
       })
-      reveal.fromTo(group,
-        { scale: config.group.scale, y: () => width() * config.group.y },
-        { scale: 1, y: 0 }, 0)
-      sides.forEach((phone, index) => {
-        const direction = index === 0 ? -1 : 1
-        reveal.fromTo(phone,
-          { x: () => direction * width() * config.sides.from.spread, y: () => width() * config.sides.from.y, scale: config.sides.from.scale },
-          { x: () => direction * width() * finalSpread, y: () => width() * config.sides.to.y, scale: config.sides.to.scale }, 0)
+      let headingPlayed = false
+      let alive = true
+      let scrollFrame = 0
+      let resizeFrame = 0
+      const reveals: Reveal[] = []
+      // Keep Miau's glass-card reveal; FPS owns one shared WAAPI sequence.
+      const projects = Array.from(section.querySelectorAll<HTMLElement>('[data-project="miau"]'))
+
+      function track(project: HTMLElement, anchor: HTMLElement, timeline: gsap.core.Timeline, fraction = 0, devices: DeviceMotion[] = [], exitAnchor = anchor) {
+        const reveal: Reveal = { project, anchor, exitAnchor, timeline, fraction, devices, started: false, completed: false, exitOrigin: 0 }
+        reveals.push(reveal)
+        timeline.eventCallback("onComplete", () => {
+          reveal.completed = true
+          reveal.exitOrigin = Math.min(0, exitAnchor.getBoundingClientRect().top)
+          scheduleScroll()
+        })
+        return reveal
+      }
+
+      projects.forEach(project => {
+        const copy = project.querySelector<HTMLElement>("[data-project-copy]")!
+        track(project, copy, gsap.timeline({ paused: true }).fromTo(copy,
+          { opacity: 0 }, { opacity: 1, duration: 0.6, ease: fade }))
+        if (mobile) {
+          const visual = project.querySelector<HTMLElement>("[data-miau-carousel]")!
+          const timeline = gsap.timeline({ paused: true }).fromTo(visual,
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.9, ease: arrive })
+          track(project, visual, timeline, 0.12)
+        }
       })
-      reveal.fromTo(hook, colorStart, colorEnd, 0)
-      gsap.fromTo(title, colorStart, {
-        ...colorEnd,
-        ease: "none",
-        scrollTrigger: { trigger: title, start: "top 92%", end: "top 42%", scrub: 0.3 },
-      })
+
+      function checkScroll() {
+        scrollFrame = 0
+        if (!alive) return
+        const viewport = window.innerHeight
+        if (!headingPlayed && heading.getBoundingClientRect().top < viewport * 0.85) {
+          headingPlayed = true
+          headingReveal.play()
+        }
+        reveals.forEach(reveal => {
+          if (reveal.project.getBoundingClientRect().top > viewport + 1) {
+            if (reveal.started) {
+              reveal.started = reveal.completed = false
+              reveal.exitOrigin = 0
+              reveal.timeline.pause(0, true)
+              reveal.devices.forEach(({ set }) => set(0))
+              reveal.refresh?.()
+            }
+            return
+          }
+          if (!reveal.started) reveal.refresh?.()
+          const bounds = reveal.anchor.getBoundingClientRect()
+          const threshold = reveal.fraction ? config.trigger : config.copyTrigger
+          const revealPoint = bounds.top + Math.min(bounds.height, viewport) * reveal.fraction
+          const shouldStart = reveal.shouldStart?.() ?? (revealPoint <= viewport * threshold)
+          if (!reveal.started && shouldStart) {
+            reveal.started = true
+            if (bounds.bottom <= 0) {
+              reveal.timeline.progress(1, true).pause()
+              reveal.refresh?.()
+              reveal.completed = true
+              reveal.exitOrigin = Math.min(0, reveal.exitAnchor.getBoundingClientRect().top)
+            } else reveal.timeline.play(0)
+          }
+          if (reveal.completed && reveal.devices.length) {
+            const exitBounds = reveal.exitAnchor.getBoundingClientRect()
+            const distance = Math.min(exitBounds.height, Math.max(0, reveal.exitOrigin - Math.min(0, exitBounds.top)))
+            reveal.devices.forEach(({ set, factor }) => set(-distance * factor))
+          }
+        })
+      }
+      function scheduleScroll() {
+        if (alive && !scrollFrame) scrollFrame = requestAnimationFrame(checkScroll)
+      }
+      const measure = () => {
+        resizeFrame = 0
+        if (!alive) return
+        reveals.forEach(({ timeline, refresh }) => {
+          const time = timeline.time()
+          timeline.invalidate().totalTime(time, true)
+          refresh?.()
+        })
+        scheduleScroll()
+      }
+      const scheduleMeasure = () => {
+        if (!resizeFrame) resizeFrame = requestAnimationFrame(measure)
+      }
+      const resize = new ResizeObserver(scheduleMeasure)
+      projects.forEach(project => resize.observe(project))
+      const focus = (event: FocusEvent) => {
+        if (!(event.target instanceof Element)) return
+        const project = event.target.closest("[data-project]")
+        reveals.filter(reveal => reveal.project === project).forEach(reveal => {
+          reveal.timeline.progress(1, true).pause()
+          reveal.refresh?.()
+          reveal.started = reveal.completed = true
+          reveal.exitOrigin = Math.min(0, reveal.exitAnchor.getBoundingClientRect().top)
+          reveal.devices.forEach(({ set }) => set(0))
+        })
+      }
+      section.addEventListener("focusin", focus)
+      window.addEventListener("scroll", scheduleScroll, { passive: true })
+      window.addEventListener("resize", scheduleMeasure, { passive: true })
+      window.addEventListener("pageshow", scheduleMeasure)
+      void document.fonts.ready.then(() => { if (alive) scheduleMeasure() })
+      scheduleScroll()
+
+      return () => {
+        alive = false
+        cancelAnimationFrame(scrollFrame)
+        cancelAnimationFrame(resizeFrame)
+        resize.disconnect()
+        section.removeEventListener("focusin", focus)
+        window.removeEventListener("scroll", scheduleScroll)
+        window.removeEventListener("resize", scheduleMeasure)
+        window.removeEventListener("pageshow", scheduleMeasure)
+      }
     }, section)
 
-    // Fonts and breakpoint changes can alter the local trigger positions.
-    let alive = true
-    let refreshFrame = 0
-    const refresh = () => {
-      cancelAnimationFrame(refreshFrame)
-      refreshFrame = requestAnimationFrame(() => { if (alive) ScrollTrigger.refresh() })
-    }
-    const resize = new ResizeObserver(refresh)
-    resize.observe(section)
-    resize.observe(visual)
-    void document.fonts.ready.then(() => { if (alive) refresh() })
-
-    return () => {
-      alive = false
-      cancelAnimationFrame(refreshFrame)
-      resize.disconnect()
-      media.revert()
-    }
+    return () => media.revert()
   }, [sectionRef])
 }

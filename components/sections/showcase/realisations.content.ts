@@ -14,19 +14,19 @@ export const REALISATIONS: Record<"miau" | "studio", Realisation> = {
   miau: {
     name: "Miau",
     hook: ["Partir serein.", "Garder le lien."],
-    description: "Un service pour trouver une garde adaptée à son chat.",
+    description: "Une application pour trouver une garde pour son chat et échanger avec la personne qui s’en occupe.",
     context: "Garde de chats",
     offer: "App",
     icon: "applications",
-    cta: "Découvrir Miau",
+    cta: "Découvrir le projet",
     href: "https://miau-app.com/",
   },
   studio: {
     name: "French Pixel Studio",
     hook: ["Les créations", "au premier plan."],
-    description: "Une galerie web pour découvrir les œuvres, sur grand écran comme sur mobile.",
-    context: "Galerie d’art numérique",
-    offer: "Website",
+    description: "Un site pour découvrir les illustrations du studio et accéder à sa boutique en ligne.",
+    context: "Studio d’illustration numérique",
+    offer: "Site web",
     icon: "website",
     cta: "Découvrir le site",
     href: "https://www.frenchpixelstudio.fr/",
@@ -34,9 +34,9 @@ export const REALISATIONS: Record<"miau" | "studio", Realisation> = {
 }
 
 export const PROJECT_IMAGES = {
-  map: "/images/realisations/miau-map.webp",
-  auth: "/images/realisations/miau-auth-orange.png",
-  orion: "/images/realisations/miau-orion.webp",
+  map: "/images/realisations/miau-map-silver.png",
+  auth: "/images/realisations/miau-auth-emerald.png",
+  orion: "/images/realisations/miau-orion-sage.png",
 } as const
 
 /** Original PNGs extracted byte-for-byte from french-pixel-resin-poc(3).html. */
@@ -49,30 +49,36 @@ export const FRENCH_PIXEL_GALLERY = {
   ],
 } as const
 
-/** Scroll range uses viewport fractions; device travel uses the visual's width. */
-export const MIAU_REVEAL = {
-  // Wait until most of the zoomed pose is in view. Short viewports still get
-  // a usable scroll interval, without adding height or pinning the section.
-  range: { startBottom: 1.1, endCenter: 0.56, minimumTravel: 0.18 },
-  scrub: 0.45,
-  ease: "power1.inOut",
-  // Start close to the devices, then pull back as the side screens separate.
-  group: { scale: 1.2, y: 0.018 },
-  sides: {
-    from: { spread: 0.1, scale: 0.94, y: 0.024 },
-    to: { spread: 0.322, scale: 0.9, y: 0.058 },
-    compactSpread: 0.306,
-  },
+/** Scroll starts each reveal; time, never scroll distance, completes it. */
+export const SHOWCASE_MOTION = {
+  trigger: 0.88,
+  copyTrigger: 0.88,
 } as const
 
-export const SHOWCASE_THEME_REVEAL = {
-  // Desktop copy and phones enter together; use the phones' stable bounds.
-  desktop: { start: "top 100%", end: "top 82%", scrub: 0.7 },
-  // Finish before the section enters the mobile viewport. Direct scrubbing
-  // prevents a grey catch-up phase after a fast swipe.
-  compact: { start: "top 125%", end: "top 100%", scrub: true },
-  // A gentler middle slope avoids concentrating the colour change into a flash.
-  ease: "sine.inOut",
-  // Near this point both white and black text contrast with the neutral surface.
-  foregroundSwitch: 0.422,
+/** Independent viewport triggers; desktop ends at 2850 ms, mobile at 800 ms. */
+export const FPS_REVEAL = {
+  cardTrigger: 0.92,
+  monitorVisibility: 0.3,
+  mobileMonitorVisibility: 0.15,
+  mobileMonitorTrigger: 0.92,
+  mobileReveal: { delay: 0, duration: 800, easing: "cubic-bezier(.16,1,.3,1)" },
+  card: { delay: 0, duration: 900, easing: "cubic-bezier(.16,1,.3,1)" },
+  appear: { delay: 140, duration: 360, easing: "ease-out" },
+  reveal: { delay: 140, duration: 2080, easing: "cubic-bezier(.2,.75,.15,1)" },
+  reflection: { delay: 950, duration: 1180, easing: "cubic-bezier(.25,.1,.25,1)" },
+  breath: { delay: 1270, duration: 1580, easing: "cubic-bezier(.37,0,.63,1)" },
+} as const
+
+/** Milliseconds; all Miau animations share one document-timeline start time. */
+export const MIAU_REVEAL = {
+  visibility: 0.33,
+  startScale: 1.32,
+  appear: { duration: 400, easing: "ease-out" },
+  center: { delay: 150, duration: 2300, easing: "cubic-bezier(.2,.75,.15,1)" },
+  sides: { delays: [430, 550], duration: 1900, easing: "cubic-bezier(.2,.75,.15,1)" },
+  reflection: {
+    centerDelay: 500, centerDuration: 1400,
+    sideDelay: 300, sideDuration: 1300,
+    easing: "cubic-bezier(.25,.1,.25,1)",
+  },
 } as const
