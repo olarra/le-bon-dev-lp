@@ -1,8 +1,9 @@
 .section {
   --method-lime: var(--color-accent);
-  --method-bg: var(--color-surface-guarantees, #0c120e);
-  --method-ink: #f5f6ee;
-  --method-muted: #bdc6b9;
+  --method-bg: #102820;
+  --method-surface: #1b382d;
+  --method-ink: #f7f6ea;
+  --method-muted: #c3d0c7;
   --method-ease: 500ms cubic-bezier(0.44, 0, 0.56, 1);
   width: 100%;
   padding: 160px 24px 120px;
@@ -39,7 +40,7 @@
   padding: var(--eyebrow-padding);
   border: 1px solid rgb(200 245 62 / 28%);
   border-radius: 999px;
-  background: linear-gradient(180deg, rgb(200 245 62 / 9%), rgb(200 245 62 / 3%)), #151c16;
+  background: linear-gradient(180deg, rgb(200 245 62 / 9%), rgb(200 245 62 / 3%)), var(--method-surface);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%);
   color: var(--method-lime);
   font-size: var(--eyebrow-size);
@@ -87,13 +88,13 @@
 
 .timeline::before {
   width: 1px;
-  background: #34432f;
+  background: #36594a;
   transform: translateX(-50%);
 }
 
 .timeline::after {
   width: 2px;
-  background: linear-gradient(180deg, #86b65f, #afcc77 45%, var(--method-lime));
+  background: linear-gradient(180deg, #97d83b, #b4eb3c 45%, var(--method-lime));
   box-shadow: 0 0 10px rgb(200 245 62 / 16%);
   transform: translateX(-50%) scaleY(var(--method-progress, 0));
   transform-origin: center top;
@@ -103,8 +104,7 @@
    exported Process Item composition. Rows grow naturally with their copy. */
 .step {
   position: relative;
-  z-index: 1;
-  isolation: isolate;
+  /* Share the timeline's layers: card below the line, markers above it. */
   display: grid;
   grid-template-columns: minmax(0, 1fr) 160px minmax(0, 1fr);
   align-items: center;
@@ -117,9 +117,9 @@
   position: absolute;
   z-index: -1;
   inset: 8px 0;
-  border: 1px solid rgb(163 196 117 / 9%);
+  border: 1px solid rgb(199 218 205 / 12%);
   border-radius: 40px;
-  background: linear-gradient(110deg, rgb(200 245 62 / 4%), rgb(117 151 77 / 9%));
+  background: var(--method-surface);
   opacity: 0;
   transition: opacity var(--method-ease);
   pointer-events: none;
@@ -147,9 +147,9 @@
   min-width: 36px;
   height: 36px;
   padding-inline: 6px;
-  border: 1px solid rgb(184 205 156 / 12%);
+  border: 1px solid rgb(199 218 205 / 18%);
   border-radius: 12px;
-  background: #182219;
+  background: var(--method-surface);
   color: var(--method-muted);
   font-size: 17px;
   font-variant-numeric: tabular-nums;
@@ -157,12 +157,13 @@
 }
 
 .step[data-active="true"] .number {
-  border-color: rgb(200 245 62 / 28%);
+  border-color: rgb(200 245 62 / 40%);
   color: var(--method-lime);
 }
 
 .rail {
   position: relative;
+  z-index: 1;
   grid-column: 2;
   grid-row: 1;
   align-self: stretch;
@@ -178,7 +179,7 @@
   height: 36px;
   border-radius: 12px;
   background: var(--method-bg);
-  box-shadow: inset 0 0 0 2px #43563b;
+  box-shadow: inset 0 0 0 2px #496e5b;
   transform: scale(0.68);
   transition: transform var(--method-ease), box-shadow var(--method-ease);
 }
@@ -194,13 +195,13 @@
 
 .marker::before {
   inset: 0;
-  background: linear-gradient(130deg, #7c9d56, #e1f6b6 32%, var(--method-lime) 66%, #7d9b53);
+  background: linear-gradient(130deg, #86b832, #f1ffc2 32%, var(--method-lime) 66%, #96c92d);
 }
 
 .marker::after {
   inset: 3px;
   border-radius: 9px;
-  background: radial-gradient(circle, #95ba61 0%, #c5e88f 50%, #eff5d9 100%);
+  background: radial-gradient(circle at 35% 30%, #e7ff9a 0%, var(--method-lime) 55%, #9ed42f 100%);
 }
 
 .markerCore {
@@ -209,7 +210,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #15231a;
+  background: var(--method-bg);
   opacity: 0;
   transform: scale(0.5);
   transition: opacity var(--method-ease), transform var(--method-ease);

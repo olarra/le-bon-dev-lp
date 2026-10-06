@@ -1,13 +1,16 @@
 .section {
-  --contact-bg: var(--color-surface-guarantees, #0c120e);
+  --contact-bg: #102820;
   --contact-lime: var(--color-accent);
+  --contact-ivory: #f7f6ea;
+  --contact-ink: #153f32;
+  --contact-muted: #c3d0c7;
   position: relative;
   isolation: isolate;
   width: 100%;
   padding: 160px 24px 144px;
   overflow: clip;
   background: var(--contact-bg);
-  color: #f5f6ee;
+  color: var(--contact-ivory);
   font-family: var(--font-body);
 }
 
@@ -18,17 +21,13 @@
   box-sizing: border-box;
 }
 
-/* Broad, low-contrast light on the dark surface, as in the background
-   reference. Forest, yellow green and olive keep it in the site's palette. */
+/* A soft forest light connects the estimate section to the Method palette. */
 .section::before {
   content: "";
   position: absolute;
   z-index: -1;
   inset: 0;
-  background:
-    radial-gradient(ellipse 46% 78% at 63% 56%, rgb(86 116 42 / 21%), transparent 75%),
-    radial-gradient(ellipse 42% 65% at 36% 68%, rgb(82 94 34 / 13%), transparent 78%),
-    radial-gradient(ellipse 40% 58% at 75% 45%, rgb(39 76 43 / 17%), transparent 80%);
+  background: radial-gradient(ellipse 62% 78% at 68% 55%, rgb(71 118 87 / 14%), transparent 78%);
   pointer-events: none;
 }
 
@@ -54,7 +53,7 @@
   padding: var(--eyebrow-padding);
   border: 1px solid rgb(200 245 62 / 25%);
   border-radius: 999px;
-  background: linear-gradient(180deg, rgb(200 245 62 / 8%), rgb(200 245 62 / 2%));
+  background: linear-gradient(180deg, rgb(200 245 62 / 8%), rgb(200 245 62 / 2%)), #1b382d;
   color: var(--contact-lime);
   font-size: var(--eyebrow-size);
   font-weight: 600;
@@ -76,7 +75,7 @@
 .factors {
   margin: 0;
   padding: 0;
-  border-top: 1px solid rgb(199 220 172 / 14%);
+  border-top: 1px solid rgb(199 218 205 / 18%);
   list-style: none;
 }
 
@@ -85,15 +84,15 @@
   align-items: baseline;
   gap: 19px;
   padding-block: 19px;
-  border-bottom: 1px solid rgb(199 220 172 / 14%);
-  color: #c2ccbb;
+  border-bottom: 1px solid rgb(199 218 205 / 18%);
+  color: var(--contact-muted);
   font-size: 18px;
   line-height: 1.45;
 }
 
 .factorTitle {
   display: block;
-  color: #f0f4e8;
+  color: var(--contact-ivory);
   font-weight: 600;
 }
 
@@ -106,7 +105,7 @@
 .factorNumber {
   flex: none;
   width: 20px;
-  color: #a3bc72;
+  color: var(--contact-lime);
   font-size: 12px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -122,18 +121,16 @@
   align-items: center;
   min-width: 0;
   padding: 52px 46px 42px;
-  border: 1px solid rgb(242 248 226 / 85%);
+  border: 1px solid rgb(247 246 234 / 88%);
   border-radius: 80px;
   background:
-    radial-gradient(ellipse 75% 35% at 9% 0%, rgb(225 239 156 / 95%), transparent 100%),
-    radial-gradient(ellipse 72% 58% at 96% 9%, rgb(248 250 227 / 95%), transparent 100%),
-    radial-gradient(ellipse 90% 70% at 3% 95%, rgb(204 231 139 / 85%), transparent 100%),
-    linear-gradient(130deg, #e1edc9, #c3d3a5 52%, #91b58c);
+    radial-gradient(ellipse 85% 46% at 50% 100%, rgb(200 245 62 / 24%), transparent 80%),
+    var(--contact-ivory);
   box-shadow:
     inset 0 0 1px 2px rgb(255 255 255 / 65%),
-    inset 0 0 36px rgb(247 250 234 / 24%),
-    0 24px 80px -40px rgb(0 0 0 / 50%);
-  color: #17291e;
+    inset 0 0 36px rgb(255 255 255 / 22%),
+    0 24px 80px -40px rgb(5 24 16 / 30%);
+  color: var(--contact-ink);
   text-align: center;
 }
 
@@ -176,7 +173,7 @@
 .description {
   max-width: 420px;
   margin: 24px 0 0;
-  color: #43543a;
+  color: #51665c;
   font-size: 18px;
   line-height: 1.55;
   text-wrap: pretty;
@@ -185,7 +182,7 @@
 .response {
   display: block;
   margin-top: 10px;
-  color: #2c452c;
+  color: var(--contact-ink);
   font-weight: 500;
 }
 
@@ -203,7 +200,7 @@
   min-height: 44px;
   margin-top: 12px;
   padding: 4px 8px;
-  color: #2c452c;
+  color: var(--contact-ink);
   font-size: 15px;
   font-weight: 500;
   line-height: 1.4;
@@ -211,14 +208,15 @@
   text-underline-offset: 4px;
 }
 
-/* Price Button's two-pixel gradient rim and softly lit black inset. */
+/* Forest face and inset highlights match the project CTAs. */
 .estimateLink {
   width: 100%;
   max-width: 356px;
   padding: 2px;
   border-radius: 999px;
-  background: linear-gradient(110deg, #82a960, #e7efc7 30%, #c8f53e 60%, #78954f);
-  color: #f9faf3;
+  background: linear-gradient(140deg, #66a369, #123b24 38%, #93be79 70%, #183c25);
+  box-shadow: 0 14px 30px -14px rgb(160 221 53 / 32%);
+  color: var(--contact-ivory);
   font-size: 17px;
   font-weight: 500;
   line-height: 1.4;
@@ -234,8 +232,8 @@
   min-height: 60px;
   padding: 12px 18px;
   border-radius: inherit;
-  background: #0d1a12;
-  box-shadow: inset 0 0 16px rgb(245 249 234 / 44%);
+  background: linear-gradient(145deg, #245733, #102d1e 55%, #194329);
+  box-shadow: inset 0 1px 3px rgb(241 255 224 / 45%), inset 0 -2px 4px rgb(0 0 0 / 38%);
   transition: background-color 300ms ease, box-shadow 300ms ease;
 }
 
@@ -246,7 +244,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: rgb(236 247 213 / 13%);
+  background: rgb(241 255 224 / 9%);
   color: var(--contact-lime);
 }
 
@@ -257,13 +255,12 @@
 
 .estimateLink:focus-visible,
 .contactLink:focus-visible {
-  outline: 2px solid #375d31;
+  outline: 2px solid var(--contact-ink);
   outline-offset: 5px;
 }
 
 .estimateLink:focus-visible .estimateLinkInner {
-  background: #233a25;
-  box-shadow: inset 0 0 20px rgb(245 249 234 / 54%);
+  box-shadow: inset 0 1px 4px rgb(241 255 224 / 65%), inset 0 -2px 4px rgb(0 0 0 / 25%);
 }
 
 .estimateLink:focus-visible svg {
@@ -272,12 +269,11 @@
 
 @media (hover: hover) and (pointer: fine) {
   .contactLink:hover {
-    color: #17291e;
+    color: #245733;
   }
 
   .estimateLink:hover .estimateLinkInner {
-    background: #233a25;
-    box-shadow: inset 0 0 20px rgb(245 249 234 / 54%);
+    box-shadow: inset 0 1px 4px rgb(241 255 224 / 65%), inset 0 -2px 4px rgb(0 0 0 / 25%);
   }
 
   .estimateLink:hover svg {
@@ -324,9 +320,7 @@
   }
 
   .section::before {
-    background:
-      radial-gradient(ellipse 95% 45% at 60% 35%, rgb(86 116 42 / 22%), transparent 85%),
-      radial-gradient(ellipse 100% 35% at 20% 65%, rgb(82 94 34 / 16%), transparent 85%);
+    background: radial-gradient(ellipse 95% 60% at 50% 34%, rgb(71 118 87 / 14%), transparent 80%);
   }
 
   .inner {
