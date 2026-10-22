@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Message reçu</title>
+  <defs>
+    <linearGradient id="forest" x1="39" y1="84" x2="199" y2="218" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#285A44"/>
+      <stop offset=".55" stop-color="#103D30"/>
+      <stop offset="1" stop-color="#092F25"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="66" y1="39" x2="164" y2="147" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFEF5"/>
+      <stop offset="1" stop-color="#E8EED1"/>
+    </linearGradient>
+    <linearGradient id="lime" x1="160" y1="140" x2="219" y2="217" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E1FF7A"/>
+      <stop offset=".42" stop-color="#C5F52F"/>
+      <stop offset="1" stop-color="#A3D51B"/>
+    </linearGradient>
+  </defs>
+  <!-- A single die-cut silhouette; the site's MetalSticker adds its shared finish. -->
+  <path d="M41 77 79 47a24 24 0 0 1 15-5h39a24 24 0 0 1 15 5l43 34a24 24 0 0 1 9 19v32a51 51 0 1 1-39 87H51a25 25 0 0 1-25-25V100a29 29 0 0 1 15-23Z" fill="#F8F9E6" stroke="#F8F9E6" stroke-width="10" stroke-linejoin="round"/>
+  <g data-layer="envelope">
+    <path d="m44 88 59-43a15 15 0 0 1 18 0l61 43a17 17 0 0 1 7 14v89a18 18 0 0 1-18 18H52a18 18 0 0 1-18-18v-89a17 17 0 0 1 10-14Z" fill="url(#forest)"/>
+    <path d="m44 94 60-43a13 13 0 0 1 16 0l58 43-66 53Z" fill="#B7F400"/>
+    <path d="M64 48h77l22 22v88H64a8 8 0 0 1-8-8V56a8 8 0 0 1 8-8Z" fill="url(#paper)" stroke="#103D30" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M140 48v15a8 8 0 0 0 8 8h15" fill="#D2DDAC" stroke="#103D30" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M79 84h45M79 101h60" fill="none" stroke="#557554" stroke-width="7" stroke-linecap="round"/>
+    <path d="M36 101 102 148a17 17 0 0 0 20 0l65-47v90a16 16 0 0 1-16 16H52a16 16 0 0 1-16-16Z" fill="url(#forest)"/>
+    <path d="m44 105 58 42a17 17 0 0 0 20 0l56-41" fill="none" stroke="#E7F2C5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m44 195 45-40m40 0 47 39" fill="none" stroke="#5B8059" stroke-width="4" stroke-linecap="round"/>
+    <path d="M53 202h95" stroke="#8FA76D" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g data-layer="confirmation">
+    <circle cx="191" cy="178" r="47" fill="#F8F9E6"/>
+    <circle cx="191" cy="178" r="39" fill="url(#lime)" stroke="#103D30" stroke-width="5"/>
+    <path d="M166 158a32 32 0 0 1 49-2" fill="none" stroke="#F5FFD5" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="m173 179 12 12 25-27" fill="none" stroke="#103D30" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="m195 36 4 11 11 4-11 4-4 11-4-11-11-4 11-4Z" fill="#B7F400" stroke="#103D30" stroke-width="3" stroke-linejoin="round"/>
+</svg>

@@ -1,7 +1,10 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import type { Dictionary } from "@/lib/i18n/types"
+import type { Locale } from "@/lib/i18n/config"
+import { estimationHref } from "@/lib/estimation/schema"
 import { HEADING_REVEAL } from "@/lib/motion"
 import { useHeroMotion } from "./use-hero-motion"
 import { WaveBrandCard } from "./WaveBrandCard"
@@ -17,7 +20,6 @@ import styles from "./hero.module.css"
 import { HERO_DOTS_ANIMATED, HERO_FLUID_ENABLED, HERO_HALFTONE, HERO_SHIMMER, HERO_STATIC_DOT_COLOR } from "./hero.background"
 import type { Breakpoint as Bp } from "@/lib/breakpoints"
 import {
-  CTA_HREF,
   TICKER_CONFIG,
   TICKER_DIRECTION,
   TICKER_PATH,
@@ -38,7 +40,7 @@ const TICKER_BREAKPOINTS: readonly [Bp, keyof typeof TICKER_CONFIG][] = [
   ["phone", "phone"],
 ]
 
-export function HeroSection({ copy, topbar }: { copy: Dictionary["hero"]; topbar: Dictionary["topbar"] }) {
+export function HeroSection({ copy, topbar, locale }: { copy: Dictionary["hero"]; topbar: Dictionary["topbar"]; locale: Locale }) {
   const { heroRef, headingRef, spiralRef, ribbonPausedRef, dotsPausedRef } = useHeroMotion()
 
   return (
@@ -113,7 +115,7 @@ export function HeroSection({ copy, topbar }: { copy: Dictionary["hero"]; topbar
                 <p className={styles.subtitle}>{copy.subtitle}</p>
 
                 <div className={styles.ctaGroup}>
-                  <a href={CTA_HREF} className={styles.ctaButton} aria-describedby="hero-estimate-hint">
+                  <Link href={estimationHref(locale)} scroll={false} className={styles.ctaButton} aria-describedby="hero-estimate-hint">
                     <span>{copy.cta}</span>
                     <svg
                       className={styles.ctaArrow}
@@ -130,7 +132,7 @@ export function HeroSection({ copy, topbar }: { copy: Dictionary["hero"]; topbar
                       <path d="M5 12h14" />
                       <path d="m13 6 6 6-6 6" />
                     </svg>
-                  </a>
+                  </Link>
                   <p className={styles.ctaHint} id="hero-estimate-hint">{copy.hint}</p>
                 </div>
 

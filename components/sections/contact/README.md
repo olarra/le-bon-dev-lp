@@ -1,6 +1,11 @@
 # Estimation et contact
 
 `ContactSection.tsx` présente l’estimation et ses critères.
+Son CTA est un lien vers `/{lang}/estimation?type=webapp` : depuis l’accueil,
+Next ouvre le formulaire guidé dans un panneau ; un accès direct donne la page
+dédiée. Le formulaire guidé et son API sont décrits dans
+`components/estimation/README.md`. Le formulaire de contact ci-dessous reste
+un parcours distinct.
 `ContactFormSection.tsx` présente l’introduction, les coordonnées et
 `ContactForm`. Les vues reçoivent `copy` depuis le dictionnaire de la route
 `/[lang]` ; les coordonnées restent dans `lib/contact.ts`.

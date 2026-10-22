@@ -1,13 +1,15 @@
+import Link from "next/link"
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
 import { CONTACT } from "@/lib/contact"
-import { ESTIMATE_HREF } from "./contact.content"
+import { estimationHref } from "@/lib/estimation/schema"
+import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/types"
 import styles from "./contact.module.css"
 
 /** The reference's consultation panel, adapted to the supplied estimate copy.
  * Its pill CTA follows Conicorn's exported Price Button (55736c5f645fdf8b). */
-export function ContactSection({ copy }: { copy: Dictionary["estimate"] }) {
+export function ContactSection({ copy, locale }: { copy: Dictionary["estimate"]; locale: Locale }) {
   return (
     <section className={styles.section} id="estimation" aria-labelledby="estimation-title" data-header-theme="dark" data-reveal-viewport="0.9">
       <div className={styles.inner}>
@@ -24,12 +26,12 @@ export function ContactSection({ copy }: { copy: Dictionary["estimate"] }) {
           </p>
 
           <div className={styles.actions} data-reveal>
-            <a className={styles.estimateLink} href={ESTIMATE_HREF}>
+            <Link className={styles.estimateLink} href={estimationHref(locale, "webapp")} scroll={false}>
               <span className={styles.estimateLinkInner}>
                 <span>{copy.cta}</span>
                 <span className={styles.arrowCircle}><Arrow /></span>
               </span>
-            </a>
+            </Link>
             <a
               className={styles.contactLink}
               href={CONTACT.whatsappHref}

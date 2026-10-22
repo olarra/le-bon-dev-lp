@@ -7,7 +7,6 @@ export const SUBTITLE_INTRO =
 
 export const CTA_LABEL = "Estimer mon projet"
 export const CTA_HINT = "Présentez votre projet en 3 minutes."
-export const CTA_HREF = "#contact"
 
 export const HIGHLIGHT_BEFORE = "Un "
 export const HIGHLIGHT_WORD = "développeur"

@@ -114,8 +114,20 @@ Le serveur valide les champs et leur longueur, ainsi qu’un champ piège anti-s
 Il n’applique pas de limite de fréquence ni de limite personnalisée sur le corps HTTP.
 Les demandes ne sont pas stockées en base et les erreurs ne journalisent pas leur contenu.
 
-Le formulaire d’estimation guidé et la FAQ restent à réaliser ; les CTA d’estimation
-continuent d’ouvrir la section Contact en attendant le parcours guidé.
+Le formulaire d’estimation suit les sept étapes de `estimation-poc.html`.
+Les CTA du Hero, des offres et de l’encart Estimation ouvrent le parcours dans
+un panneau via la route interceptée `app/[lang]/@estimate/(.)estimation`.
+L’URL `/{lang}/estimation`, ouverte directement ou rechargée, affiche le même
+formulaire dans une page dédiée, avec contenu rendu côté serveur, métadonnées,
+canonical, hreflang et entrée dans le sitemap. `/estimation` redirige vers la
+version française ; `?type=site` et `?type=webapp` préremplissent le projet.
+
+Le parcours utilise `/api/estimation` et le même transport Mailjet que le contact.
+Les réponses sont conservées localement jusqu’à l’envoi réussi, puis effacées.
+Cette route limite le JSON à 32 000 caractères et valide les choix et les textes.
+Elle ne stocke pas de demandes en base. La confirmation reste un état du
+formulaire, sans URL distincte. Voir `components/estimation/README.md`.
+La FAQ reste à réaliser.
 
 ## Apparitions au défilement
 

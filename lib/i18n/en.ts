@@ -38,7 +38,7 @@ const en: Dictionary = {
           "Domain, hosting, launch and guidance",
         ],
         aftercare: { title: "After launch", description: "One month of fixes included, then further changes quoted individually or covered by ongoing support." },
-        price: { amount: "€2,500 excl. VAT", detail: "five pages, content supplied" }, cta: "Get a website estimate", href: "#contact",
+        price: { amount: "€2,500 excl. VAT", detail: "five pages, content supplied" }, cta: "Get a website estimate", href: "/en/estimation?type=site",
       },
       {
         id: "saas-mobile", kind: "applications", title: "Applications", detail: "Web or mobile", promise: "An application that does exactly what your business needs.",
@@ -53,7 +53,7 @@ const en: Dictionary = {
           "Documentation and source code handed over",
         ],
         aftercare: { title: "After deployment", description: "Bugs fixed during the warranty period specified in your quote. Optional monthly maintenance after that: iOS and Android compatibility, app stores and improvements." },
-        cta: "Get an app estimate", href: "#contact",
+        cta: "Get an app estimate", href: "/en/estimation?type=webapp",
       },
     ],
   },

@@ -21,7 +21,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   const copy = await getDictionary(lang)
   return (
     <>
-      <HeroSection copy={copy.hero} topbar={copy.topbar} />
+      <HeroSection copy={copy.hero} topbar={copy.topbar} locale={lang} />
       <div id="page-body" className={styles.sections}>
         <GuaranteesTimelineSection copy={copy.guarantees} />
         <OffersSection copy={copy.offers} />
@@ -30,7 +30,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         </ShowcaseSection>
         <MethodSection copy={copy.method} />
         <StudioSection copy={copy.studio} />
-        <ContactSection copy={copy.estimate} />
+        <ContactSection copy={copy.estimate} locale={lang} />
         <ContactFormSection locale={lang} copy={copy.contact} />
       </div>
       <SectionTransitions targetIds={SECTION_TARGETS} forwardOnly />

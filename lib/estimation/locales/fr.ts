@@ -1,0 +1,66 @@
+import type { EstimationCopy } from "../copy"
+
+const fr: EstimationCopy = {
+  title: "Estimer mon projet",
+  seo: { title: "Estimer le prix de votre site ou application", description: "Présentez votre projet de site internet, d’application web ou mobile. Le bon dev vous répond sous 24 h ouvrées avec une première estimation personnalisée." },
+  page: {
+    eyebrow: "Une première estimation",
+    title: "Votre projet commence ici.",
+    description: "Quelques questions pour estimer le prix de votre site ou application. Le studio lit vos réponses et vous répond sous 24 h ouvrées.",
+    pricing: "Sites internet à partir de 2 500 € HT : cinq pages, contenus fournis. Les applications font l’objet d’une estimation adaptée à leur périmètre.",
+    explanationTitle: "Ce qui fait varier l’estimation",
+    explanation: [
+      "Le prix dépend du nombre d’écrans, des rôles de vos utilisateurs et des fonctionnalités à développer. Présenter une activité, gérer des réservations ou connecter un outil métier demandent des travaux différents. Les intégrations, le design et les animations comptent aussi, tout comme votre point de départ : une idée, des maquettes ou un produit existant à reprendre.",
+      "Ce parcours aide le studio à comprendre votre activité, les personnes qui utiliseront votre produit et vos priorités. Vous pouvez laisser les questions facultatives de côté et revenir sur vos réponses avant l’envoi. Le délai et le budget souhaités servent à organiser une proposition réaliste.",
+      "Le studio vous répond par e-mail avec une première estimation, ou les questions nécessaires pour la préciser. Le périmètre, les jalons et le devis sont ensuite définis avec vous avant de commencer le travail.",
+    ],
+  },
+  steps: [
+    { label: "Projet", title: "Quel type de projet avez-vous ?", help: "Un ou plusieurs choix." },
+    { label: "Secteur", title: "Dans quel secteur travaillez-vous ?", help: "Pour vous proposer des fonctionnalités et des exemples adaptés." },
+    { label: "Fonctionnalités", title: "De quoi votre projet a-t-il besoin ?", help: "Cochez ce qui vous parle, sans vous soucier de l’ordre : le cadrage s’en charge. Facultatif." },
+    { label: "Design", title: "Où en êtes-vous côté design ?", help: "Un seul choix." },
+    { label: "Délai", title: "Quand souhaitez-vous lancer ?", help: "Pour organiser une réponse réaliste, pas pour promettre une date." },
+    { label: "Détails", title: "Parlez-nous de votre projet.", help: "Tout est facultatif, mais plus on en sait, plus l’estimation est juste." },
+    { label: "Contact", title: "Où vous envoyer l’estimation ?", help: "Le studio lit vos réponses et vous répond par e-mail sous 24 h ouvrées. Pas de newsletter." },
+  ],
+  types: {
+    site: { title: "Site internet", description: "Présenter votre activité, recevoir des demandes" },
+    webapp: { title: "Application web", description: "Un service en ligne, un outil pour votre équipe" },
+    mobile: { title: "Application mobile", description: "iOS et Android" },
+    shop: { title: "Boutique en ligne", description: "Catalogue, panier, paiement" },
+    redo: { title: "Refonte ou reprise", description: "Un site ou une application déjà existants" },
+    unknown: { title: "Je ne sais pas encore", description: "Décrivez votre idée ci-dessous" },
+  },
+  sectors: { health: "Santé et bien-être", property: "Immobilier", finance: "Finance et assurance", trades: "Artisans et BTP", retail: "Commerce et restauration", education: "Formation et enseignement", sports: "Sport et loisirs", business: "Services aux entreprises", public: "Associations et secteur public", media: "Médias et communication", other: "Autre" },
+  audiences: { public: "Le public, vos clients", team: "Votre équipe, en interne", both: "Les deux" },
+  features: { booking: "Prise de rendez-vous", payment: "Paiement en ligne", accounts: "Comptes utilisateurs", admin: "Espace client ou administration", notifications: "Notifications", messaging: "Messagerie : échanges entre utilisateurs", documents: "Documents : devis, factures PDF", catalog: "Catalogue ou boutique", languages: "Plusieurs langues", maps: "Cartes et géolocalisation", analytics: "Tableaux de bord", integrations: "Connexion à vos outils", ai: "Fonctionnalités IA", other: "Autre" },
+  designs: {
+    zero: { title: "Je pars de zéro", description: "Pas de logo ni de charte" },
+    brand: { title: "J’ai une identité visuelle", description: "Logo, couleurs, typographies" },
+    mockups: { title: "J’ai des maquettes", description: "Figma, PDF ou autre" },
+    rebrand: { title: "Je veux refaire mon identité", description: "Logo et charte à repenser avec le projet" },
+  },
+  delays: { month: "Dans le mois", "three-months": "Dans les 3 mois", "six-months": "Dans les 6 mois", unknown: "Pas encore de date" },
+  budgets: { "under-5": "Moins de 5 k€", "5-15": "5 à 15 k€", "15-40": "15 à 40 k€", "over-40": "Plus de 40 k€", unknown: "Pas encore" },
+  constraints: { sensitive: "Données sensibles : santé, personnelles", accessibility: "Accessibilité", france: "Hébergement en France imposé" },
+  fields: {
+    typeOther: "Vous ne trouvez pas votre cas ? Dites-le en une phrase (facultatif)",
+    sectorNote: "Précisez si besoin (facultatif)",
+    featureIA: "Lesquelles ? Par exemple un assistant qui répond à vos clients, ou la lecture automatique de documents",
+    featureOther: "Autre : décrivez en quelques mots",
+    deadline: "Une date à respecter ? Ouverture, salon, saison… (facultatif)",
+    name: "Nom du projet",
+    desc: "Votre projet en quelques lignes : le contexte, ce qui vous a décidé, ce que vous attendez",
+    link: "Lien vers un site ou une application existants",
+    firstName: "Prénom", email: "E-mail", company: "Entreprise (facultatif)", phone: "Téléphone (facultatif)",
+  },
+  groups: { audience: "Pour qui ?", features: "Fonctionnalités", budget: "Un budget en tête ? (facultatif)", constraints: "Des contraintes particulières ? (facultatif)", recap: "Récapitulatif", contact: "Vos coordonnées" },
+  actions: { back: "Retour", next: "Suivant", submit: "Recevoir mon estimation", sending: "Envoi…", retry: "Réessayer", edit: "Modifier", close: "Fermer", restart: "Recommencer", home: "Retour au site" },
+  status: { steps: "Étapes", step: "Étape", of: "sur", saved: "Vos réponses sont conservées sur cet appareil jusqu’à l’envoi.", notStored: "Vos réponses restent disponibles tant que ce formulaire est ouvert.", unspecified: "non renseigné", descriptionProvided: "Description renseignée", deadline: "date à respecter : ", language: "Langue", noScript: "Activez JavaScript pour remplir le parcours, ou présentez votre projet par e-mail." },
+  errors: { project: "Choisissez au moins un type de projet, ou décrivez votre idée.", firstName: "Indiquez votre prénom.", email: "Indiquez un e-mail valide, pour recevoir l’estimation.", link: "Indiquez une adresse de site valide, ou laissez ce champ vide.", invalid: "Vérifiez vos réponses avant de réessayer.", send: "La demande n’a pas pu être envoyée. Vos réponses sont conservées : réessayez, ou écrivez-nous à" },
+  success: { title: "Votre demande est bien reçue.", beforeEmail: "Une copie part à ", afterEmail: ". Le studio vous répond sous 24 h ouvrées avec une première estimation, ou avec les questions qu’il lui manque.", withoutCopy: "La copie par e-mail n’a pas pu partir, mais votre demande est bien arrivée au studio. Vous recevrez une réponse sous 24 h ouvrées.", followup: "Vous pouvez répondre à cet e-mail pour corriger ou compléter.", details: "Voir les données envoyées" },
+  email: { subject: "Demande d’estimation", confirmation: "Votre demande d’estimation est bien arrivée — Le bon dev", greeting: "Bonjour", body: "Votre demande est bien reçue. Le studio vous répond sous 24 h ouvrées avec une première estimation, ou avec les questions qu’il lui manque. Voici une copie de vos réponses. Vous pouvez répondre à cet e-mail pour corriger ou compléter.", closing: "À bientôt,\nLe bon dev\nhello@lebondev.fr", sentAt: "Demande reçue le" },
+}
+
+export default fr

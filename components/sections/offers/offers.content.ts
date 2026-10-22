@@ -43,7 +43,7 @@ export const OFFERS = [
       detail: "cinq pages, contenus fournis",
     },
     cta: "Estimer mon site",
-    href: "#contact",
+    href: "/fr/estimation?type=site",
   },
   {
     id: "saas-mobile",
@@ -66,6 +66,6 @@ export const OFFERS = [
       description: "Bugs corrigés pendant la garantie fixée au devis. Ensuite, en option, un forfait mensuel de maintenance : compatibilité iOS et Android, stores, évolutions.",
     },
     cta: "Estimer mon application",
-    href: "#contact",
+    href: "/fr/estimation?type=webapp",
   },
 ] as const satisfies readonly Offer[]

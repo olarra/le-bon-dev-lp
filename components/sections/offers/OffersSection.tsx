@@ -1,6 +1,7 @@
 "use client"
 
 import { useLayoutEffect, useRef } from "react"
+import Link from "next/link"
 import type { Offer } from "./offers.content"
 import type { Dictionary } from "@/lib/i18n/types"
 import { OfferSticker } from "@/components/offer-icons/OfferSticker"
@@ -93,12 +94,12 @@ function OfferCard({ offer, copy }: { offer: Offer; copy: Dictionary["offers"] }
               </p>
             </div>
           )}
-          <a className={styles.offerLink} href={offer.href}>
+          <Link className={styles.offerLink} href={offer.href} scroll={false}>
             <span className={styles.offerLinkInner}>
               <span>{offer.cta}</span>
               <Arrow />
             </span>
-          </a>
+          </Link>
         </div>
       </div>
     </article>

@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function RootLayout({ children, params }: Props & { children: ReactNode }) {
+export default async function RootLayout({ children, estimate, params }: Props & { children: ReactNode; estimate: ReactNode }) {
   const { lang } = await params
   if (!isLocale(lang)) notFound()
   return (
@@ -45,7 +45,7 @@ export default async function RootLayout({ children, params }: Props & { childre
         <noscript>
           <style>{'[data-scroll-reveal="pending"], [data-reveal] { opacity: 1 !important; transform: none !important; }'}</style>
         </noscript>
-        <Providers key={lang}>{children}</Providers>
+        <Providers key={lang}>{children}{estimate}</Providers>
       </body>
     </html>
   )

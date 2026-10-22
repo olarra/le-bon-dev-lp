@@ -20,5 +20,3 @@ export const ESTIMATE_FACTORS = [
     description: "Partir de zéro, disposer de maquettes ou reprendre du code existant change le travail à prévoir.",
   },
 ] as const
-
-export const ESTIMATE_HREF = "#contact"

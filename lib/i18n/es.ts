@@ -38,7 +38,7 @@ const es: Dictionary = {
           "Dominio, alojamiento, publicación y orientación de uso",
         ],
         aftercare: { title: "Después del lanzamiento", description: "Un mes de correcciones incluido. Después, mejoras con presupuesto individual o mediante acompañamiento continuo." },
-        price: { amount: "2.500 € sin IVA", detail: "cinco páginas, contenido proporcionado" }, cta: "Estimar mi sitio web", href: "#contact",
+        price: { amount: "2.500 € sin IVA", detail: "cinco páginas, contenido proporcionado" }, cta: "Estimar mi sitio web", href: "/es/estimation?type=site",
       },
       {
         id: "saas-mobile", kind: "applications", title: "Aplicaciones", detail: "Web o móvil", promise: "Una aplicación que hace exactamente lo que tu actividad necesita.",
@@ -53,7 +53,7 @@ const es: Dictionary = {
           "Entrega de documentación y código fuente",
         ],
         aftercare: { title: "Después del despliegue", description: "Corrección de errores durante la garantía fijada en el presupuesto. Después, mantenimiento mensual opcional: compatibilidad con iOS y Android, tiendas de aplicaciones y mejoras." },
-        cta: "Estimar mi aplicación", href: "#contact",
+        cta: "Estimar mi aplicación", href: "/es/estimation?type=webapp",
       },
     ],
   },
