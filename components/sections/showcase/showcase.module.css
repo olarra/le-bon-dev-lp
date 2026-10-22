@@ -19,31 +19,26 @@
 .content { width: 100%; }
 .sectionHeader {
   display: grid;
-  justify-items: start;
+  justify-items: center;
   gap: 14px;
   width: var(--project-width);
   margin: 0 auto clamp(32px, 3vw, 48px);
-  text-align: left;
+  text-align: center;
 }
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
   margin: 0;
-  color: #747d83;
-  font-size: 13px;
+  padding: var(--eyebrow-padding);
+  border: 1px solid #dce6d3;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 92%);
+  color: #476443;
+  font-size: var(--eyebrow-size);
   font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.23em;
+  letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
-}
-.eyebrow::before {
-  content: "";
-  flex: 0 0 9px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #afe432;
 }
 .title {
   margin: 0;
