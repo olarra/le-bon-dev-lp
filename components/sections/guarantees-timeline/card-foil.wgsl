@@ -1,5 +1,5 @@
 // Adapted from vgpu's Holographic Card (MIT, Copyright 2025 Vercel, Inc.).
-// Complete, unmodified example and license: /holographic-card.
+// Complete, unmodified example and license: references/vgpu/holographic-card/.
 // The HTML card supplies the silhouette, illustration and translated lettering.
 struct Params {
   resolution: vec2f,

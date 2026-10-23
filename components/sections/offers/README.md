@@ -102,7 +102,7 @@ arrondis. Le fond vert réapparaît lorsque la lumière s’éteint. Le shader d
 seulement pendant la passe, à un DPR maximal de 1,5 et avec une surface limitée
 à 1,5 million de pixels. Ses dimensions suivent la mise en page et non
 l’échelle animée de la carte. L’exemple Holographic Card et sa licence d’origine
-sont conservés dans `/holographic-card`.
+sont conservés dans `references/vgpu/holographic-card/`.
 
 Sans WebGPU, ou si son initialisation n’est pas terminée au début de la passe,
 `MetalFinish` avec `palette="green"` joue le même reflet en CSS : une seule bande

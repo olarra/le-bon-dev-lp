@@ -42,7 +42,7 @@ conserve sa composition et son morphing.
 Les illustrations restent au premier plan, sans blob derrière elles. Chaque
 carte reçoit un fond graphite teinté de forêt, pétrole ou mousse, une bordure
 fine et un shader de matériau complet, `card-foil.wgsl`, adapté de la source
-officielle Holographic Card téléchargée dans `/holographic-card`.
+officielle Holographic Card téléchargée dans `references/vgpu/holographic-card/`.
 Il reprend les vagues gravées à densité 142, la diffraction, le grain fixe,
 la nacre, le reflet argenté, l'écho spectral et les micro-points de la référence.
 Trois petits éclats à quatre branches apparaissent seulement au passage de

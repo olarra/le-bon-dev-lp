@@ -1,5 +1,5 @@
 // Adapted from vgpu's Holographic Card (MIT, Copyright 2025 Vercel, Inc.).
-// Original source and license: /holographic-card.
+// Original source and license: references/vgpu/holographic-card/.
 // SVG owns the blob silhouette. Mobile metal cards use card-foil.wgsl.
 // The illuminated material keeps its engraving fixed in local coordinates.
 // Offers select the smooth green finish; guarantees keep the engraved spectrum.

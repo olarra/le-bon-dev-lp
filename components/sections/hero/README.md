@@ -26,7 +26,7 @@ remue le fluide et dépose une traînée vert sauge à citron. Le rendu transpar
 laisse apparaître le dégradé clair existant. `HERO_FLUID_ENABLED`, dans
 `hero.background.ts`, permet de désactiver cet essai.
 
-La source officielle complète est conservée dans `/fluid/`, avec sa provenance
+La source officielle complète est conservée dans `references/vgpu/fluid/`, avec sa provenance
 et sa licence MIT. L’adaptation se trouve dans `./fluid/` :
 
 - `simulation.ts` et les shaders conservent le solveur : advection, vorticité,
@@ -52,7 +52,7 @@ Cet essai n’a pas fait l’objet de vérifications automatisées ou visuelles.
 
 L’holographie vgpu reste utilisée pour les blobs de « Nos garanties », documentés
 dans `components/sections/guarantees-timeline/README.md`. La source de référence
-et sa licence MIT sont conservées dans `holographic-card/`.
+et sa licence MIT sont conservées dans `references/vgpu/holographic-card/`.
 
 ## Traductions
 

@@ -4,7 +4,7 @@ Les cinq fichiers d’origine (`index.tsx`, `renderer.ts`, `scene.ts`,
 `lettering.ts`, `shader.wgsl`) ont été téléchargés sans modification avec :
 
 ```bash
-npx vgpu examples pull holographic-card --out ./holographic-card
+npx vgpu examples pull holographic-card --out ./references/vgpu/holographic-card
 ```
 
 La référence a été récupérée à nouveau le 3 octobre 2026 avec `--force`,

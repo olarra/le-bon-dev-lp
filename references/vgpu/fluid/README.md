@@ -3,7 +3,7 @@
 Source officielle téléchargée avec la commande demandée :
 
 ```bash
-npx vgpu examples pull fluid --out ./fluid
+npx vgpu examples pull fluid --out ./references/vgpu/fluid
 ```
 
 Le CLI a fourni 13 fichiers (24 357 octets), conservés sans modification ici :
@@ -15,7 +15,7 @@ Le CLI a fourni 13 fichiers (24 357 octets), conservés sans modification ici :
 ne constitue pas une vérification de l’intégration dans l’application.
 
 La copie adaptée se trouve dans `components/sections/hero/fluid/` et son montage
-React dans `HeroFluid.tsx`. Voir le [README du Hero](../components/sections/hero/README.md)
+React dans `HeroFluid.tsx`. Voir le [README du Hero](../../../components/sections/hero/README.md)
 pour les changements de palette, de composition, d’interaction et de nettoyage.
 
 Le solveur utilise seulement `vgpu`, déjà installé avec son chargeur WGSL.

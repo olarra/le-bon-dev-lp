@@ -147,7 +147,7 @@ L’effet recherché pour notre site : « j’ai déjà mieux compris mon projet
 
 ## 6. Adaptation au positionnement réel de Le bon dev
 
-Le code actuel présente deux offres principales : sites internet et applications web ou mobiles. Le site annonce un point d’entrée de **2 500 € HT pour cinq pages avec contenus fournis**, et une première estimation sous 24 h. Il prévoit déjà un formulaire de contact Mailjet et les langues français, anglais et espagnol. Sources internes : [offres](components/sections/offers/offers.content.ts), [contenus français](lib/i18n/fr.ts), [route contact](app/api/contact/route.ts).
+Le code actuel présente deux offres principales : sites internet et applications web ou mobiles. Le site annonce un point d’entrée de **2 500 € HT pour cinq pages avec contenus fournis**, et une première estimation sous 24 h. Il prévoit déjà un formulaire de contact Mailjet et les langues français, anglais et espagnol. Sources internes : [offres](../../components/sections/offers/offers.content.ts), [contenus français](../../lib/i18n/fr.ts), [route contact](../../app/api/contact/route.ts).
 
 Conséquences pour le futur parcours :
 

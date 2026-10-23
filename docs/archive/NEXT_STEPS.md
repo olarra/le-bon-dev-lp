@@ -1,5 +1,7 @@
 # Prochaines étapes
 
+Archive du cadrage initial : cette liste ne décrit plus l'état actuel du projet.
+
 - [ ] Créer le formulaire d’estimation guidé en plusieurs étapes. Voir l’[analyse business et le brief](ESTIMATEUR_INSIGHTS.md).
 - [x] Brancher le header et le menu mobile sur les sections : Garanties, Offres, Réalisations, Méthode, Studio et Contact.
 - [x] Ajouter les animations d’apparition aux textes de toutes les sections.
