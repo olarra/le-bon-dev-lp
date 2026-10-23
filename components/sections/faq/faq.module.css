@@ -17,7 +17,7 @@
 
 .inner { width: 100%; max-width: 1240px; margin-inline: auto; }
 .layout { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.45fr); gap: clamp(48px, 6vw, 96px); align-items: start; }
-.introduction { position: sticky; top: calc(var(--scroll-padding-top) + 24px); min-width: 0; }
+.introduction { min-width: 0; }
 .header { display: grid; justify-items: start; gap: 22px; }
 .eyebrow {
   display: inline-flex;
@@ -62,11 +62,12 @@
 .topic[aria-selected="true"] .topicArrow { opacity: 1; transform: none; color: var(--faq-category-on-surface); }
 .groups { display: grid; gap: 44px; min-width: 0; }
 .group { min-width: 0; scroll-margin-top: 16px; }
-/* Keep category changes from moving the sidebar and the rest of the page. */
-.groups[data-faq-tabs] { gap: 0; align-items: start; }
-.groups[data-faq-tabs] > .group { grid-area: 1 / 1; visibility: hidden; pointer-events: none; }
-.groups[data-faq-tabs] > .group[data-faq-active] { visibility: visible; pointer-events: auto; z-index: 1; }
-.groups[data-faq-tabs] > .group[data-faq-outgoing] { visibility: visible; }
+/* Only the selected category contributes height; the outgoing panel fades in place. */
+.groups[data-faq-tabs] { display: block; position: relative; }
+.groups[data-faq-tabs] > .group { display: none; pointer-events: none; }
+.groups[data-faq-tabs] > .group[data-faq-active] { display: block; position: relative; pointer-events: auto; z-index: 1; }
+.groups[data-faq-tabs] > .group[data-faq-outgoing] { display: block; position: absolute; inset: 0 0 auto; }
+.groups[data-faq-resizing] { overflow: clip; }
 .groupHeader { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--faq-category-ink); }
 .groupHeader > span { display: grid; place-items: center; flex-shrink: 0; width: 28px; height: 28px; border-radius: 9px; background: var(--faq-category-accent); color: var(--faq-category-on-accent); font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .groupHeader h3 { margin: 0; padding: 6px 10px; border-radius: 8px; background: var(--faq-category-surface); color: var(--faq-category-on-surface); font-size: 13px; font-weight: 500; line-height: 1.4; letter-spacing: .08em; text-transform: uppercase; }
@@ -116,7 +117,6 @@
 @media (max-width: 809.98px) {
   .section { padding: 72px 20px 64px; }
   .layout { grid-template-columns: minmax(0, 1fr); gap: 36px; }
-  .introduction { position: static; }
   .header { gap: 18px; }
   .title { max-width: 22ch; font-size: var(--section-title-size); }
   .description { max-width: none; font-size: 18px; }
@@ -143,10 +143,6 @@
   .toggle { width: 26px; height: 26px; }
   .answer { padding-inline: 18px; font-size: 15px; }
   .groupHeader h3 { font-size: 12px; }
-}
-
-@media (min-width: 810px) and (max-height: 800px) {
-  .introduction { position: static; }
 }
 
 @keyframes answerIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }

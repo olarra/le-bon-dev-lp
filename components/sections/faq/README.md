@@ -8,11 +8,13 @@ les traductions se trouvent dans `lib/i18n/faq/en.ts` et `lib/i18n/faq/es.ts`.
 ## Disposition et contenu
 
 Sur ordinateur, l'introduction et les trois catégories restent à gauche, avec
-les questions de la catégorie sélectionnée à droite. Sur mobile, l'ensemble passe
-sur une colonne et les catégories forment une rangée de trois onglets.
+les questions de la catégorie sélectionnée à droite. Les deux colonnes suivent
+le défilement de la page : aucune colonne collante ni zone de défilement interne.
+Sur mobile, l'ensemble passe sur une colonne et les catégories forment une rangée
+de trois onglets.
 Chaque catégorie possède une couleur distincte : lime avant le projet, bleu
-pétrole des illustrations Garanties pendant, olive de la palette globale
-(`--color-primary-dark`) après la mise en ligne. L'onglet sélectionné, le titre,
+pétrole des illustrations Garanties pendant, olive foncé (`#667b17`) après la mise
+en ligne pour garder le texte blanc lisible. L'onglet sélectionné, le titre,
 les pastilles et le bouton « − » reprennent la couleur de leur catégorie.
 Le premier groupe porte un texte forêt sur lime, les deux autres un texte blanc
 sur bleu pétrole ou olive. La pastille de l'onglet sélectionné devient blanche
@@ -26,15 +28,17 @@ clavier, Début et Fin permettent de changer de catégorie ; Tab mène au pannea
 actif. Sans JavaScript, les trois groupes restent visibles et les liens servent
 d'ancres classiques.
 
-Les panneaux partagent la même cellule de grille, dont la hauteur s'adapte au
-plus grand groupe. Les catégories inactives restent invisibles, hors de l'arbre
-d'accessibilité et inertes. Cela conserve la position du sommaire et de la suite
-de la page pendant le changement de catégorie.
+Seul le panneau actif occupe de la place dans la page. Les catégories inactives
+sont masquées et inertes ; leurs réponses ouvertes ne créent plus d'espace vide
+sous une catégorie courte. La grille suit la plus haute des deux colonnes.
 
-La transition utilise uniquement un fondu : sortie sur 180 ms, entrée sur
-260 ms, sans déplacement vertical ni animation de hauteur. Les réponses déjà
-ouvertes dans chaque catégorie sont conservées. Les animations en cours sont
-annulables, et la préférence de mouvement réduit donne un changement immédiat.
+La transition associe un fondu (sortie sur 180 ms, entrée sur 260 ms) à un
+ajustement de hauteur sur 260 ms. Le panneau sortant reste superposé le temps
+du fondu. La hauteur redevient automatique à la fin, sans repositionner le scroll.
+Les réponses déjà ouvertes dans chaque catégorie sont conservées. Une nouvelle
+sélection reprend depuis la hauteur affichée ; un clic sur une question pendant
+le fondu adapte la transition à sa hauteur finale. La préférence de mouvement
+réduit donne un changement immédiat.
 
 Les ancres `#faq-avant`, `#faq-pendant` et `#faq-apres` permettent de partager une
 catégorie. Leur mise à jour au clic ne fait pas défiler la page. Les identifiants

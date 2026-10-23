@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
-type Transition = { animation: Animation; opening: boolean }
+type Transition = { animation: Animation; opening: boolean; height: number }
 
 /** Enhance the server-rendered groups into tabs; native links remain usable without JS. */
 export function FaqInteractions({ children, className }: { children: ReactNode; className: string }) {
@@ -24,16 +24,17 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
     const transitions = new Map<HTMLDetailsElement, Transition>()
     let activeGroup: HTMLElement | undefined
     let panelAnimation: Animation | undefined
+    let panelSizeAnimation: Animation | undefined
     let outgoingAnimation: Animation | undefined
     let outgoingGroup: HTMLElement | undefined
     let refreshFrame = 0
 
-    // Accordion height changes move the contact/footer reveal triggers.
+    // Refresh downstream reveals after the FAQ has reached its final height.
     const refreshLayout = () => {
       cancelAnimationFrame(refreshFrame)
       refreshFrame = requestAnimationFrame(() => {
         refreshFrame = 0
-        ScrollTrigger.refresh()
+        if (!panelSizeAnimation && !transitions.size) ScrollTrigger.refresh()
       })
     }
     const settle = (details: HTMLDetailsElement, transition: Transition) => {
@@ -74,7 +75,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
         easing: "cubic-bezier(.22,1,.36,1)",
         fill: "both",
       })
-      const transition = { animation, opening }
+      const transition = { animation, opening, height: to }
       transitions.set(details, transition)
       animation.onfinish = () => {
         settle(details, transition)
@@ -89,18 +90,47 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
     }
     const stopPanelTransition = () => {
       panelAnimation?.cancel()
+      panelSizeAnimation?.cancel()
       outgoingAnimation?.cancel()
+      panels.removeAttribute("data-faq-resizing")
       outgoingGroup?.removeAttribute("data-faq-outgoing")
       panelAnimation = undefined
+      panelSizeAnimation = undefined
       outgoingAnimation = undefined
       outgoingGroup = undefined
     }
+    const resizePanels = (from: number, duration: number) => {
+      if (!activeGroup) return
+      let to = activeGroup.getBoundingClientRect().height
+      // A question clicked during a category fade may still be opening or closing.
+      transitions.forEach((transition, details) => {
+        if (activeGroup?.contains(details)) to += transition.height - details.getBoundingClientRect().height
+      })
+      if (!motion.matches || !panels.animate || Math.abs(to - from) < 1) {
+        refreshLayout()
+        return
+      }
+      panels.setAttribute("data-faq-resizing", "")
+      const animation = panels.animate([{ height: `${from}px` }, { height: `${to}px` }], {
+        duration, easing: "cubic-bezier(.22,1,.36,1)", fill: "both",
+      })
+      panelSizeAnimation = animation
+      animation.onfinish = () => {
+        if (panelSizeAnimation !== animation) return
+        panelSizeAnimation = undefined
+        animation.cancel()
+        panels.removeAttribute("data-faq-resizing")
+        refreshLayout()
+      }
+    }
     const selectGroup = (group: HTMLElement, animate = true) => {
       if (group === activeGroup) return
+      const fromHeight = panels.getBoundingClientRect().height
       const previousGroup = activeGroup
       const previousOpacity = previousGroup ? getComputedStyle(previousGroup).opacity : "1"
       const incomingOpacity = group === outgoingGroup ? getComputedStyle(group).opacity : "0"
       stopPanelTransition()
+      settleAccordions()
       const selectedLink = links.find(link => link.dataset.faqTopic === group.dataset.faqGroup)
       if (activeGroup?.contains(document.activeElement)) selectedLink?.focus({ preventScroll: true })
       activeGroup = group
@@ -119,11 +149,11 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
       })
 
       if (!animate || !motion.matches || !group.animate) {
-        if (!previousGroup) refreshLayout()
+        refreshLayout()
         return
       }
 
-      // Both panels share a stable grid track; only opacity changes on selection.
+      // Crossfade in place while adapting the document flow to the selected group.
       if (previousGroup) {
         previousGroup.setAttribute("data-faq-outgoing", "")
         outgoingGroup = previousGroup
@@ -149,7 +179,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
         panelAnimation = undefined
         entrance.cancel()
       }
-
+      resizePanels(fromHeight, 260)
     }
     const activateTopic = (link: HTMLAnchorElement) => {
       const group = groups.find(panel => panel.dataset.faqGroup === link.dataset.faqTopic)
@@ -187,11 +217,13 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
       const details = summary?.parentElement
       if (!summary || !(details instanceof HTMLDetailsElement)) return
       event.preventDefault()
+      const resizingFrom = panelSizeAnimation ? panels.getBoundingClientRect().height : undefined
       stopPanelTransition()
 
       const opening = !(transitions.get(details)?.opening ?? details.open)
       if (opening) closeOtherAnswers(details)
       setAccordion(details, opening)
+      if (resizingFrom !== undefined) resizePanels(resizingFrom, 300)
       if (!transitions.size) refreshLayout()
     }
     const keydown = (event: KeyboardEvent) => {
