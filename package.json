@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
+    "email:proposal": "node scripts/generate-email-proposal.cjs",
+    "social:cards": "node scripts/generate-social-cards.cjs",
     "build": "next build",
     "start": "next start"
   },

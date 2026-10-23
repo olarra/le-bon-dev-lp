@@ -5,15 +5,17 @@ import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/types"
 
 type State = "idle" | "sending" | "success" | "error" | "unavailable" | "invalid"
+type Receipt = { email: string; confirmationSent: boolean }
 
 export function useContactForm(locale: Locale, copy: Dictionary["contact"]["form"]) {
   const [state, setState] = useState<State>("idle")
+  const [receipt, setReceipt] = useState<Receipt | null>(null)
   const requestRef = useRef<AbortController | null>(null)
   useEffect(() => () => { requestRef.current?.abort() }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (requestRef.current) return
+    if (requestRef.current || state === "success") return
     const form = event.currentTarget
     for (const name of ["name", "message"]) {
       const field = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement
@@ -25,7 +27,9 @@ export function useContactForm(locale: Locale, copy: Dictionary["contact"]["form
     }
     if (!form.reportValidity()) return
 
-    const payload = { ...Object.fromEntries(new FormData(form)), locale }
+    const formData = new FormData(form)
+    const email = String(formData.get("email") ?? "").trim()
+    const payload = { ...Object.fromEntries(formData), locale }
     const controller = new AbortController()
     requestRef.current = controller
     setState("sending")
@@ -42,7 +46,7 @@ export function useContactForm(locale: Locale, copy: Dictionary["contact"]["form
         setState(result.error === "invalid" ? "invalid" : result.error === "unavailable" ? "unavailable" : "error")
         return
       }
-      form.reset()
+      setReceipt({ email, confirmationSent: result.confirmationSent === true })
       setState("success")
     } catch {
       if (!controller.signal.aborted) setState("error")
@@ -57,5 +61,11 @@ export function useContactForm(locale: Locale, copy: Dictionary["contact"]["form
     if (!requestRef.current) setState("idle")
   }
 
-  return { state, handleSubmit, handleInput }
+  function restart() {
+    if (requestRef.current) return
+    setReceipt(null)
+    setState("idle")
+  }
+
+  return { state, receipt, handleSubmit, handleInput, restart }
 }

@@ -1,9 +1,12 @@
 import { CONTACT } from "@/lib/contact"
 import { FooterWordmark } from "./FooterWordmark"
 import type { Dictionary } from "@/lib/i18n/types"
+import type { Locale } from "@/lib/i18n/config"
+import { LEGAL_LABELS, legalHref } from "@/lib/legal/navigation"
 import styles from "./SiteFooter.module.css"
 
-export function SiteFooter({ copy }: { copy: Dictionary["footer"] }) {
+export function SiteFooter({ copy, locale }: { copy: Dictionary["footer"]; locale: Locale }) {
+  const legal = LEGAL_LABELS[locale]
   return (
     <footer className={styles.footer} data-header-theme="light">
       <div className={styles.surface}>
@@ -35,6 +38,10 @@ export function SiteFooter({ copy }: { copy: Dictionary["footer"] }) {
 
         <div className={styles.bottomline}>
           <small>© {new Date().getFullYear()} Le bon dev</small>
+          <nav className={styles.legalLinks} aria-label={legal.navigation}>
+            <a href={legalHref(locale, "notice")}>{legal.notice}</a>
+            <a href={legalHref(locale, "privacy")}>{legal.privacy}</a>
+          </nav>
           <a className={styles.backToTop} href="#statistics">{copy.top} <Arrow up /></a>
         </div>
       </div>

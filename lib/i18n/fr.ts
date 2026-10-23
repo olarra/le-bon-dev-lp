@@ -57,6 +57,12 @@ const fr: Dictionary = {
     eyebrow: "Le contact", titleBefore: "On en ", titleHighlight: "parle ?", description: "Un site à lancer, une application à créer ou un produit à faire évoluer ? Racontez-nous ce que vous avez en tête.", detailsLabel: "Les coordonnées du studio",
     email: "Par e-mail", whatsapp: "Sur WhatsApp", response: "Une réponse sous 24h", developer: "Un échange avec le développeur.",
     form: {
+      receipt: {
+        title: "Message bien reçu.", response: "Le studio vous répond sous 24 h.",
+        beforeEmail: "Une confirmation a été envoyée à ", afterEmail: ". Vous pouvez y répondre pour compléter votre message.",
+        withoutCopy: "Votre message est bien arrivé au studio, mais l’e-mail de confirmation n’a pas pu être envoyé. Vous n’avez pas besoin de renvoyer le formulaire.",
+        restart: "Envoyer un autre message",
+      },
       label: "Présentez-nous votre projet", name: "Nom et prénom", namePlaceholder: "Votre nom", email: "E-mail", emailPlaceholder: "vous@entreprise.fr", company: "Entreprise", companyPlaceholder: "Votre entreprise", phone: "Téléphone", phonePlaceholder: "+33 6 00 00 00 00", optional: "facultatif",
       project: "Votre projet", projectTypes: { website: "Site internet", application: "Application", evolution: "Évolution", unsure: "À définir" }, message: "Quelques mots sur votre projet", messagePlaceholder: "Votre idée, vos utilisateurs, ce que vous aimeriez créer ou améliorer…",
       hint: "* Champs obligatoires. Vos coordonnées servent uniquement à échanger sur votre projet.", submit: "Envoyer mon message", pending: "Envoi en cours…", success: "Votre message a bien été envoyé. Nous vous répondrons sous 24h.", error: "L’envoi n’a pas abouti. Réessayez ou écrivez-nous à hello@lebondev.fr.", unavailable: "L’envoi est momentanément indisponible. Écrivez-nous à hello@lebondev.fr.", invalid: "Vérifiez les champs du formulaire avant de réessayer.", nameRequired: "Indiquez votre nom.", messageRequired: "Décrivez votre projet en quelques mots.", honeypot: "Laissez ce champ vide",

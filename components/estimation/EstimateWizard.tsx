@@ -5,6 +5,8 @@ import type { Locale } from "@/lib/i18n/config"
 import { CONTACT } from "@/lib/contact"
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
+import { PrivacyLink } from "@/components/legal/PrivacyLink"
+import { LEGAL_LABELS } from "@/lib/legal/navigation"
 import type { EstimationCopy } from "@/lib/estimation/copy"
 import {
   AUDIENCES, BUDGETS, CONSTRAINTS, DELAYS, DESIGNS, FEATURES, PROJECT_TYPES, SECTORS,
@@ -191,6 +193,9 @@ export function EstimateWizard({ locale, copy, prefill, mode = "page", onClose, 
         {!receipt && <footer className={styles.footer}>
           {form.error && <p className={styles.error} id={errorId} role="alert">{copy.errors[form.error.field]}</p>}
           {form.sendError && <p className={styles.error} role="alert">{form.sendError === "invalid" ? copy.errors.invalid : <>{copy.errors.send} <a href={"mailto:" + CONTACT.email}>{CONTACT.email}</a>.</>}</p>}
+          {draft.step === STEP_COUNT && <p className={styles.privacyNotice}>
+            {LEGAL_LABELS[locale].formInformation} <PrivacyLink locale={locale} />
+          </p>}
           <div className={styles.footerNavigation}>
             <button type="button" className={styles.back} data-hidden={draft.step === 1} tabIndex={draft.step === 1 ? -1 : undefined} aria-hidden={draft.step === 1 || undefined}
               disabled={!ready || sending || draft.step === 1} onClick={() => form.go(draft.step - 1)}><EstimateIcon name="back" size={18} /><span>{copy.actions.back}</span></button>

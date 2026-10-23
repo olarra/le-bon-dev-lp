@@ -14,10 +14,44 @@ Le bouton envoie maintenant le formulaire au serveur via `/api/contact`.
 `lib/contact-form.ts` porte les limites et les identifiants stables des projets.
 `app/api/contact/route.ts` suit le projet de référence : configuration, lecture
 du formulaire, notification au studio, confirmation traduite, réponse HTTP.
-`lib/mailjet.ts` expose le helper `sendMailjet(to, subject, text, replyTo?)`.
+`lib/mailjet.ts` expose le helper
+`sendMailjet({ to, subject, text, html, replyTo, inlineAttachments })`.
+`lib/email/contact.ts` produit deux variantes du template validé : une
+confirmation courte avec le délai de réponse et la signature, et une
+notification studio contenant l’intégralité du message et des coordonnées.
+Les deux variantes existent en français, anglais et espagnol, en HTML et en
+texte. Le rendu commun est dans `lib/email/layout.ts`. Les images sont hébergées
+en HTTPS lorsque `MAIL_ASSET_BASE_URL` est renseignée, sinon jointes en secours
+pour les essais locaux. Les pièces jointes peuvent être affichées à nouveau en
+bas du message par la messagerie. Les trois PNG de `public/images/email/` et les
+quatre polices utilisées ont été transférés sur LWS le 23 octobre 2026.
+`MAIL_ASSET_BASE_URL=https://lebondev.fr` est renseignée en local et doit être
+reprise dans les autres environnements. L’accès HTTPS n’a pas été contrôlé.
+Les templates sont conservés dans le code ; aucun template distant Mailjet
+n’est à créer. `design/email-proposal/index.html` permet de comparer les variantes
+visiteur et studio avec des données fictives et le HTML réellement envoyé.
+Le fichier s’ouvre directement, sans route dans l’application. Le régénérer
+avec `yarn email:proposal` après toute modification des templates ou des textes ;
+la génération et l’aperçu ne déclenchent aucun envoi.
+Le rendu reçu reste à confirmer par un essai utilisateur.
 La route utilise directement `request.json()`, le champ piège et la validation des champs.
 L’échec de cette seconde notification ne transforme pas une demande reçue en échec.
 Les erreurs conservent la saisie et les envois simultanés sont empêchés.
+
+Après un envoi réussi, une bannière compacte remplace le bouton d’envoi en bas
+du formulaire. Elle conserve le sticker métal « Message reçu » à gauche, un
+petit titre, le délai de réponse et l’adresse de confirmation. Les champs et
+les informations envoyées restent visibles, désactivés jusqu’au prochain
+message. Le focus rejoint le titre de la bannière sans déplacer la page.
+L’apparition respecte le mouvement réduit. Le lien « Envoyer un autre message »
+vide le formulaire, réactive les champs et replace le focus sur le nom ; seul
+ce redémarrage peut ramener le premier champ dans la zone visible.
+
+La confirmation utilise le résultat `confirmationSent` de l’API : si seul cet
+e-mail échoue, l’écran confirme la réception par le studio et explique qu’il
+n’est pas nécessaire de renvoyer le formulaire. Ces textes sont traduits en
+français, anglais et espagnol. Cette modification n’a pas fait l’objet d’une
+vérification visuelle ou automatisée.
 
 Les clés `MAIL_MJ_API_KEY_PUBLIC`, `MAIL_MJ_API_KEY_PRIVATE` et l’expéditeur
 autorisé `MAIL_USERNAME` doivent être renseignés côté serveur. Comme dans le

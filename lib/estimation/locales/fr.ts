@@ -32,7 +32,13 @@ const fr: EstimationCopy = {
     redo: { title: "Refonte ou reprise", description: "Un site ou une application déjà existants" },
     unknown: { title: "Je ne sais pas encore", description: "Décrivez votre idée ci-dessous" },
   },
-  sectors: { health: "Santé et bien-être", property: "Immobilier", finance: "Finance et assurance", trades: "Artisans et BTP", retail: "Commerce et restauration", education: "Formation et enseignement", sports: "Sport et loisirs", business: "Services aux entreprises", public: "Associations et secteur public", media: "Médias et communication", other: "Autre" },
+  sectors: {
+    health: "Santé et bien-être", property: "Immobilier", finance: "Finance et assurance",
+    trades: "Artisans et BTP", industry: "Industrie et énergie", retail: "Commerce et restauration",
+    education: "Formation et enseignement", sports: "Sport et loisirs", business: "Services aux entreprises",
+    hr: "RH, recrutement et intérim", public: "Associations et secteur public", media: "Médias et communication",
+    transport: "Transport et mobilité", other: "Autre",
+  },
   audiences: { public: "Le public, vos clients", team: "Votre équipe, en interne", both: "Les deux" },
   features: { booking: "Prise de rendez-vous", payment: "Paiement en ligne", accounts: "Comptes utilisateurs", admin: "Espace client ou administration", notifications: "Notifications", messaging: "Messagerie : échanges entre utilisateurs", documents: "Documents : devis, factures PDF", catalog: "Catalogue ou boutique", languages: "Plusieurs langues", maps: "Cartes et géolocalisation", analytics: "Tableaux de bord", integrations: "Connexion à vos outils", ai: "Fonctionnalités IA", other: "Autre" },
   designs: {

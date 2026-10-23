@@ -146,6 +146,7 @@
 
 .bottomline {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
@@ -157,6 +158,23 @@
 .bottomline small {
   font-size: 13px;
   line-height: 1.5;
+}
+
+.legalLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 22px;
+}
+
+.legalLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #304c2f;
+  font-size: 13px;
+  text-decoration: none;
+  text-underline-offset: 4px;
 }
 
 .backToTop {
@@ -185,6 +203,7 @@
 @media (hover: hover) and (pointer: fine) {
   .navigation a:hover,
   .email:hover,
+  .legalLinks a:hover,
   .backToTop:hover {
     text-decoration: underline;
   }
@@ -281,8 +300,14 @@
   }
 
   .bottomline small,
+  .legalLinks a,
   .backToTop {
     font-size: 12px;
+  }
+
+  .legalLinks {
+    order: 1;
+    flex-basis: 100%;
   }
 }
 

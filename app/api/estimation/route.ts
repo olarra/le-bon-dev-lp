@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { isEmail } from "@/lib/contact-form"
+import { estimationConfirmationEmail, estimationNotificationEmail } from "@/lib/email/estimation"
 import { parseEstimateSubmission } from "@/lib/estimation/schema"
 import { getEstimationCopy } from "@/lib/estimation/copy"
-import { estimateEmailBody } from "@/lib/estimation/summary"
 import { sendMailjet } from "@/lib/mailjet"
 
 export const runtime = "nodejs"
@@ -25,23 +25,17 @@ export async function POST(request: NextRequest) {
 
   try {
     const copy = await getEstimationCopy(submission.locale)
-    const summary = estimateEmailBody(submission, copy)
     const sentAt = new Date().toISOString()
-    await sendMailjet(
-      adminEmail,
-      copy.email.subject + " — " + submission.firstName,
-      summary + "\n" + copy.status.language + " : " + submission.locale + "\nSource : " + (submission.source || "general") + "\n" + copy.email.sentAt + " : " + sentAt,
-      submission.email,
-    )
+    await sendMailjet({
+      to: adminEmail,
+      replyTo: submission.email,
+      ...estimationNotificationEmail(submission, copy, sentAt),
+    })
 
     // A confirmation failure must not cause a duplicate request to the studio.
     let confirmationSent = true
     try {
-      await sendMailjet(
-        submission.email,
-        copy.email.confirmation,
-        copy.email.greeting + " " + submission.firstName + ",\n\n" + copy.email.body + "\n\n" + summary + "\n" + copy.email.closing,
-      )
+      await sendMailjet({ to: submission.email, ...estimationConfirmationEmail(submission, copy) })
     } catch (error) {
       confirmationSent = false
       console.error("Estimate confirmation:", error instanceof Error ? error.message : "Send failed")

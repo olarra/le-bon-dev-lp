@@ -31,7 +31,13 @@ const en: EstimationCopy = {
     redo: { title: "Redesign or takeover", description: "An existing website or application" },
     unknown: { title: "I’m not sure yet", description: "Describe your idea below" },
   },
-  sectors: { health: "Health and wellbeing", property: "Property", finance: "Finance and insurance", trades: "Trades and construction", retail: "Retail and hospitality", education: "Training and education", sports: "Sport and leisure", business: "Business services", public: "Non-profits and public sector", media: "Media and communications", other: "Other" },
+  sectors: {
+    health: "Health and wellbeing", property: "Property", finance: "Finance and insurance",
+    trades: "Trades and construction", industry: "Industry and energy", retail: "Retail and hospitality",
+    education: "Training and education", sports: "Sport and leisure", business: "Business services",
+    hr: "HR, recruitment and staffing", public: "Non-profits and public sector", media: "Media and communications",
+    transport: "Transport and mobility", other: "Other",
+  },
   audiences: { public: "The public, your customers", team: "Your internal team", both: "Both" },
   features: { booking: "Appointment booking", payment: "Online payment", accounts: "User accounts", admin: "Customer portal or administration", notifications: "Notifications", messaging: "Messaging between users", documents: "Documents: quotes, PDF invoices", catalog: "Catalogue or shop", languages: "Multiple languages", maps: "Maps and geolocation", analytics: "Dashboards", integrations: "Connections to your tools", ai: "AI features", other: "Other" },
   designs: {

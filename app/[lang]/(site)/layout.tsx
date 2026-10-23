@@ -17,7 +17,7 @@ export default async function SiteLayout({ children, params }: { children: React
       <SiteStructuredData locale={lang} description={copy.seo.description} title={copy.seo.title} />
       <a className="skip-link" href="#main-content">{copy.skip}</a>
       <SiteHeader locale={lang} copy={copy.header} />
-      <PageFrame footer={<SiteFooter copy={copy.footer} />}>{children}</PageFrame>
+      <PageFrame footer={<SiteFooter copy={copy.footer} locale={lang} />}>{children}</PageFrame>
       <RevealController />
     </>
   )

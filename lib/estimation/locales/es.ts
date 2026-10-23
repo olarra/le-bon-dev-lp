@@ -31,7 +31,13 @@ const es: EstimationCopy = {
     redo: { title: "Rediseño o recuperación", description: "Un sitio web o una aplicación ya existentes" },
     unknown: { title: "Todavía no lo sé", description: "Describe tu idea a continuación" },
   },
-  sectors: { health: "Salud y bienestar", property: "Inmobiliario", finance: "Finanzas y seguros", trades: "Oficios y construcción", retail: "Comercio y restauración", education: "Formación y enseñanza", sports: "Deporte y ocio", business: "Servicios a empresas", public: "Asociaciones y sector público", media: "Medios y comunicación", other: "Otro" },
+  sectors: {
+    health: "Salud y bienestar", property: "Inmobiliario", finance: "Finanzas y seguros",
+    trades: "Oficios y construcción", industry: "Industria y energía", retail: "Comercio y restauración",
+    education: "Formación y enseñanza", sports: "Deporte y ocio", business: "Servicios a empresas",
+    hr: "RR. HH., selección y trabajo temporal", public: "Asociaciones y sector público", media: "Medios y comunicación",
+    transport: "Transporte y movilidad", other: "Otro",
+  },
   audiences: { public: "El público, tus clientes", team: "Tu equipo, internamente", both: "Ambos" },
   features: { booking: "Reserva de citas", payment: "Pago en línea", accounts: "Cuentas de usuario", admin: "Área de clientes o administración", notifications: "Notificaciones", messaging: "Mensajería entre usuarios", documents: "Documentos: presupuestos, facturas PDF", catalog: "Catálogo o tienda", languages: "Varios idiomas", maps: "Mapas y geolocalización", analytics: "Paneles de control", integrations: "Conexión con tus herramientas", ai: "Funciones de IA", other: "Otra" },
   designs: {

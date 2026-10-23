@@ -1,0 +1,218 @@
+.page {
+  min-height: 100svh;
+  background: #fbfcf8;
+  color: #203e33;
+  font-family: var(--font-body);
+}
+
+.header,
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(1120px, calc(100% - 64px));
+  margin-inline: auto;
+}
+
+.header {
+  min-height: 104px;
+  border-bottom: 1px solid #dce3d7;
+}
+
+.brand {
+  display: block;
+  flex: none;
+  width: 174px;
+  color: #203e33;
+}
+
+.brand svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.headerActions,
+.back,
+.languages,
+.documents {
+  display: flex;
+  align-items: center;
+}
+
+.headerActions { gap: 32px; }
+
+.back {
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.back svg { flex: none; }
+
+.languages { gap: 2px; }
+
+.languages a {
+  display: grid;
+  place-items: center;
+  min-width: 40px;
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.languages a[aria-current="page"] {
+  background: #203e33;
+  color: #fff;
+}
+
+.main {
+  width: min(740px, calc(100% - 48px));
+  margin-inline: auto;
+  padding: 68px 0 88px;
+}
+
+.documents {
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #dce3d7;
+}
+
+.documents a {
+  padding: 12px 0;
+  border-bottom: 2px solid transparent;
+  color: #596853;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.documents a[aria-current="page"] {
+  border-bottom-color: #203e33;
+  color: #203e33;
+  font-weight: 600;
+}
+
+.introduction { margin-bottom: 40px; }
+
+.introduction h1 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(38px, 5vw, 60px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.03em;
+}
+
+.introduction p {
+  max-width: 60ch;
+  margin: 20px 0 0;
+  color: #596853;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.introduction small {
+  display: block;
+  margin-top: 20px;
+  color: #596853;
+  font-size: 12px;
+}
+
+.draftNotice {
+  margin: 0 0 32px;
+  padding: 16px 20px;
+  border: 1px solid #c8d4ba;
+  border-radius: 10px;
+  background: #f0f3e9;
+  color: #42594d;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pending {
+  color: #596853;
+  font-style: italic;
+}
+
+.content {
+  color: #42594d;
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.content section + section {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid #e0e5dc;
+}
+
+.content h2 {
+  margin: 0 0 12px;
+  color: #203e33;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.content p { margin: 0 0 14px; }
+.content p:last-child { margin-bottom: 0; }
+.content address { font-style: normal; }
+.content ul { margin: 12px 0; padding-left: 22px; }
+.content li + li { margin-top: 8px; }
+.content dl { margin: 0; }
+
+.content dl > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(0, 2.5fr);
+  gap: 8px 24px;
+  padding-block: 8px;
+}
+
+.content dt { color: #596853; }
+.content dd { margin: 0; color: #203e33; }
+.content address { white-space: pre-line; }
+
+.footer {
+  flex-wrap: wrap;
+  min-height: 88px;
+  padding-block: 24px;
+  border-top: 1px solid #dce3d7;
+  color: #596853;
+  font-size: 13px;
+}
+
+.footer small { font-size: inherit; }
+.page a { color: inherit; text-underline-offset: 4px; }
+.page .languages a[aria-current="page"] { color: #fff; }
+.page a:focus-visible { outline: 2px solid #203e33; outline-offset: 5px; }
+.main:focus { outline: none; }
+
+@media (max-width: 599.98px) {
+  .header,
+  .footer { width: calc(100% - 40px); gap: 16px; }
+  .header { min-height: 88px; flex-wrap: wrap; padding-block: 20px; }
+  .brand { width: 144px; }
+  .headerActions { display: contents; }
+  .languages { margin-left: auto; }
+  .languages a { min-width: 34px; }
+  .back { order: 1; width: 100%; min-height: 32px; font-size: 13px; }
+  .main { width: calc(100% - 40px); padding-block: 36px 56px; }
+  .documents { margin-bottom: 28px; gap: 8px 20px; }
+  .introduction { margin-bottom: 32px; }
+  .introduction p { font-size: 16px; }
+  .content { font-size: 15px; }
+  .content h2 { font-size: 19px; }
+  .content dl > div { grid-template-columns: 1fr; gap: 0; }
+}
+
+@media (forced-colors: active) {
+  .page { background: Canvas; color: CanvasText; }
+  .languages a[aria-current="page"] { outline: 1px solid currentColor; }
+  .documents a[aria-current="page"] { border-bottom-color: LinkText; }
+}

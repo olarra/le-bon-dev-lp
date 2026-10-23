@@ -107,6 +107,12 @@ const en: Dictionary = {
   contact: {
     eyebrow: "Get in touch", titleBefore: "Let’s ", titleHighlight: "talk.", description: "A website to launch, an app to build or a product to improve? Tell us what you have in mind.", detailsLabel: "Studio contact details", email: "By email", whatsapp: "On WhatsApp", response: "A reply within 24h", developer: "A conversation with the developer.",
     form: {
+      receipt: {
+        title: "Message received.", response: "The studio will reply within 24 hours.",
+        beforeEmail: "A confirmation email has been sent to ", afterEmail: ". You can reply to it to add anything to your message.",
+        withoutCopy: "Your message has reached the studio, but the confirmation email could not be sent. There’s no need to submit the form again.",
+        restart: "Send another message",
+      },
       label: "Tell us about your project", name: "Full name", namePlaceholder: "Your name", email: "Email", emailPlaceholder: "you@company.com", company: "Company", companyPlaceholder: "Your company", phone: "Phone", phonePlaceholder: "+44 7700 900000", optional: "optional", project: "Your project",
       projectTypes: { website: "Website", application: "Application", evolution: "Improvements", unsure: "To be defined" }, message: "A few words about your project", messagePlaceholder: "Your idea, your users, what you’d like to build or improve…",
       hint: "* Required fields. Your contact details are only used to discuss your project.", submit: "Send my message", pending: "Sending…", success: "Your message has been sent. We’ll get back to you within 24h.", error: "Your message could not be sent. Try again or email hello@lebondev.fr.", unavailable: "Sending is temporarily unavailable. Please email hello@lebondev.fr.", invalid: "Please check the form fields and try again.", nameRequired: "Please enter your name.", messageRequired: "Please describe your project in a few words.", honeypot: "Leave this field empty",

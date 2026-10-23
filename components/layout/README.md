@@ -26,6 +26,9 @@ partagent un `data-reveal-group`, limité aux voisins visibles pour respecter
 leur empilement sur tablette et téléphone. La ligne finale (copyright et
 « Retour en haut ») est visible dès le rendu, sans délai ni animation d’entrée,
 sur tous les breakpoints.
+Cette ligne inclut les liens Mentions légales et Confidentialité dans la langue
+courante, regroupés sur une ligne supplémentaire sur mobile. Les documents
+utilisent leur propre en-tête compact, avec retour au site et choix de langue.
 
 `FooterWordmark` combine deux mouvements sur des éléments distincts : le lien
 révèle le logo entier par une montée et un fondu, tandis que son parent assure

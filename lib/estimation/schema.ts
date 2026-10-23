@@ -2,7 +2,7 @@ import { isEmail } from "@/lib/contact-form"
 import { isLocale, type Locale } from "@/lib/i18n/config"
 
 export const PROJECT_TYPES = ["site", "webapp", "mobile", "shop", "redo", "unknown"] as const
-export const SECTORS = ["health", "property", "finance", "trades", "retail", "education", "sports", "business", "public", "media", "other"] as const
+export const SECTORS = ["health", "property", "finance", "trades", "industry", "retail", "education", "sports", "business", "hr", "public", "media", "transport", "other"] as const
 export const AUDIENCES = ["public", "team", "both"] as const
 export const FEATURES = ["booking", "payment", "accounts", "admin", "notifications", "messaging", "documents", "catalog", "languages", "maps", "analytics", "integrations", "ai", "other"] as const
 export const DESIGNS = ["zero", "brand", "mockups", "rebrand"] as const

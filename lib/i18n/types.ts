@@ -49,6 +49,7 @@ export type Dictionary = {
       project: string; projectTypes: Record<"website" | "application" | "evolution" | "unsure", string>
       message: string; messagePlaceholder: string; hint: string; submit: string; pending: string
       success: string; error: string; unavailable: string; invalid: string; nameRequired: string; messageRequired: string; honeypot: string
+      receipt: { title: string; response: string; beforeEmail: string; afterEmail: string; withoutCopy: string; restart: string }
     }
     confirmation: { subject: string; greeting: string; body: string; closing: string }
   }

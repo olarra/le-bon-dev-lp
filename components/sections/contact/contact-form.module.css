@@ -146,6 +146,111 @@
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 85%);
 }
 
+.formContent {
+  display: grid;
+  gap: inherit;
+  min-width: 0;
+}
+
+.successPanel {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #b9c9ad;
+  border-radius: 16px;
+  background: #fffef9;
+  box-shadow: 0 3px 12px rgb(25 60 47 / 4%);
+  text-align: left;
+  animation: successEnter 280ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.successArtwork {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+}
+
+.successSticker {
+  --sticker-size: 64px;
+  transform: rotate(-5deg);
+}
+
+.successContent {
+  min-width: 0;
+}
+
+.successTitle {
+  margin: 0;
+  color: var(--form-ink);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.successTitle:focus { outline: none; }
+
+.successResponse {
+  display: flex;
+  align-items: start;
+  gap: 6px;
+  margin: 4px 0 0;
+  color: var(--form-ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.successResponse svg {
+  flex: none;
+  margin-top: 2px;
+  color: #62843b;
+}
+
+.successDetails {
+  margin: 8px 0 0;
+  color: var(--form-muted);
+  font-size: 13px;
+  line-height: 1.55;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+
+.successDetails strong {
+  color: var(--form-ink);
+  font-weight: 500;
+}
+
+.restart {
+  min-height: 36px;
+  margin-top: 4px;
+  padding: 7px 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--form-ink);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.restart:focus-visible {
+  outline: 2px solid #50732e;
+  outline-offset: 4px;
+}
+
+@keyframes successEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -225,6 +330,16 @@
 .field textarea::placeholder {
   color: #76816d;
   opacity: 1;
+}
+
+.formBody:disabled input,
+.formBody:disabled textarea {
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+}
+
+.formBody:disabled .choice {
+  cursor: default;
 }
 
 .field input:focus,
@@ -511,7 +626,57 @@
   }
 }
 
+@media (max-width: 479.98px) {
+  .successPanel {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 0 12px;
+    padding: 14px;
+  }
+
+  .successArtwork {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 48px;
+    height: 48px;
+  }
+
+  .successSticker {
+    --sticker-size: 48px;
+  }
+
+  .successContent {
+    display: contents;
+  }
+
+  .successTitle,
+  .successResponse {
+    grid-column: 2;
+  }
+
+  .successTitle {
+    font-size: 16px;
+  }
+
+  .successDetails,
+  .restart {
+    grid-column: 1 / -1;
+  }
+
+  .successDetails {
+    margin-top: 12px;
+  }
+
+  .restart {
+    justify-self: start;
+    min-height: 44px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .successPanel {
+    animation: none;
+  }
+
   .field input,
   .field textarea,
   .choice span,
@@ -527,7 +692,8 @@
 
 @media (forced-colors: active) {
   .section,
-  .form {
+  .form,
+  .successPanel {
     background: Canvas;
     color: CanvasText;
     box-shadow: none;
@@ -548,5 +714,13 @@
   .choice input:checked + span {
     background: Highlight;
     color: HighlightText;
+  }
+
+  .successPanel {
+    border-color: CanvasText;
+  }
+
+  .successResponse svg {
+    color: CanvasText;
   }
 }

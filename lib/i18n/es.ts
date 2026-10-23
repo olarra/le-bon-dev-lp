@@ -107,6 +107,12 @@ const es: Dictionary = {
   contact: {
     eyebrow: "El contacto", titleBefore: "¿Lo ", titleHighlight: "hablamos?", description: "¿Un sitio que lanzar, una aplicación que crear o un producto que mejorar? Cuéntanos qué tienes en mente.", detailsLabel: "Datos de contacto del estudio", email: "Por correo electrónico", whatsapp: "Por WhatsApp", response: "Una respuesta en 24 h", developer: "Una conversación con el desarrollador.",
     form: {
+      receipt: {
+        title: "Mensaje recibido.", response: "El estudio te responde en 24 horas.",
+        beforeEmail: "Hemos enviado una confirmación a ", afterEmail: ". Puedes responder a ese correo para añadir algo a tu mensaje.",
+        withoutCopy: "Tu mensaje ha llegado al estudio, pero no se ha podido enviar el correo de confirmación. No necesitas volver a enviar el formulario.",
+        restart: "Enviar otro mensaje",
+      },
       label: "Cuéntanos tu proyecto", name: "Nombre y apellidos", namePlaceholder: "Tu nombre", email: "Correo electrónico", emailPlaceholder: "tu@empresa.com", company: "Empresa", companyPlaceholder: "Tu empresa", phone: "Teléfono", phonePlaceholder: "Incluye el prefijo de tu país", optional: "opcional", project: "Tu proyecto",
       projectTypes: { website: "Sitio web", application: "Aplicación", evolution: "Mejoras", unsure: "Por definir" }, message: "Unas palabras sobre tu proyecto", messagePlaceholder: "Tu idea, tus usuarios, lo que te gustaría crear o mejorar…",
       hint: "* Campos obligatorios. Tus datos de contacto solo se usan para hablar de tu proyecto.", submit: "Enviar mi mensaje", pending: "Enviando…", success: "Tu mensaje se ha enviado. Te responderemos en un plazo de 24 h.", error: "No se ha podido enviar el mensaje. Inténtalo de nuevo o escribe a hello@lebondev.fr.", unavailable: "El envío no está disponible temporalmente. Escribe a hello@lebondev.fr.", invalid: "Revisa los campos del formulario antes de volver a intentarlo.", nameRequired: "Indica tu nombre.", messageRequired: "Describe tu proyecto en unas palabras.", honeypot: "Deja este campo vacío",

@@ -1,6 +1,12 @@
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async headers() {
+    return [{
+      source: "/fonts/:path*",
+      headers: [{ key: "Access-Control-Allow-Origin", value: "*" }],
+    }]
+  },
   webpack(config) {
     config.module.rules.push({ test: /\.wgsl$/, loader: "@vgpu/wgsl/loader-webpack" })
     return config
@@ -14,6 +20,8 @@ const nextConfig = {
     return [
       { source: "/", destination: "/fr", permanent: true },
       { source: "/estimation", destination: "/fr/estimation", permanent: true },
+      { source: "/mentions-legales", destination: "/fr/mentions-legales", permanent: true },
+      { source: "/confidentialite", destination: "/fr/confidentialite", permanent: true },
       { source: "/legacy", destination: "/fr", permanent: true },
       { source: "/index.html", destination: "/fr", permanent: true },
     ]

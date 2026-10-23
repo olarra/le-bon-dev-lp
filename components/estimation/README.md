@@ -6,6 +6,13 @@ Design, Délai, Détails, Contact. Les textes français sont dans
 `lib/estimation/locales/fr.ts` ; les versions anglaise et espagnole suivent le
 même schéma et les mêmes identifiants de réponse.
 
+Le secteur propose quatorze choix, « Autre » compris. Les entrées Industrie et
+énergie, RH/recrutement/intérim et Transport/mobilité complètent les secteurs
+existants dans les trois langues. « Services aux entreprises », « Artisans et
+BTP » et « Immobilier » sont conservés. Les identifiants des anciens choix et
+la clé de brouillon restent stables ; les nouveaux choix partagent le schéma
+de réception et les libellés des récapitulatifs et des e-mails.
+
 ## Page et panneau
 
 `app/[lang]/estimation/page.tsx` rend l’introduction, le formulaire et les
@@ -33,6 +40,8 @@ latérale sur desktop et compacte sur mobile ; les questions conservent leurs
 groupes, choix multiples ou uniques et champs conditionnels. Les budgets sont
 des tranches, sans estimation automatique ni curseur numérique artificiel.
 Le récapitulatif permet de modifier les étapes déjà visitées.
+La dernière étape indique l’usage des données et ouvre la page Confidentialité
+dans un nouvel onglet, sans quitter le formulaire.
 
 Les transitions d’étape utilisent Web Animations (opacité et transform).
 Les interactions de sélection et l’ouverture du panneau utilisent CSS. Le
@@ -85,6 +94,27 @@ piège. Le serveur valide les identifiants, longueurs et champs requis. Il
 notifie le studio puis envoie au visiteur une copie lisible de ses réponses,
 dans la langue du formulaire, avec `sendMailjet` et la configuration existante :
 `MAIL_MJ_API_KEY_PUBLIC`, `MAIL_MJ_API_KEY_PRIVATE`, `MAIL_USERNAME`.
+
+`lib/email/estimation.ts` adapte le template approuvé à la confirmation visiteur
+et à la notification studio, dans les trois langues. Le récapitulatif HTML
+reprend les six groupes de réponses complets (dont descriptions libres,
+précisions IA, autres fonctionnalités et lien) et les quatre champs de contact.
+Le message studio ajoute la langue, la source et la date de réception.
+La version texte reprend les mêmes informations. La date est formatée dans la
+langue du formulaire et le fuseau Europe/Paris. Le logo et les symboles sont
+des PNG hébergés en HTTPS lorsque `MAIL_ASSET_BASE_URL` est renseignée, avec un
+secours en pièces jointes tant que les fichiers ne sont pas publiés. Ce secours
+peut être réaffiché en bas du message par certaines messageries. La signature
+et la mise en page sont partagées avec le contact dans `lib/email/layout.ts`.
+Les images et les quatre polices utilisées ont été transférées sur LWS le
+23 octobre 2026, avec `MAIL_ASSET_BASE_URL=https://lebondev.fr` renseignée en
+local. Reprendre cette valeur dans les autres environnements. L’accès HTTPS
+n’a pas été contrôlé.
+Aucun `TemplateID` ni changement des clés Mailjet n’est requis.
+`design/email-proposal/index.html` présente les variantes visiteur et studio,
+en fichier local sans route dans l’application. `yarn email:proposal` remplace
+cet aperçu depuis les mêmes fonctions que les API, sans envoyer de mail.
+Le rendu reçu reste à confirmer par un essai utilisateur.
 
 Un échec conserve les réponses. Les doubles clics sont bloqués pendant la
 requête. Si seule la copie au visiteur échoue, la demande reste reçue et la

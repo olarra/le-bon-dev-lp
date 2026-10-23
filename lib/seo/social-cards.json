@@ -1,0 +1,48 @@
+{
+  "version": "v1",
+  "width": 1200,
+  "height": 630,
+  "domain": "lebondev.fr",
+  "variants": {
+    "studio": {
+      "fr": {
+        "label": "WEB · MOBILE",
+        "lines": ["Votre vision.", "Notre savoir-faire."],
+        "caption": "Sites internet & applications",
+        "alt": "Le bon dev — Votre vision. Notre savoir-faire. Studio de développement de sites internet et d’applications."
+      },
+      "en": {
+        "label": "WEB · MOBILE",
+        "lines": ["Your vision.", "Our know-how."],
+        "caption": "Websites & applications",
+        "alt": "Le bon dev — Your vision. Our know-how. Website and application development studio."
+      },
+      "es": {
+        "label": "WEB · MÓVIL",
+        "lines": ["Tu visión.", "Nuestro talento."],
+        "caption": "Sitios web y aplicaciones",
+        "alt": "Le bon dev — Tu visión. Nuestro talento. Estudio de desarrollo de sitios web y aplicaciones."
+      }
+    },
+    "estimation": {
+      "fr": {
+        "label": "ESTIMATION",
+        "lines": ["Votre projet", "commence ici."],
+        "caption": "Une première estimation sous 24 h ouvrées.",
+        "alt": "Le bon dev — Votre projet commence ici. Une première estimation de votre site ou application sous 24 h ouvrées."
+      },
+      "en": {
+        "label": "PROJECT ESTIMATE",
+        "lines": ["Your project", "starts here."],
+        "caption": "An initial estimate within 24 working hours.",
+        "alt": "Le bon dev — Your project starts here. An initial estimate for your website or application within 24 working hours."
+      },
+      "es": {
+        "label": "ESTIMACIÓN",
+        "lines": ["Tu proyecto", "empieza aquí."],
+        "caption": "Una primera estimación en 24 horas laborables.",
+        "alt": "Le bon dev — Tu proyecto empieza aquí. Una primera estimación de tu sitio web o aplicación en 24 horas laborables."
+      }
+    }
+  }
+}

@@ -1,9 +1,10 @@
 import type { ReactNode } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { isLocale, LOCALES, OG_LOCALES } from "@/lib/i18n/config"
+import { isLocale, LOCALES } from "@/lib/i18n/config"
 import { getDictionary } from "@/lib/i18n/dictionaries"
 import { SITE } from "@/lib/site"
+import { socialMetadata } from "@/lib/seo/social"
 import "lenis/dist/lenis.css"
 import "../globals.css"
 import { caveat, morna, outfit } from "../fonts"
@@ -23,16 +24,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     metadataBase: new URL(SITE.url),
     title: { default: seo.title, template: `%s — ${SITE.name}` },
     description: seo.description,
+    robots: { "max-image-preview": "large" },
     alternates: {
       canonical: `/${lang}`,
       languages: { fr: "/fr", en: "/en", es: "/es", "x-default": "/fr" },
     },
-    openGraph: {
-      type: "website", siteName: SITE.name, url: `/${lang}`,
-      title: seo.title, description: seo.description, locale: OG_LOCALES[lang],
-      alternateLocale: LOCALES.filter(locale => locale !== lang).map(locale => OG_LOCALES[locale]),
-    },
-    twitter: { card: "summary", title: seo.title, description: seo.description },
+    ...socialMetadata({ locale: lang, path: `/${lang}`, ...seo }),
   }
 }
 

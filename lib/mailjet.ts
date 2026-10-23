@@ -1,5 +1,16 @@
-/** Mailjet v3.1 transport, following the reference project's sendMailjet helper. */
-export async function sendMailjet(to: string, subject: string, text: string, replyTo?: string) {
+import type { InlineEmailAttachment } from "./email/types"
+
+type MailjetMessage = {
+  to: string
+  subject: string
+  text: string
+  html?: string
+  replyTo?: string
+  inlineAttachments?: readonly InlineEmailAttachment[]
+}
+
+/** Mailjet v3.1 transport; templates and translations are owned by the site. */
+export async function sendMailjet({ to, subject, text, html, replyTo, inlineAttachments }: MailjetMessage) {
   const pub = process.env.MAIL_MJ_API_KEY_PUBLIC
   const priv = process.env.MAIL_MJ_API_KEY_PRIVATE
   const sender = process.env.MAIL_USERNAME
@@ -18,6 +29,15 @@ export async function sendMailjet(to: string, subject: string, text: string, rep
           ReplyTo: { Email: replyTo || sender },
           Subject: subject,
           TextPart: text,
+          ...(html ? { HTMLPart: html } : {}),
+          ...(inlineAttachments?.length ? {
+            InlinedAttachments: inlineAttachments.map(attachment => ({
+              ContentType: attachment.contentType,
+              Filename: attachment.filename,
+              ContentID: attachment.contentId,
+              Base64Content: attachment.base64Content,
+            })),
+          } : {}),
         },
       ],
     }),

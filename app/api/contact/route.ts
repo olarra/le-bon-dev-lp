@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { isEmail, parseContactSubmission } from "@/lib/contact-form"
+import { contactConfirmationEmail, contactNotificationEmail } from "@/lib/email/contact"
 import { getDictionary } from "@/lib/i18n/dictionaries"
 import { sendMailjet } from "@/lib/mailjet"
 
@@ -24,28 +25,24 @@ export async function POST(request: NextRequest) {
   if (!submission) {
     return NextResponse.json({ error: "invalid" }, { status: 400 })
   }
-  const { name, email, company, phone, project, message, locale } = submission
+  const { email, locale } = submission
 
   try {
     const { contact } = await getDictionary(locale)
+    const sentAt = new Date().toISOString()
 
     // Notify the studio; replying to this email reaches the visitor.
-    await sendMailjet(
-      adminEmail,
-      `Prise de contact — ${name}`,
-      `Nom : ${name}\nE-mail : ${email}\nEntreprise : ${company || "—"}\nTéléphone : ${phone || "—"}\nProjet : ${contact.form.projectTypes[project]}\nLangue : ${locale}\n\n${message}`,
-      email,
-    )
+    await sendMailjet({
+      to: adminEmail,
+      replyTo: email,
+      ...contactNotificationEmail(submission, contact, sentAt),
+    })
 
     // Confirm in the visitor's language. A failed confirmation must not
     // invite a second submission of a request the studio already received.
     let confirmationSent = true
     try {
-      await sendMailjet(
-        email,
-        contact.confirmation.subject,
-        `${contact.confirmation.greeting} ${name},\n\n${contact.confirmation.body}\n\n${contact.confirmation.closing}`,
-      )
+      await sendMailjet({ to: email, ...contactConfirmationEmail(submission, contact) })
     } catch (error) {
       confirmationSent = false
       console.error("Mailjet confirmation:", error instanceof Error ? error.message : "Send failed")
