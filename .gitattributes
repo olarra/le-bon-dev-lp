@@ -1,0 +1,6 @@
+# Generated HTML previews; their sources remain in scripts/ and lib/.
+design/social-cards/index.html linguist-generated=true
+design/email-proposal/index.html linguist-generated=true
+
+# External reference examples, separate from the application source.
+references/** linguist-vendored=true
