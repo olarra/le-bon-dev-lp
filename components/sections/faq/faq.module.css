@@ -43,11 +43,6 @@
   --faq-category-on-surface: var(--faq-category-on-accent);
   --faq-category-badge: #fff;
 }
-.section :is([data-faq-topic="avant"], [data-faq-group="avant"]) {
-  --faq-category-surface: var(--faq-ink);
-  --faq-category-on-surface: #fff;
-  --faq-category-badge: var(--faq-lime);
-}
 .section :is([data-faq-topic="pendant"], [data-faq-group="pendant"]) {
   --faq-category-ink: #1b3d56;
   --faq-category-accent: #1b3d56;
@@ -56,7 +51,8 @@
 .section :is([data-faq-topic="apres"], [data-faq-group="apres"]) {
   --faq-category-ink: var(--faq-ink);
   --faq-category-accent: var(--color-primary-dark);
-  --faq-category-on-accent: #10251c;
+  --faq-category-on-accent: #fff;
+  --faq-category-on-surface: #fff;
 }
 .topic { display: grid; grid-template-columns: 30px minmax(0, 1fr) 18px; align-items: center; gap: 12px; min-height: 56px; padding: 10px 14px; border: 1px solid transparent; border-radius: 15px; color: var(--faq-category-ink); text-decoration: none; font-size: 15px; font-weight: 500; line-height: 1.35; transition: background-color .2s, border-color .2s, color .2s; }
 .topicNumber { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--faq-category-accent); color: var(--faq-category-on-accent); font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; transition: background-color .2s, color .2s; }

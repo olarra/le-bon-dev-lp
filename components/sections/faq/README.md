@@ -10,14 +10,13 @@ les traductions se trouvent dans `lib/i18n/faq/en.ts` et `lib/i18n/faq/es.ts`.
 Sur ordinateur, l'introduction et les trois catégories restent à gauche, avec
 les questions de la catégorie sélectionnée à droite. Sur mobile, l'ensemble passe
 sur une colonne et les catégories forment une rangée de trois onglets.
-Chaque catégorie possède des repères distincts : forêt et lime avant le projet,
-le bleu pétrole des illustrations Garanties pendant, l'olive de la palette
-globale (`--color-primary-dark`) après la mise en ligne. Dans le premier groupe,
-l'onglet sélectionné, le titre et le bouton « − » portent un texte blanc sur
-fond forêt ; les pastilles et la ligne du titre gardent le lime vif. Le groupe
-suivant utilise du blanc sur bleu pétrole, le dernier du forêt sur olive.
-La pastille sélectionnée reste lime dans le premier groupe et devient blanche
-dans les deux autres. Les réponses ouvertes gardent un fond légèrement teinté
+Chaque catégorie possède une couleur distincte : lime avant le projet, bleu
+pétrole des illustrations Garanties pendant, olive de la palette globale
+(`--color-primary-dark`) après la mise en ligne. L'onglet sélectionné, le titre,
+les pastilles et le bouton « − » reprennent la couleur de leur catégorie.
+Le premier groupe porte un texte forêt sur lime, les deux autres un texte blanc
+sur bleu pétrole ou olive. La pastille de l'onglet sélectionné devient blanche
+avec un numéro foncé. Les réponses ouvertes gardent un fond légèrement teinté
 pour la lecture des longs textes ; les réponses fermées restent blanches.
 
 Les dix questions sont toujours rendues côté serveur. Après hydratation,
