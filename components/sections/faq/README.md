@@ -62,8 +62,10 @@ et sa bordure discrète, sans trait lime latéral.
 natif est désactivé pendant cette amélioration pour permettre aux deux animations
 de se terminer ensemble. Une nouvelle activation peut inverser une transition
 en cours. Ouvrir ou fermer une réponse ne commande aucun défilement de la page.
-La section exclut également ses éléments de l'ancrage automatique du navigateur,
-pour que les changements de hauteur ne servent pas à repositionner le viewport.
+La section exclut également ses éléments de l'ancrage automatique du navigateur.
+Pendant les changements de hauteur, cet ancrage est suspendu au niveau du document :
+une section suivante visible ne peut donc pas faire remonter la page. La valeur
+précédente est restaurée après la transition et le recalcul des positions.
 
 À la fin, la hauteur redevient automatique et les positions ScrollTrigger sont
 actualisées pour les apparitions des contenus suivants. La préférence de mouvement

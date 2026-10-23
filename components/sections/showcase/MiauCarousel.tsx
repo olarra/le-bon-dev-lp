@@ -215,7 +215,7 @@ function CarouselPhone({ phone, index, position, mobile, reduced, active, alt }:
         style={{ transform: mobile ? transform : "none", opacity: mobile ? opacity : 1, filter: mobile ? filter : "none" }}>
         <div className={styles.phonePose}><div>
           <Image src={phone.src} alt={alt} width={phone.width} height={phone.height}
-            quality={90} sizes="(max-width: 699px) 81vw, (max-width: 1199px) 32vw, 420px" draggable={false} />
+            quality={90} sizes="(max-width: 430px) 73vw, (max-width: 699px) 315px, 0px" draggable={false} />
         </div></div>
       </motion.div>
     </motion.div>

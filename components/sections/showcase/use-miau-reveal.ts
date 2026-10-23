@@ -213,8 +213,27 @@ function mountDesktopReveal(section: HTMLElement | null) {
   project.addEventListener("focusin", finish)
   reduced.addEventListener("change", onPreferenceChange)
 
-  // Decode before revealing so a late image response cannot skip its entrance.
-  void Promise.allSettled(Array.from(group.querySelectorAll("img"), image => image.decode())).then(() => {
+  // Let native lazy loading start the request; decode only after the image loads.
+  // Calling decode while the lazy image is pending can reject before it arrives.
+  const imageCleanups: (() => void)[] = []
+  const readyImages = Array.from(group.querySelectorAll("img"), image => new Promise<void>(resolve => {
+    const finishLoading = () => {
+      image.removeEventListener("load", finishLoading)
+      image.removeEventListener("error", finishLoading)
+      void image.decode().catch(() => {}).then(resolve)
+    }
+    if (image.complete) finishLoading()
+    else {
+      image.addEventListener("load", finishLoading, { once: true })
+      image.addEventListener("error", finishLoading, { once: true })
+    }
+    imageCleanups.push(() => {
+      image.removeEventListener("load", finishLoading)
+      image.removeEventListener("error", finishLoading)
+      resolve()
+    })
+  }))
+  void Promise.all(readyImages).then(() => {
     if (!alive) return
     assetsReady = true
     startIfVisible()
@@ -223,6 +242,7 @@ function mountDesktopReveal(section: HTMLElement | null) {
 
   return () => {
     alive = false
+    imageCleanups.forEach(cleanup => cleanup())
     observer?.disconnect()
     resize?.disconnect()
     cancelAnimationFrame(measureFrame)

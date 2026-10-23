@@ -37,6 +37,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   let rendererLoad: AbortController | undefined
   let foil: BlobFoilRenderer | undefined
   let foilRevision = 0
+  let resourcesReady = typeof IntersectionObserver === "undefined"
   let morphs: gsap.core.Tween[] = []
   let mobileStack = false
   let stickyTop = 0
@@ -184,7 +185,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   function startRenderer() {
     stopRenderer()
     // Mobile cards use their own images; only desktop needs the morph renderer.
-    if (disposed || !desktop.matches || reduced.matches) return
+    if (disposed || !resourcesReady || !desktop.matches || reduced.matches) return
     const load = new AbortController()
     rendererLoad = load
     void createRenderer(canvas, assets, {
@@ -216,7 +217,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
 
   function startFoil() {
     stopFoil()
-    if (disposed || reduced.matches || contrast.matches || !navigator.gpu) return
+    if (disposed || !resourcesReady || reduced.matches || contrast.matches || !navigator.gpu) return
     const revision = foilRevision
     void import("./blob-foil-renderer").then(({ createBlobFoilRenderer }) => {
       if (disposed || revision !== foilRevision) return
@@ -262,6 +263,15 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     onRefresh: (self) => schedule(self.progress),
   })
   update(trigger.progress)
+  // The static artwork covers the entrance while GPU resources warm up nearby.
+  const resourceObserver = typeof IntersectionObserver !== "undefined" ? new IntersectionObserver(entries => {
+    if (disposed || !entries.some(entry => entry.isIntersecting)) return
+    resourcesReady = true
+    resourceObserver?.disconnect()
+    startRenderer()
+    startFoil()
+  }, { rootMargin: "400px 0px" }) : undefined
+  resourceObserver?.observe(list)
   startRenderer()
   startFoil()
   const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(refresh) : undefined
@@ -287,6 +297,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     cancelAnimationFrame(frame)
     cancelAnimationFrame(refreshFrame)
     observer?.disconnect()
+    resourceObserver?.disconnect()
     trigger?.kill()
     stopRenderer()
     stopFoil()

@@ -39,21 +39,21 @@ export const GUARANTEE_STEPS = [
     phase: "Avant de commencer",
     title: "Un budget respecté",
     description: "Chaque fonctionnalité est chiffrée avant de commencer. Le montant ne bouge pas sans votre accord.",
-    image: "budget-envelope.png",
+    image: "budget-envelope.webp",
   },
   {
     kind: "followup",
     phase: "Pendant le projet",
     title: "Un suivi régulier",
     description: "Les jalons sont fixés ensemble au cadrage. Chacun se termine par une version à tester et un compte rendu.",
-    image: "followup-calendar.png",
+    image: "followup-calendar.webp",
   },
   {
     kind: "handover",
     phase: "À la livraison",
     title: "Les clés en main",
     description: "Code, accès et documentation, remis à la livraison.",
-    image: "handover-keys.png",
+    image: "handover-keys.webp",
   },
 ] as const
 

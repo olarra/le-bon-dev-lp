@@ -1,6 +1,8 @@
 /* The outer SVG supplies the precise silhouette mask.
    Each finish receives local pointer coordinates on its own sticker wrapper. */
 .sticker {
+  --sticker-mask: linear-gradient(transparent, transparent);
+  --sticker-artwork: linear-gradient(transparent, transparent);
   display: block;
   flex: 0 0 auto;
   width: var(--sticker-size, 56px);

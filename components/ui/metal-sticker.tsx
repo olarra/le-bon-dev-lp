@@ -1,4 +1,6 @@
-import type { CSSProperties } from "react"
+"use client"
+
+import { useEffect, useRef } from "react"
 import styles from "./metal-sticker.module.css"
 
 type MetalStickerProps = {
@@ -12,19 +14,39 @@ type MetalStickerProps = {
 /** The outer SVG silhouette masks the shared finish over artwork and backing. */
 export function MetalSticker({ src, className, backing, tone }: MetalStickerProps) {
   const backingSrc = backing === "circle" ? "/images/stickers/circle-lime.svg" : undefined
+  const ref = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    const element = ref.current
+    const image = element?.querySelector<HTMLImageElement>("[data-sticker-artwork]")
+    if (!element || !image) return
+    const revealFinish = () => {
+      if (!image.naturalWidth) return
+      // CSS masks would otherwise bypass the image's native lazy loading.
+      element.style.setProperty("--sticker-mask", `url("${backingSrc ?? src}")`)
+      element.style.setProperty("--sticker-artwork", `url("${src}")`)
+    }
+    if (image.complete) revealFinish()
+    image.addEventListener("load", revealFinish)
+    return () => {
+      image.removeEventListener("load", revealFinish)
+      element.style.removeProperty("--sticker-mask")
+      element.style.removeProperty("--sticker-artwork")
+    }
+  }, [src, backingSrc])
 
   return (
     <span
+      ref={ref}
       className={`${styles.sticker}${className ? ` ${className}` : ""}`}
       data-metal-sticker=""
       data-backing={backing}
       data-tone={tone}
-      style={{ "--sticker-mask": `url("${backingSrc ?? src}")`, "--sticker-artwork": `url("${src}")` } as CSSProperties}
       aria-hidden="true"
     >
       <span key={`${src}:${backingSrc ?? ""}`} className={styles.stickerFace}>
         {backingSrc && <img src={backingSrc} width={128} height={128} alt="" draggable={false} loading="lazy" decoding="async" />}
-        <img className={styles.stickerArtwork} src={src} width={120} height={120} alt="" draggable={false} loading="lazy" decoding="async" />
+        <img className={styles.stickerArtwork} data-sticker-artwork src={src} width={120} height={120} alt="" draggable={false} loading="lazy" decoding="async" />
         <FinishLayers />
       </span>
     </span>

@@ -2,14 +2,14 @@ import type { CSSProperties, ReactNode } from "react"
 import { ResinCta } from "@/components/atoms/ResinCta"
 import { OfferSticker } from "@/components/offer-icons"
 import { MetalSticker } from "@/components/ui/metal-sticker"
-import designSticker from "@/public/images/realisations/stickers/design.png"
-import developmentSticker from "@/public/images/realisations/stickers/development.png"
-import appStoreSticker from "@/public/images/realisations/stickers/app-store.png"
-import googlePlaySticker from "@/public/images/realisations/stickers/google-play.png"
-import copywritingSticker from "@/public/images/realisations/stickers/copywriting.png"
-import responsiveSticker from "@/public/images/realisations/stickers/responsive.png"
-import seoSticker from "@/public/images/realisations/stickers/seo.png"
-import interactionsSticker from "@/public/images/realisations/stickers/interactions.png"
+import designSticker from "@/public/images/realisations/stickers/design.webp"
+import developmentSticker from "@/public/images/realisations/stickers/development.webp"
+import appStoreSticker from "@/public/images/realisations/stickers/app-store.webp"
+import googlePlaySticker from "@/public/images/realisations/stickers/google-play.webp"
+import copywritingSticker from "@/public/images/realisations/stickers/copywriting.webp"
+import responsiveSticker from "@/public/images/realisations/stickers/responsive.webp"
+import seoSticker from "@/public/images/realisations/stickers/seo.webp"
+import interactionsSticker from "@/public/images/realisations/stickers/interactions.webp"
 import type { Dictionary } from "@/lib/i18n/types"
 import type { Realisation } from "./realisations.content"
 import glass from "../studio/studio.module.css"
@@ -23,7 +23,7 @@ type Props = {
 }
 
 // Content-hashed URLs keep the visible image and CSS masks on the same revision,
-// even when a replacement PNG keeps its source filename.
+// even when regenerated lossless artwork keeps its filename.
 const STICKERS = {
   design: designSticker,
   development: developmentSticker,

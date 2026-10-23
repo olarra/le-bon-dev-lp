@@ -6,7 +6,7 @@
 .authPhone { left: 32.5%; top: -4.5%; width: 35%; z-index: 3; }
 .orionPhone { right: 14%; z-index: 2; }
 .phonePose { transform: rotate(var(--phone-rotation)); transform-origin: 50% 65%; }
-.phone img { display: block; width: 100%; height: auto; user-select: none; }
+.phone img { display: block; width: 100%; height: auto; object-fit: contain; user-select: none; }
 .phoneControls { display: none; }
 @media (max-width: 699px) {
   .phoneVisual { display: block; --phone-width: calc(min(70vw, 300px, 34svh) * 0.96); width: 100%; padding-top: 16px; }

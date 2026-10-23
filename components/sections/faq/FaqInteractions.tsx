@@ -28,13 +28,41 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
     let outgoingAnimation: Animation | undefined
     let outgoingGroup: HTMLElement | undefined
     let refreshFrame = 0
+    let anchorFrame = 0
+    let previousAnchoring: { value: string; priority: string } | undefined
+    const documentStyle = document.documentElement.style
+
+    const restoreAnchoring = () => {
+      cancelAnimationFrame(anchorFrame)
+      anchorFrame = 0
+      if (!previousAnchoring) return
+      const { value, priority } = previousAnchoring
+      if (value) documentStyle.setProperty("overflow-anchor", value, priority)
+      else documentStyle.removeProperty("overflow-anchor")
+      previousAnchoring = undefined
+    }
+    const holdAnchoring = () => {
+      cancelAnimationFrame(anchorFrame)
+      anchorFrame = 0
+      if (previousAnchoring) return
+      previousAnchoring = {
+        value: documentStyle.getPropertyValue("overflow-anchor"),
+        priority: documentStyle.getPropertyPriority("overflow-anchor"),
+      }
+      // A visible section below the FAQ can become the browser's scroll anchor.
+      // Suspend that adjustment only while the FAQ changes height.
+      documentStyle.setProperty("overflow-anchor", "none")
+    }
 
     // Refresh downstream reveals after the FAQ has reached its final height.
     const refreshLayout = () => {
       cancelAnimationFrame(refreshFrame)
       refreshFrame = requestAnimationFrame(() => {
         refreshFrame = 0
-        if (!panelSizeAnimation && !transitions.size) ScrollTrigger.refresh()
+        if (!panelSizeAnimation && !transitions.size) {
+          ScrollTrigger.refresh()
+          anchorFrame = requestAnimationFrame(restoreAnchoring)
+        }
       })
     }
     const settle = (details: HTMLDetailsElement, transition: Transition) => {
@@ -53,6 +81,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
       if (previous?.opening === opening || (!previous && details.open === opening)) return
       const summary = details.querySelector<HTMLElement>("[data-faq-question]")
       if (!summary) return
+      holdAnchoring()
       const from = details.getBoundingClientRect().height
       previous?.animation.cancel()
       transitions.delete(details)
@@ -125,6 +154,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
     }
     const selectGroup = (group: HTMLElement, animate = true) => {
       if (group === activeGroup) return
+      holdAnchoring()
       const fromHeight = panels.getBoundingClientRect().height
       const previousGroup = activeGroup
       const previousOpacity = previousGroup ? getComputedStyle(previousGroup).opacity : "1"
@@ -217,6 +247,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
       const details = summary?.parentElement
       if (!summary || !(details instanceof HTMLDetailsElement)) return
       event.preventDefault()
+      holdAnchoring()
       const resizingFrom = panelSizeAnimation ? panels.getBoundingClientRect().height : undefined
       stopPanelTransition()
 
@@ -283,6 +314,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
       cancelAnimationFrame(refreshFrame)
       stopPanelTransition()
       settleAccordions()
+      restoreAnchoring()
       nativeNames.forEach((name, details) => { if (name) details.setAttribute("name", name) })
       topics.removeAttribute("role")
       topics.removeAttribute("aria-label")

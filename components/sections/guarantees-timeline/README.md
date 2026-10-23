@@ -77,6 +77,12 @@ Cette exploration n'a pas fait l'objet de vérifications visuelles ou automatis�
   `data-morph-path` et couches qui le réutilisent avec `use`.
 - `morph-content.ts` centralise les tracés, palettes et échelles des illustrations.
 
+Les PNG originaux restent dans `public/images/guarantees-timeline/png/`.
+`yarn images:lossless` génère les WebP sans perte et sans redimensionnement dans
+le dossier `webp/` voisin. Les images de repli utilisent le chargement différé
+natif ; les ressources WebGL et WebGPU démarrent à proximité des cartes, avec
+les illustrations statiques comme repli pendant leur préparation.
+
 Les trois blobs ont des fonds sombres distincts : vert forêt (`#174b38`) pour
 le budget, bleu pétrole (`#1b3d56`) pour le suivi et vert mousse (`#34521c`)
 pour la livraison. Chaque teinte possède un dégradé assorti, des reflets clairs

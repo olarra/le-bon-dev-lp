@@ -103,7 +103,7 @@ export function GuaranteeArt({ step, withBlob = true }: { step: GuaranteeStep; w
       {withBlob && <GuaranteeBlob path={MORPH_BLOBS[index]} palette={MORPH_PALETTES[index]} />}
       <Image
         className={styles.illustration}
-        src={`/images/guarantees-timeline/png/${step.image}`}
+        src={`/images/guarantees-timeline/webp/${step.image}`}
         alt=""
         width={1254}
         height={1254}

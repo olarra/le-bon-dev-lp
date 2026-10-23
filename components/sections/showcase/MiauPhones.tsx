@@ -23,8 +23,8 @@ export function MiauPhones({ copy }: { copy: Dictionary["showcase"] }) {
                   <i className={styles.phoneShadow} aria-hidden="true" />
                   <Image
                     src={phone.src} alt={copy.phones[index]} width={phone.width} height={phone.height}
-                    quality={90} sizes="(max-width: 699px) 260px, 430px"
-                    loading="eager" draggable={false}
+                    quality={90} sizes="(max-width: 699px) 0px, 360px"
+                    loading="lazy" draggable={false}
                   />
                   <span className={styles.screenReflection} aria-hidden="true">
                     <i className={styles.reflectionBand} data-phone-reflection />

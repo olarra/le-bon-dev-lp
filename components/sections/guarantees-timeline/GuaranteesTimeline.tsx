@@ -12,7 +12,7 @@ import { mountGuaranteesEntrance } from "./guarantees-entrance"
 import morph from "./guarantees-morph.module.css"
 import styles from "./guarantees-timeline.module.css"
 
-const assets = GUARANTEE_STEPS.map((step) => `/images/guarantees-timeline/png/${step.image}`)
+const assets = GUARANTEE_STEPS.map((step) => `/images/guarantees-timeline/webp/${step.image}`)
 
 /** The entrance transforms the complete artwork independently of its float. */
 function ArtworkEntrance({ children }: { children: ReactNode }) {
@@ -68,6 +68,8 @@ export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; ste
                         width={1254}
                         height={1254}
                         draggable={false}
+                        loading="lazy"
+                        decoding="async"
                         style={{ transform: `scale(${ILLUSTRATION_SCALES[index]})` }}
                       />
                     ))}

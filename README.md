@@ -36,6 +36,7 @@ l'envoi des formulaires nécessite leur configuration.
 | `yarn start` | Servir la version de production |
 | `yarn email:proposal` | Régénérer l'aperçu HTML des e-mails dans `design/email-proposal/` |
 | `yarn social:cards` | Régénérer les cartes de partage et leur galerie dans `design/social-cards/` |
+| `yarn images:lossless` | Régénérer les WebP sans perte des garanties et stickers depuis les PNG originaux |
 
 ## Organisation du projet
 

@@ -30,7 +30,10 @@ variante « fondu d'origine », sans rebond.
 Les positions finales et dimensions des téléphones sont définies en CSS, dans
 une seconde rangée indépendante du chapeau. Il n'y a pas de vague ni de filtre
 `drop-shadow` sur les appareils. Les marges transparentes des images sont
-compensées par leurs dimensions/positions CSS.
+compensées par leurs dimensions/positions CSS. `object-fit: contain` conserve
+les proportions de chaque image dans ce cadre. Les variantes desktop et mobile
+chargent leurs images à proximité du viewport, avec des tailles adaptées à leur
+affichage et les niveaux de qualité existants (90 pour Miau, 95 pour la galerie).
 
 `useMiauReveal` utilise exclusivement `Element.animate()` pour l'entrée. Les effets
 ont `fill: both` et partagent une seule heure de départ sur `document.timeline` :
@@ -103,9 +106,12 @@ et ombre douce. La galerie garde son ratio 1288/711, sa navigation et ses trois 
 Le PNG du moniteur en résine et ses pieds ne sont plus affichés. Les attributs
 `data-resin-*` restent les points d'attache du contrôleur d'animation existant.
 
-Les PNG de prestations sont dans `public/images/realisations/stickers`. Leurs
-imports statiques produisent une URL liée au contenu, commune à l'image et aux
-masques CSS. `MetalSticker` reconstruit sa face lorsque cette adresse change,
+Les PNG de prestations sont conservés dans `public/images/realisations/stickers`.
+`yarn images:lossless` produit leurs WebP sans perte, à la résolution d'origine.
+Les imports statiques de ces WebP produisent une URL liée au contenu, commune à
+l'image et aux masques CSS. Les masques sont activés après le chargement natif
+différé de l'image ; ils ne déclenchent plus son téléchargement hors écran.
+`MetalSticker` reconstruit sa face lorsque cette adresse change,
 en conservant l'enveloppe utilisée par le contrôleur de lumière au scroll/pointeur.
 Les dimensions et décalages CSS compensent les marges transparentes de chaque
 fichier pour égaliser la taille visible des icônes.
