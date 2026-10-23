@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useLayoutEffect, useRef } from "react"
-import { useAnimationControls, type AnimationControls } from "motion/react"
+import { useAnimationControls } from "motion/react"
+import type { AnimationControls } from "@/lib/motion"
 
 /** Server markup stays visible; only mounted, motion-enabled headings animate. */
 export function useHeadingReveal(threshold: number, externalControls?: AnimationControls) {

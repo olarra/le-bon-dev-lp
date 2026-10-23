@@ -10,7 +10,11 @@ import "../globals.css"
 import { caveat, morna, outfit } from "../fonts"
 import { Providers } from "../providers"
 
-type Props = { params: Promise<{ lang: string }> }
+type Props = {
+  children: ReactNode
+  estimate: ReactNode
+  params: Promise<{ lang: string }>
+}
 
 export function generateStaticParams() {
   return LOCALES.map(lang => ({ lang }))
@@ -33,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function RootLayout({ children, estimate, params }: Props & { children: ReactNode; estimate: ReactNode }) {
+export default async function RootLayout({ children, estimate, params }: Props) {
   const { lang } = await params
   if (!isLocale(lang)) notFound()
   return (

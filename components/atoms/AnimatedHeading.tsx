@@ -1,9 +1,9 @@
 "use client"
 
 import { Children, cloneElement, isValidElement, type CSSProperties, type ReactNode } from "react"
-import { motion, type AnimationControls, type Variants } from "motion/react"
+import { motion, type Variants } from "motion/react"
 import { useHeadingReveal } from "@/hooks/use-heading-reveal"
-import { HEADING_REVEAL, type HeadingReveal } from "@/lib/motion"
+import { HEADING_REVEAL, type AnimationControls, type HeadingReveal } from "@/lib/motion"
 
 type Props = {
   text: string
@@ -23,6 +23,7 @@ export function AnimatedHeading({
 }: Props) {
   const { ref, controls } = useHeadingReveal(effect.threshold, externalControls)
   const Container = Tag === "span" ? "span" : "div"
+  const isHeading = Tag !== "span" && Tag !== "p"
   const variants: Variants = {
     hidden: effect.effect,
     visible: (index: number) => ({
@@ -74,7 +75,8 @@ export function AnimatedHeading({
 
   return (
     <Container ref={ref} className={className} style={{ display: "block" }}>
-      <Tag id={id} className={textClassName} style={{ display: "block", textAlign }} aria-label={text}>
+      <Tag id={id} className={textClassName} style={{ display: "block", textAlign }} aria-label={isHeading ? text : undefined}>
+        {!isHeading && <span className="sr-only">{text}</span>}
         <span aria-hidden="true">{tokenize(children ?? text)}</span>
       </Tag>
     </Container>

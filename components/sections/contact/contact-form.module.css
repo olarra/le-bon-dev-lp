@@ -196,7 +196,7 @@
 
 .successResponse {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   gap: 6px;
   margin: 4px 0 0;
   color: var(--form-ink);

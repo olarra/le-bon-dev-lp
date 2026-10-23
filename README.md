@@ -211,6 +211,61 @@ JavaScript, les trois groupes et leurs accordéons natifs restent accessibles.
 Les liens d'estimation ouvrent
 le même parcours que les autres CTA. Voir `components/sections/faq/README.md`.
 
+## Recette du 23 octobre 2026
+
+Recette demandée par le propriétaire, réalisée sur un build de production dans
+une copie isolée du projet. Le serveur de développement existant a été conservé.
+
+- Build Next.js et contrôle TypeScript réussis ; 58 tests existants passent.
+- Accueil, estimation et deux pages légales en FR/EN/ES : 48 combinaisons
+  contrôlées aux largeurs 320, 390, 834 et 1440 px. Aucun débordement horizontal,
+  lien d'ancre cassé, image chargée en erreur ou erreur JavaScript observé.
+- 122 contrôles d'interaction passent : FAQ à ouverture unique sans déplacement
+  du scroll, clavier, estimation en fenêtre et en page, validation des champs,
+  brouillon, erreur d'envoi, nouvelle tentative, confirmation et remise à zéro.
+- 12 contrôles de navigation passent, dont le lien d'évitement et le changement
+  de langue en conservant la section consultée.
+- 55 contrôles complémentaires passent : redirections, pages 404, images de
+  partage, métadonnées dans le HTML pour WhatsApp, Facebook, X et LinkedIn,
+  sitemap, contenu sans JavaScript et mouvement réduit.
+- Aucun échec axe WCAG 2 A/AA et 2.1 AA dans les pages et états contrôlés,
+  y compris les confirmations et le récapitulatif avec réponses facultatives vides.
+
+Les envois des deux formulaires ont été simulés dans le navigateur : aucun
+e-mail réel n'a été envoyé pendant cette recette. Le fonctionnement Mailjet
+reste celui précédemment validé par le propriétaire. Les contrôles utilisent
+Chrome sans interface et des dimensions simulées ; ils ne remplacent pas un
+essai sur iPhone réel ni un audit complet avec lecteur d'écran.
+
+Corrections apportées : types du layout et des animations qui bloquaient le
+build, libellés d'étapes qui se chevauchaient sur mobile, structure du
+récapitulatif, noms accessibles des titres, contrastes des textes et de l'olive
+avec texte blanc, clics pendant les apparitions, restitution du focus et du
+scroll après fermeture de l'estimation. Le texte animé du Studio reste lisible
+avant comme après son changement de couleur.
+
+Mesure Lighthouse 12.8.2 sur `/fr` en local, avec profils mobile et ordinateur
+distincts. Résultats de laboratoire, à confirmer après déploiement :
+
+| Indicateur | Mobile | Ordinateur |
+| --- | --- | --- |
+| Performance | 73/100 | 95/100 |
+| Accessibilité | 100/100 | 100/100 |
+| Bonnes pratiques | 96/100 | 96/100 |
+| SEO | 100/100 | 100/100 |
+| LCP | 7,6 s | 1,4 s |
+| Blocage du fil principal | 40 ms | 20 ms |
+| Décalage de mise en page (CLS) | 0,022 | 0,001 |
+
+La performance mobile reste à améliorer. Les PNG des garanties et des stickers
+de réalisations représentent l'essentiel des images lourdes ; certains sont
+chargés immédiatement par les masques CSS ou les rendus graphiques malgré la
+présence de `loading="lazy"` sur les images visibles. Lighthouse estime environ
+7,8 Mio d'économie potentielle avec des formats adaptés. Une première mesure
+mobile avait donné un LCP de 25,6 s : les résultats locaux restent variables.
+Le score de bonnes pratiques signale aussi les proportions des trois images
+Miau, actuellement ajustées en CSS pour aligner les silhouettes.
+
 ## Points restants avant publication
 
 Le fonctionnement de l'envoi d'e-mails a été confirmé par le propriétaire du site.
@@ -224,7 +279,12 @@ La même configuration Mailjet sera utilisée dans les différents environnement
 production comprise. Ce point n'est plus en attente.
 Les templates de contact et d’estimation sont intégrés dans le code, en trois
 langues, pour les confirmations visiteurs et les notifications au studio.
+Le dépôt distant `git@github.com:le-bon-dev/landing-page.git` est connecté ;
+la branche `master` est publiée et suit `origin/master`.
 
+- Alléger le chargement initial, en priorité sur mobile : formats et dimensions
+  des images, chargement différé des masques et illustrations hors écran.
+  Revoir également la compensation des proportions des images Miau.
 - Reprendre `MAIL_ASSET_BASE_URL=https://lebondev.fr` dans la configuration du
   futur hébergement du site (fichiers publiés sur LWS, configuration locale faite).
   Confirmer le rendu par un essai utilisateur depuis chacun des formulaires :
@@ -236,10 +296,10 @@ langues, pour les confirmations visiteurs et les notifications au studio.
   avec liens dans le footer et les formulaires, et affichent explicitement leur
   statut provisoire. Elles restent non indexées et hors sitemap tant que ces
   renseignements manquent. Voir `components/legal/README.md`.
-- Connecter le dépôt distant et préparer le déploiement.
-- Réaliser la recette finale sur demande explicite : mobile et desktop,
-  langues, navigation, performance et accessibilité, ainsi que les aperçus
-  WhatsApp et réseaux sociaux une fois les pages et images accessibles publiquement.
+- Préparer le déploiement : hébergement, variables d'environnement et domaine.
+- Après déploiement, contrôler sur demande explicite le rendu sur appareils
+  réels, les envois et les aperçus WhatsApp et réseaux sociaux, une fois les pages
+  et images accessibles publiquement.
 
 ## Apparitions au défilement
 

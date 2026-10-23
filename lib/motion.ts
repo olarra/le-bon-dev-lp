@@ -1,3 +1,7 @@
+import type { useAnimationControls } from "motion/react"
+
+export type AnimationControls = ReturnType<typeof useAnimationControls>
+
 export type HeadingReveal = {
   startDelay: number
   threshold: number

@@ -1,5 +1,5 @@
 import { gsap } from "gsap"
-import type { AnimationControls } from "motion/react"
+import type { AnimationControls } from "@/lib/motion"
 /** Content starts at the card's top, independently of the original card pose. */
 export function mountOffersContentEntrance(
   section: HTMLElement,

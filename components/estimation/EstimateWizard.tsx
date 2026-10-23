@@ -119,8 +119,11 @@ export function EstimateWizard({ locale, copy, prefill, mode = "page", onClose, 
           <h4>{copy.groups.recap}</h4>
           <dl>{estimateSummary(draft, copy).map(row => (
             <div className={styles.recapRow} key={row.step}>
-              <div><dt>{row.label}</dt><dd data-empty={!row.value}>{row.value || copy.status.unspecified}</dd></div>
-              <button type="button" onClick={() => form.go(row.step)} aria-label={copy.actions.edit + " : " + row.label}><EstimateIcon name="edit" size={15} /><span>{copy.actions.edit}</span></button>
+              <dt>{row.label}</dt>
+              <dd data-empty={!row.value}>
+                <span>{row.value || copy.status.unspecified}</span>
+                <button type="button" onClick={() => form.go(row.step)} aria-label={copy.actions.edit + " : " + row.label}><EstimateIcon name="edit" size={15} /><span>{copy.actions.edit}</span></button>
+              </dd>
             </div>
           ))}</dl>
         </section>

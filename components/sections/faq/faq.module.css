@@ -50,7 +50,7 @@
 }
 .section :is([data-faq-topic="apres"], [data-faq-group="apres"]) {
   --faq-category-ink: var(--faq-ink);
-  --faq-category-accent: var(--color-primary-dark);
+  --faq-category-accent: #667b17;
   --faq-category-on-accent: #fff;
   --faq-category-on-surface: #fff;
 }

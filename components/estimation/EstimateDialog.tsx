@@ -26,6 +26,7 @@ export function EstimateDialog({ locale, copy, prefill }: { locale: Locale; copy
     const dialog = dialogRef.current
     if (!dialog) return
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const scrollPosition = { left: window.scrollX, top: window.scrollY }
     const { body, documentElement } = document
     const previous = { body: body.style.overflow, html: documentElement.style.overflow, padding: body.style.paddingRight }
     const scrollbar = window.innerWidth - documentElement.clientWidth
@@ -40,7 +41,13 @@ export function EstimateDialog({ locale, copy, prefill }: { locale: Locale; copy
       body.style.overflow = previous.body
       documentElement.style.overflow = previous.html
       body.style.paddingRight = previous.padding
-      if (opener?.isConnected) opener.focus({ preventScroll: true })
+      // Back navigation may focus the URL fragment after this cleanup. Restore
+      // the reading position and opener once that navigation has committed.
+      requestAnimationFrame(() => {
+        if (!opener?.isConnected || document.querySelector("dialog[open]")) return
+        window.scrollTo({ ...scrollPosition, behavior: "instant" })
+        opener.focus({ preventScroll: true })
+      })
     }
   }, [])
 

@@ -114,7 +114,9 @@ export function RevealController() {
       })
 
       const onFocus = (event: FocusEvent) => {
-        if (!(event.target instanceof Element)) return
+        // Keyboard focus must reveal pending content immediately. A pointer
+        // press must keep its target in place until the click has completed.
+        if (!(event.target instanceof Element) || !event.target.matches(":focus-visible")) return
         const target = event.target.closest<HTMLElement>("[data-reveal]")
         if (target && items.includes(target)) context.add(() => settle(target))
       }

@@ -25,7 +25,7 @@ export function MagicText({ paragraphs, className }: {
       // Set every word up front: delayed stagger children must stay muted
       // before their individual tween begins, including after a refresh.
       gsap.set(tokens, {
-        color: style.getPropertyValue("--text-reveal-muted").trim() || "#9ca791",
+        color: style.getPropertyValue("--text-reveal-muted").trim() || "#657563",
       })
       gsap.to(tokens, {
         color: style.color,

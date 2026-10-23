@@ -61,7 +61,7 @@
 }
 .context {
   margin: 6px 0 0;
-  color: #747d83;
+  color: #657077;
   font-size: 20px;
   line-height: 1.4;
 }
@@ -69,7 +69,7 @@
   grid-area: description;
   max-width: 59ch;
   margin: 0;
-  color: #747d83;
+  color: #657077;
   font-size: 18px;
   line-height: 1.55;
   text-wrap: pretty;
