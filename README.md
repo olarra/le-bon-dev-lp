@@ -127,7 +127,15 @@ Les réponses sont conservées localement jusqu’à l’envoi réussi, puis eff
 Cette route limite le JSON à 32 000 caractères et valide les choix et les textes.
 Elle ne stocke pas de demandes en base. La confirmation reste un état du
 formulaire, sans URL distincte. Voir `components/estimation/README.md`.
-La FAQ reste à réaliser.
+
+La FAQ est placée entre l'encart Estimation et le formulaire de contact. Ses dix
+questions, réparties en trois groupes, reprennent la rédaction française validée
+dans `wireframe_faq_le_bon_dev_final_v2.html`, avec traductions en anglais et en
+espagnol. Les catégories fonctionnent comme des onglets : seul le groupe choisi
+est affiché, avec un fondu dans une zone de hauteur stable au changement. Sans
+JavaScript, les trois groupes et leurs accordéons natifs restent accessibles.
+Les liens d'estimation ouvrent
+le même parcours que les autres CTA. Voir `components/sections/faq/README.md`.
 
 ## Apparitions au défilement
 

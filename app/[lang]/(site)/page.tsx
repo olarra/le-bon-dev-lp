@@ -11,6 +11,7 @@ import { MethodSection } from "@/components/sections/method/MethodSection"
 import { StudioSection } from "@/components/sections/studio/StudioSection"
 import { ContactSection } from "@/components/sections/contact/ContactSection"
 import { ContactFormSection } from "@/components/sections/contact/ContactFormSection"
+import { FaqSection } from "@/components/sections/faq/FaqSection"
 import styles from "./page.module.css"
 
 const SECTION_TARGETS = ["statistics", "garanties-timeline"] as const
@@ -31,6 +32,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
         <MethodSection copy={copy.method} />
         <StudioSection copy={copy.studio} />
         <ContactSection copy={copy.estimate} locale={lang} />
+        <FaqSection copy={copy.faq} locale={lang} />
         <ContactFormSection locale={lang} copy={copy.contact} />
       </div>
       <SectionTransitions targetIds={SECTION_TARGETS} forwardOnly />

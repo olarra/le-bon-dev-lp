@@ -40,7 +40,7 @@ export const OFFERS = [
     },
     price: {
       amount: "2 500 € HT",
-      detail: "cinq pages, contenus fournis",
+      detail: "site vitrine de cinq pages, contenus fournis",
     },
     cta: "Estimer mon site",
     href: "/fr/estimation?type=site",

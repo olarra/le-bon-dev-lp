@@ -13,7 +13,7 @@ export const FOOTER_GROUPS = [
       { label: "Nos garanties", href: "#garanties-timeline" },
       { label: "La méthode", href: "#la-methode" },
       { label: "Qui sommes-nous ?", href: "#le-studio" },
+      { label: "Questions fréquentes", href: "#faq" },
     ],
   },
 ] as const
-

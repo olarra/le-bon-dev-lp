@@ -17,7 +17,7 @@ const drawings = {
   zero: <><path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10l-7-7Z" /><path d="M13 3v7h7m-8 2v6m-3-3h6" /></>,
   brand: <><circle cx="8" cy="8" r="4" /><rect x="12" y="12" width="8" height="8" rx="2" /><path d="m17 3 4 5h-8l4-5ZM3 17h5m-2.5-2.5v5" /></>,
   mockups: <><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M3 9h18m-11 0v12m4-8h3m-3 4h3M6 6h.01" /></>,
-  rebrand: <><path d="M20 11a8 8 0 0 0-14-5L3 9m0-5v5h5M4 14a8 8 0 0 0 13 5" /><path d="m17 12 1.5 3.5L22 17l-3.5 1.5L17 22l-1.5-3.5L12 17l3.5-1.5L17 12Z" /></>,
+  rebrand: <><path d="M12 22a10 10 0 1 1 10-10 4 4 0 0 1-4 4h-1.8a1.8 1.8 0 0 0-1.3 3 1.8 1.8 0 0 1-1.4 3Z" /><circle cx="7" cy="10" r="1.2" fill="currentColor" stroke="none" /><circle cx="10" cy="6.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="15" cy="6.5" r="1.2" fill="currentColor" stroke="none" /><circle cx="18" cy="10" r="1.2" fill="currentColor" stroke="none" /></>,
   check: <path d="m5 12 4 4L19 6" />,
   arrow: <path d="M4 12h16m-6-6 6 6-6 6" />,
   back: <path d="M20 12H4m6-6-6 6 6 6" />,

@@ -1,4 +1,5 @@
 import type { Dictionary } from "./types"
+import { FAQ_ES } from "./faq/es"
 
 const es: Dictionary = {
   seo: {
@@ -38,7 +39,7 @@ const es: Dictionary = {
           "Dominio, alojamiento, publicación y orientación de uso",
         ],
         aftercare: { title: "Después del lanzamiento", description: "Un mes de correcciones incluido. Después, mejoras con presupuesto individual o mediante acompañamiento continuo." },
-        price: { amount: "2.500 € sin IVA", detail: "cinco páginas, contenido proporcionado" }, cta: "Estimar mi sitio web", href: "/es/estimation?type=site",
+        price: { amount: "2.500 € sin IVA", detail: "sitio web de presentación de cinco páginas, contenido proporcionado" }, cta: "Estimar mi sitio web", href: "/es/estimation?type=site",
       },
       {
         id: "saas-mobile", kind: "applications", title: "Aplicaciones", detail: "Web o móvil", promise: "Una aplicación que hace exactamente lo que tu actividad necesita.",
@@ -102,6 +103,7 @@ const es: Dictionary = {
       { title: "El punto de partida del proyecto", description: "Empezar desde cero, contar con diseños o retomar código existente cambia el trabajo que hay que prever." },
     ],
   },
+  faq: FAQ_ES,
   contact: {
     eyebrow: "El contacto", titleBefore: "¿Lo ", titleHighlight: "hablamos?", description: "¿Un sitio que lanzar, una aplicación que crear o un producto que mejorar? Cuéntanos qué tienes en mente.", detailsLabel: "Datos de contacto del estudio", email: "Por correo electrónico", whatsapp: "Por WhatsApp", response: "Una respuesta en 24 h", developer: "Una conversación con el desarrollador.",
     form: {
@@ -115,7 +117,7 @@ const es: Dictionary = {
     tagline: ["Tu visión.", "Nuestro talento."], description: ["Estudio de desarrollo", "web y móvil."], navigationSuffix: "pie de página", invitation: "¿Una idea por concretar?", cta: "Hablemos de tu proyecto", home: "Le bon dev — volver al inicio", top: "Volver arriba",
     groups: [
       { label: "Los servicios", links: [{ label: "Sitios web", href: "#sites-vitrines" }, { label: "Aplicaciones", href: "#saas-mobile" }, { label: "Los proyectos", href: "#realisations" }] },
-      { label: "El estudio", links: [{ label: "Nuestras garantías", href: "#garanties-timeline" }, { label: "El método", href: "#la-methode" }, { label: "Quiénes somos", href: "#le-studio" }] },
+      { label: "El estudio", links: [{ label: "Nuestras garantías", href: "#garanties-timeline" }, { label: "El método", href: "#la-methode" }, { label: "Quiénes somos", href: "#le-studio" }, { label: "Preguntas frecuentes", href: "#faq" }] },
     ],
   },
 }

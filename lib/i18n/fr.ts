@@ -8,6 +8,7 @@ import { STUDIO_PARAGRAPHS, STUDIO_FACTS, STUDIO_PRINCIPLES } from "@/components
 import { ESTIMATE_FACTORS } from "@/components/sections/contact/contact.content"
 import { FOOTER_GROUPS } from "@/components/layout/footer.content"
 import { NAVIGATION } from "@/components/layout/header/header.content"
+import { FAQ } from "@/components/sections/faq/faq.content"
 
 const fr: Dictionary = {
   seo: {
@@ -51,6 +52,7 @@ const fr: Dictionary = {
     title: "Parlons de votre application.", description: "Quelques questions sur vos utilisateurs et ce qu’ils doivent pouvoir faire.", response: "Une première estimation sous 24h.", cta: "Estimer mon application",
     whatsapp: "Prendre contact sur WhatsApp", whatsappLabel: "Prendre contact sur WhatsApp (nouvel onglet)", eyebrow: "Une première estimation", criteriaTitle: "Ce qui peut faire varier l’estimation", factors: ESTIMATE_FACTORS,
   },
+  faq: FAQ,
   contact: {
     eyebrow: "Le contact", titleBefore: "On en ", titleHighlight: "parle ?", description: "Un site à lancer, une application à créer ou un produit à faire évoluer ? Racontez-nous ce que vous avez en tête.", detailsLabel: "Les coordonnées du studio",
     email: "Par e-mail", whatsapp: "Sur WhatsApp", response: "Une réponse sous 24h", developer: "Un échange avec le développeur.",

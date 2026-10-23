@@ -1,5 +1,6 @@
 import type { Offer } from "@/components/sections/offers/offers.content"
 import type { Realisation } from "@/components/sections/showcase/realisations.content"
+import type { FaqCopy } from "@/components/sections/faq/faq.content"
 
 type Item = { title: string; description: string }
 type Link = { label: string; href: string }
@@ -38,6 +39,7 @@ export type Dictionary = {
     title: string; description: string; response: string; cta: string; whatsapp: string; whatsappLabel: string
     eyebrow: string; criteriaTitle: string; factors: readonly Item[]
   }
+  faq: FaqCopy
   contact: {
     eyebrow: string; titleBefore: string; titleHighlight: string; description: string; detailsLabel: string
     email: string; whatsapp: string; response: string; developer: string

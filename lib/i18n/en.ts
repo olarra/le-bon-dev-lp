@@ -1,4 +1,5 @@
 import type { Dictionary } from "./types"
+import { FAQ_EN } from "./faq/en"
 
 const en: Dictionary = {
   seo: {
@@ -38,7 +39,7 @@ const en: Dictionary = {
           "Domain, hosting, launch and guidance",
         ],
         aftercare: { title: "After launch", description: "One month of fixes included, then further changes quoted individually or covered by ongoing support." },
-        price: { amount: "€2,500 excl. VAT", detail: "five pages, content supplied" }, cta: "Get a website estimate", href: "/en/estimation?type=site",
+        price: { amount: "€2,500 excl. VAT", detail: "five-page brochure website, content supplied" }, cta: "Get a website estimate", href: "/en/estimation?type=site",
       },
       {
         id: "saas-mobile", kind: "applications", title: "Applications", detail: "Web or mobile", promise: "An application that does exactly what your business needs.",
@@ -102,6 +103,7 @@ const en: Dictionary = {
       { title: "The project’s starting point", description: "Starting from scratch, having designs ready or taking over existing code changes the work involved." },
     ],
   },
+  faq: FAQ_EN,
   contact: {
     eyebrow: "Get in touch", titleBefore: "Let’s ", titleHighlight: "talk.", description: "A website to launch, an app to build or a product to improve? Tell us what you have in mind.", detailsLabel: "Studio contact details", email: "By email", whatsapp: "On WhatsApp", response: "A reply within 24h", developer: "A conversation with the developer.",
     form: {
@@ -115,7 +117,7 @@ const en: Dictionary = {
     tagline: ["Your vision.", "Our know-how."], description: ["Web and mobile", "development studio."], navigationSuffix: "footer", invitation: "An idea to bring to life?", cta: "Let’s talk about your project", home: "Le bon dev — back to home", top: "Back to top",
     groups: [
       { label: "Services", links: [{ label: "Websites", href: "#sites-vitrines" }, { label: "Applications", href: "#saas-mobile" }, { label: "Our work", href: "#realisations" }] },
-      { label: "The studio", links: [{ label: "Our commitments", href: "#garanties-timeline" }, { label: "Our process", href: "#la-methode" }, { label: "About us", href: "#le-studio" }] },
+      { label: "The studio", links: [{ label: "Our commitments", href: "#garanties-timeline" }, { label: "Our process", href: "#la-methode" }, { label: "About us", href: "#le-studio" }, { label: "Frequently asked questions", href: "#faq" }] },
     ],
   },
 }

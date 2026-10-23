@@ -9,4 +9,4 @@ export function isLocale(value: unknown): value is Locale {
 }
 
 // Stable anchors are shared across translations and existing inbound links.
-export const SECTIONS = ["statistics", "garanties-timeline", "offres", "realisations", "la-methode", "le-studio", "estimation", "contact"] as const
+export const SECTIONS = ["statistics", "garanties-timeline", "offres", "realisations", "la-methode", "le-studio", "estimation", "faq", "contact"] as const
