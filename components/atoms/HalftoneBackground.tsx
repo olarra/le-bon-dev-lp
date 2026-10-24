@@ -99,20 +99,24 @@ export function HalftoneBackground({ color, desktop, mobile, className }: Props)
     }
 
     const observer = new ResizeObserver(([entry]) => {
-      const nextWidth = Math.round(entry.contentRect.width)
-      const nextHeight = Math.round(entry.contentRect.height)
+      const nextWidth = entry.contentRect.width
+      const nextHeight = entry.contentRect.height
       if (!nextWidth || !nextHeight || (nextWidth === width && nextHeight === height)) return
       width = nextWidth
       height = nextHeight
       cancelPending()
 
-      const field = width < 810 ? mobile : desktop
-      const dots = buildDots({ width, height }, field)
+      // Keep the existing rounded dot geometry while tracking the full
+      // viewport size, including fractional-only resizes, for the image.
+      const size = { width: Math.round(width), height: Math.round(height) }
+      const field = size.width < 810 ? mobile : desktop
+      const dots = buildDots(size, field)
       // Resolve currentColor here: an SVG image does not inherit page styles.
       const fill = getComputedStyle(layer).color
-      // Keep every number at its original precision. Without a viewBox, one
-      // SVG unit stays one CSS pixel, including at fractional layer sizes.
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><g fill="${fill}">${dots.map((dot) => `<circle cx="${dot.x}" cy="${dot.y}" r="${dot.radius}" opacity="${dot.opacity}"/>`).join("")}</g></svg>`
+      // Explicit dimensions give the image its real intrinsic ratio instead
+      // of the 300 × 150 fallback. Keep fractional viewport sizes and omit a
+      // viewBox so dot coordinates remain unscaled CSS pixels.
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><g fill="${fill}">${dots.map((dot) => `<circle cx="${dot.x}" cy="${dot.y}" r="${dot.radius}" opacity="${dot.opacity}"/>`).join("")}</g></svg>`
       const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }))
       const replacement = new Image()
       const request = { url, image: replacement }
