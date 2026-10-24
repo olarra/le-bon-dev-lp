@@ -144,8 +144,9 @@
 .content h2 {
   margin: 0 0 12px;
   color: #203e33;
+  font-family: var(--font-heading);
   font-size: 21px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
 }
 

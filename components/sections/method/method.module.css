@@ -241,8 +241,9 @@
 
 .stepTitle {
   margin: 0 0 12px;
+  font-family: var(--font-heading);
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.025em;
 }

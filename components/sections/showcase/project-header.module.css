@@ -32,11 +32,11 @@
 .nameRow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
 .name {
   margin: 0;
-  font-family: var(--font-body);
+  font-family: var(--font-heading);
   font-size: clamp(32px, 3.5vw, 48px);
-  font-weight: 650;
+  font-weight: 700;
   line-height: 1.12;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 .badge {
