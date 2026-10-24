@@ -26,6 +26,7 @@ export type BlobFoilRenderer = {
 const clamp = (value: number) => Math.max(0, Math.min(1, value))
 const tiltProperties = ["--blob-tilt-y", "--blob-tilt-x", "--blob-perspective"]
 const CARD_LIGHT_OVERSHOOT = 0.68
+const MAX_MOBILE_GPU_FRAMES = 2
 
 export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
   const desktop = window.matchMedia("(min-width: 810px)")
@@ -50,6 +51,8 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
   let disposed = false
   let visible = false
   let pendingFrame = 0
+  let gpuFramesInFlight = 0
+  let redrawAfterGpuFrame = false
   let lastFrame = 0
   let removeGpuError = () => {}
 
@@ -89,9 +92,12 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
   }
 
   function requestDraw() {
-    if (!disposed && initialized && visible && !document.hidden && !pendingFrame) {
-      pendingFrame = requestAnimationFrame(draw)
-    }
+    if (disposed || !initialized || !visible || document.hidden) return
+    // Native scrolling can outrun a full-resolution metal pass on a phone.
+    // Keep normal CPU/GPU overlap, but replace requests beyond two submissions
+    // with a fresh geometry read instead of queuing old reflections.
+    if (gpuFramesInFlight >= MAX_MOBILE_GPU_FRAMES) { redrawAfterGpuFrame = true; return }
+    if (!pendingFrame) pendingFrame = requestAnimationFrame(draw)
   }
 
   function draw(now: number) {
@@ -123,6 +129,14 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
       rect.bottom > 0 && rect.top < viewportHeight && rect.right > 0 && rect.left < window.innerWidth)
 
     if (!visibleSurfaces.length) { lastFrame = 0; return }
+    // Resizing replaces the canvas texture. Wait for all submitted work using
+    // its previous size; ordinary same-size frames keep the two-frame overlap.
+    if (gpuFramesInFlight > 0 && visibleSurfaces.some(({ item, width, height }) =>
+      item.output!.size[0] !== Math.max(1, Math.round(width * dpr)) ||
+      item.output!.size[1] !== Math.max(1, Math.round(height * dpr)))) {
+      redrawAfterGpuFrame = true
+      return
+    }
     let settling = false
     const dirty: FoilSurface[] = []
     try {
@@ -174,11 +188,25 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
         dirty.push(item)
       }
       if (dirty.length) {
-        frame(gpu, current => dirty.forEach(item => current.pass(item.output!, item.shader!)))
+        const submitted = frame(gpu, current => dirty.forEach(item => current.pass(item.output!, item.shader!)))
         dirty.forEach(item => {
           item.drawnTravel = item.travel
-          item.canvas.style.opacity = "1"
+          if (item.canvas.style.opacity !== "1") item.canvas.style.opacity = "1"
         })
+        if (!desktop.matches) {
+          gpuFramesInFlight += 1
+          // VGPU's done waits for queue.onSubmittedWorkDone, not just encode.
+          // Do not await it inside rAF: completion only frees a pipeline slot
+          // and schedules the latest request when the queue had filled up.
+          void submitted.done.then(() => {
+            gpuFramesInFlight -= 1
+            if (disposed) return
+            if (redrawAfterGpuFrame) {
+              redrawAfterGpuFrame = false
+              requestDraw()
+            }
+          })
+        }
       }
     } catch {
       dispose()
@@ -211,6 +239,7 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
     if (disposed) return
     disposed = true
     cancelAnimationFrame(pendingFrame)
+    redrawAfterGpuFrame = false
     observer.disconnect()
     resizeObserver.disconnect()
     window.removeEventListener("scroll", requestDraw)

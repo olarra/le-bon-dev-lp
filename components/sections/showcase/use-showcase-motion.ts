@@ -111,11 +111,10 @@ export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
       const measure = () => {
         resizeFrame = 0
         if (!alive) return
-        reveals.forEach(({ timeline, refresh }) => {
-          const time = timeline.time()
-          timeline.invalidate().totalTime(time, true)
-          refresh?.()
-        })
+        // These tweens use fixed distances and durations. Safari's toolbar can
+        // resize the viewport mid-scroll; keep their clocks and current poses
+        // intact and only refresh geometry used by the entrance thresholds.
+        reveals.forEach(({ refresh }) => refresh?.())
         scheduleScroll()
       }
       const scheduleMeasure = () => {
