@@ -3,6 +3,7 @@
 import { Fragment, useLayoutEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { createScrollTriggerRefresh } from "@/lib/scroll-trigger-refresh"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -42,13 +43,20 @@ export function MagicText({ paragraphs, className }: {
       })
     }, paragraph)
 
-    let disposed = false
-    const refresh = () => { if (!disposed) ScrollTrigger.refresh() }
-    void document.fonts.ready.then(refresh)
-    const observer = new ResizeObserver(refresh)
+    const refresh = createScrollTriggerRefresh()
+    void document.fonts.ready.then(refresh.request)
+    let previousSize: { width: number; height: number } | undefined
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return
+      const { width, height } = entry.contentRect
+      // The initial notification repeats setup's measurements; fonts.ready
+      // already covers font replacement. Only later size changes need a pass.
+      if (previousSize && (width !== previousSize.width || height !== previousSize.height)) refresh.request()
+      previousSize = { width, height }
+    })
     observer.observe(paragraph)
     return () => {
-      disposed = true
+      refresh.dispose()
       observer.disconnect()
       media.revert()
     }

@@ -9,6 +9,7 @@ import { OfferSticker } from "@/components/offer-icons/OfferSticker"
 import { MetalFinish } from "@/components/ui/metal-sticker"
 import { useStickerMotion } from "@/hooks/use-sticker-motion"
 import { mountOffersEntrance } from "./offers-entrance"
+import { prepareNearViewport } from "@/lib/prepare-near-viewport"
 import styles from "./offers.module.css"
 
 export function OffersSection({ copy }: { copy: Dictionary["offers"] }) {
@@ -16,9 +17,12 @@ export function OffersSection({ copy }: { copy: Dictionary["offers"] }) {
   useStickerMotion(sectionRef)
 
   useLayoutEffect(() => {
-    if (!sectionRef.current) return
-    const entrance = mountOffersEntrance(sectionRef.current)
-    return () => entrance.dispose()
+    const section = sectionRef.current
+    if (!section) return
+    return prepareNearViewport(section, () => {
+      const entrance = mountOffersEntrance(section)
+      return () => entrance.dispose()
+    })
   }, [copy])
 
   return (

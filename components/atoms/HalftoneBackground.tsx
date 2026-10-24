@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import styles from "./HalftoneBackground.module.css"
 
 type Ellipse = {
@@ -76,34 +76,94 @@ type Props = {
 /** One continuous field, measured only on resize: no mirrored/cropped panels. */
 export function HalftoneBackground({ color, desktop, mobile, className }: Props) {
   const layerRef = useRef<HTMLDivElement>(null)
-  const [size, setSize] = useState<Size>({ width: 0, height: 0 })
+  const imageRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     const layer = layerRef.current
-    if (!layer) return
+    const image = imageRef.current
+    if (!layer || !image) return
+
+    let disposed = false
+    let width = 0
+    let height = 0
+    let currentUrl: string | null = null
+    let pending: { url: string; image: HTMLImageElement } | null = null
+
+    const cancelPending = () => {
+      if (!pending) return
+      pending.image.onload = null
+      pending.image.onerror = null
+      pending.image.removeAttribute("src")
+      URL.revokeObjectURL(pending.url)
+      pending = null
+    }
 
     const observer = new ResizeObserver(([entry]) => {
-      const width = Math.round(entry.contentRect.width)
-      const height = Math.round(entry.contentRect.height)
-      setSize((previous) => previous.width === width && previous.height === height ? previous : { width, height })
+      const nextWidth = Math.round(entry.contentRect.width)
+      const nextHeight = Math.round(entry.contentRect.height)
+      if (!nextWidth || !nextHeight || (nextWidth === width && nextHeight === height)) return
+      width = nextWidth
+      height = nextHeight
+      cancelPending()
+
+      const field = width < 810 ? mobile : desktop
+      const dots = buildDots({ width, height }, field)
+      // Resolve currentColor here: an SVG image does not inherit page styles.
+      const fill = getComputedStyle(layer).color
+      // Keep every number at its original precision. Without a viewBox, one
+      // SVG unit stays one CSS pixel, including at fractional layer sizes.
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><g fill="${fill}">${dots.map((dot) => `<circle cx="${dot.x}" cy="${dot.y}" r="${dot.radius}" opacity="${dot.opacity}"/>`).join("")}</g></svg>`
+      const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }))
+      const replacement = new Image()
+      const request = { url, image: replacement }
+      pending = request
+      let decodeFailed = false
+      const showReplacement = () => {
+        if (disposed || pending !== request) return
+        replacement.onload = null
+        replacement.onerror = null
+        const previousUrl = currentUrl
+        image.src = url
+        currentUrl = url
+        pending = null
+        if (previousUrl) URL.revokeObjectURL(previousUrl)
+      }
+      const discardReplacement = () => {
+        if (pending !== request) return
+        replacement.onload = null
+        replacement.onerror = null
+        URL.revokeObjectURL(url)
+        pending = null
+      }
+      replacement.onload = () => { if (decodeFailed) showReplacement() }
+      replacement.onerror = discardReplacement
+      replacement.src = url
+
+      // Decode offscreen before swapping sources so resizing never clears
+      // the visible field while its replacement is being prepared. A loaded
+      // SVG remains usable if the browser rejects the optional decode step.
+      void replacement.decode().then(showReplacement).catch(() => {
+        decodeFailed = true
+        if (replacement.complete) {
+          if (replacement.naturalWidth > 0) showReplacement()
+          else discardReplacement()
+        }
+      })
     })
     observer.observe(layer)
-    return () => observer.disconnect()
-  }, [])
-
-  const field = size.width < 810 ? mobile : desktop
-  const dots = useMemo(() => buildDots(size, field), [size, field])
+    return () => {
+      disposed = true
+      observer.disconnect()
+      cancelPending()
+      if (currentUrl) URL.revokeObjectURL(currentUrl)
+    }
+  }, [color, desktop, mobile])
 
   return (
     <div ref={layerRef} className={[styles.layer, className].filter(Boolean).join(" ")} style={{ color }} aria-hidden="true">
-      {/* No viewBox scaling: one SVG unit is one CSS pixel on every screen. */}
-      <svg className={styles.field} width="100%" height="100%" focusable="false">
-        <g fill="currentColor">
-          {dots.map((dot) => (
-            <circle key={`${dot.x}-${dot.y}`} cx={dot.x} cy={dot.y} r={dot.radius} opacity={dot.opacity} />
-          ))}
-        </g>
-      </svg>
+      {/* Runtime vector texture: one DOM node, with no raster size cap. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img ref={imageRef} className={styles.field} alt="" draggable={false} />
     </div>
   )
 }

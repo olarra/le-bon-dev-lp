@@ -5,6 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { BrandLogo } from "@/components/atoms/BrandLogo"
 import { FOOTER_WORDMARK } from "@/lib/motion"
+import { createScrollTriggerRefresh } from "@/lib/scroll-trigger-refresh"
 import styles from "./SiteFooter.module.css"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -93,10 +94,10 @@ export function FooterWordmark({ label }: { label: string }) {
       return () => { wordmark.removeEventListener("focus", onFocus) }
     })
 
-    let disposed = false
-    void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh() })
+    const refresh = createScrollTriggerRefresh()
+    void document.fonts.ready.then(refresh.request)
     return () => {
-      disposed = true
+      refresh.dispose()
       media.revert()
     }
   }, [])

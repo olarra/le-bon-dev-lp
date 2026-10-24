@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { SCROLL_REVEAL as reveal } from "@/lib/motion"
+import { createScrollTriggerRefresh } from "@/lib/scroll-trigger-refresh"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -73,12 +74,17 @@ export function RevealController() {
         const peers = groups.get(target.closest("[data-reveal-group]") ?? target) ?? [target]
         const triggerViewport = viewports.get(target) ?? viewport
         const sharedAnchor = anchors.get(target)
-        const beat = peers.filter(item => !item.hasAttribute("data-reveal-done")
-          && (sharedAnchor || item === target || top(item) <= innerHeight * (triggerViewport + reveal.groupReach)))
+        // Read the whole beat before any tween writes styles. Interleaving a
+        // sibling's measurement with the previous tween forces extra layouts.
+        const readingLine = innerHeight * (triggerViewport + reveal.groupReach)
+        const beat = peers.filter(item => !item.hasAttribute("data-reveal-done"))
+          .map(item => ({ item, rect: item.getBoundingClientRect() }))
+          .filter(({ item, rect }) => sharedAnchor || item === target
+            || rect.top - (poses.get(item)?.y ?? 0) <= readingLine)
         let index = 0
-        beat.forEach(item => {
+        beat.forEach(({ item, rect }) => {
           // Fast jumps / restored positions must not leave an invisible trail.
-          if (item.getBoundingClientRect().bottom <= 0) {
+          if (rect.bottom <= 0) {
             settle(item)
             return
           }
@@ -97,11 +103,14 @@ export function RevealController() {
         })
       })
 
-      pending.forEach(item => {
+      const initialPositions = pending.map(item => {
         // Initial content already at the reading line is restored immediately.
         const anchor = anchors.get(item) ?? item
         const triggerViewport = viewports.get(item) ?? viewport
-        if (top(anchor) < innerHeight * triggerViewport) {
+        return { item, anchor, triggerViewport, alreadyVisible: top(anchor) < innerHeight * triggerViewport }
+      })
+      initialPositions.forEach(({ item, anchor, triggerViewport, alreadyVisible }) => {
+        if (alreadyVisible) {
           settle(item)
           return
         }
@@ -127,10 +136,10 @@ export function RevealController() {
       return () => { document.removeEventListener("focusin", onFocus) }
     })
 
-    let disposed = false
-    void document.fonts.ready.then(() => { if (!disposed) ScrollTrigger.refresh() })
+    const refresh = createScrollTriggerRefresh()
+    void document.fonts.ready.then(refresh.request)
     return () => {
-      disposed = true
+      refresh.dispose()
       media.revert()
     }
   }, [pathname])
