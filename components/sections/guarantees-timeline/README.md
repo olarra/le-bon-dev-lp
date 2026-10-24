@@ -122,7 +122,8 @@ position de chaque illustration dans le viewport.
 
 Pour les cartes métalliques empilées, la lumière et les cartes partagent
 la même progression de scroll, sans rattrapage retardé. Chaque carte balaie
-sa lumière avec sa propre arrivée (`data-arrival`, exposé par le contrôleur) :
+sa lumière avec sa propre arrivée, calculée directement à partir de la position
+de la liste et de l'espacement fixe des cartes :
 rien tant que la carte précédente s'empile encore, la lampe entre par le haut
 dès que celle-ci est épinglée et atteint le bord inférieur du métal au moment
 où la carte s'épingle à son tour. La première carte balaie pendant sa montée
@@ -134,8 +135,9 @@ dans la pile : le reflet accompagne le mouvement visible.
 
 Le reflet n'utilise ni suivi du curseur ni animation autonome.
 Le moteur partage un contexte GPU entre les surfaces, limite le DPR à 2 sur desktop et 1,5 sur mobile,
-et dessine seulement les surfaces visibles lors d'un scroll, du court amortissement ou
-d'un changement de dimensions. La taille GPU est calculée avant inclinaison
+et dessine seulement les surfaces visibles dont le reflet ou les dimensions changent.
+Une carte épinglée dont la lumière est immobile conserve sa dernière image GPU.
+La taille GPU est calculée avant inclinaison
 pour ne pas réallouer la texture à chaque mouvement.
 Seules les surfaces du breakpoint actif allouent des ressources GPU.
 Le mouvement réduit ou l'absence de WebGPU conservent le matériau SVG/CSS fixe.

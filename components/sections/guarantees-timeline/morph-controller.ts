@@ -67,7 +67,6 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     mobileProperties.forEach((property) => root.style.removeProperty(property))
     gsap.set(steps, { clearProps: "transform" })
     gsap.set(cards, { clearProps: "transform" })
-    steps.forEach((step) => { delete step.dataset.arrival })
   }
 
   function configureLayout() {
@@ -148,12 +147,9 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
       const stack = getStackState(value, { entryDistance, distance: stackDistance, cardCount: steps.length })
       progress = stack.progress
       active = stack.active
-      // Covered cards recede from their top edge as the next card slides over
-      // them; the foil reads each arrival to carry its light off the metal.
-      steps.forEach((step, index) => {
-        gsap.set(cards[index], { scale: stack.scales[index] })
-        step.dataset.arrival = stack.arrivals[index].toFixed(4)
-      })
+      // Covered cards recede from their top edge as the next card slides over.
+      // The foil derives the same arrivals from scroll geometry directly.
+      cards.forEach((card, index) => gsap.set(card, { scale: stack.scales[index] }))
     } else {
       const state = getMorphState(value, reduced.matches)
       progress = state.progress

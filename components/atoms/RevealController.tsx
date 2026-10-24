@@ -14,6 +14,9 @@ export function RevealController() {
   const pathname = usePathname()
 
   useLayoutEffect(() => {
+    // Safari's collapsing toolbar changes innerHeight during a touch swipe.
+    // Keep trigger positions stable until a real viewport/layout change.
+    ScrollTrigger.config({ ignoreMobileResize: true })
     const items = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"))
     if (!items.length) return
 

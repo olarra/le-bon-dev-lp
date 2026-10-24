@@ -23,6 +23,8 @@ export function useHeader() {
     let scrollFrame = 0
     let wasScrolled = false
     let previousSurface = ""
+    let currentSection: HTMLElement | undefined
+    let previousVisibleBar = Number.NaN
 
     // Measure the actual links, including after the local font loads.
     const measureNavigation = () => {
@@ -39,10 +41,14 @@ export function useHeader() {
       // the return to the light offers surface at the end of the guarantees.
       const headerRect = header.getBoundingClientRect()
       const sampleY = headerRect.top + headerRect.height / 2
-      const surface = themedSections.find((section) => {
+      const containsHeader = (section: HTMLElement) => {
         const rect = section.getBoundingClientRect()
         return rect.top <= sampleY && rect.bottom > sampleY
-      })?.dataset.headerTheme ?? "light"
+      }
+      currentSection = currentSection && containsHeader(currentSection)
+        ? currentSection
+        : themedSections.find(containsHeader)
+      const surface = currentSection?.dataset.headerTheme ?? "light"
       if (surface !== previousSurface) {
         previousSurface = surface
         header.dataset.surface = surface
@@ -64,10 +70,11 @@ export function useHeader() {
       const visibleBar = topBar
         ? Math.min(topBarHeight, Math.max(0, topBar.getBoundingClientRect().bottom))
         : 0
-      header.style.setProperty("--topbar-offset", `${visibleBar}px`)
-      if (topBar) {
-        topBar.inert = visibleBar === 0
+      if (visibleBar !== previousVisibleBar) {
+        previousVisibleBar = visibleBar
+        header.style.setProperty("--topbar-offset", `${visibleBar}px`)
       }
+      if (topBar && topBar.inert !== (visibleBar === 0)) topBar.inert = visibleBar === 0
     }
     const scheduleUpdate = () => {
       if (!scrollFrame) {

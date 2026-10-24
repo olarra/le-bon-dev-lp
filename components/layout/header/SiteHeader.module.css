@@ -460,6 +460,20 @@
   .language[open] nav { display: flex; flex-wrap: wrap; box-shadow: none; }
 }
 
+@media (max-width: 809.98px) {
+  /* A fixed backdrop blur repaints the moving page beneath the full-width
+     mobile header on every swipe. The opaque brand surface reads the same. */
+  .header[data-scrolled="true"] .envelope {
+    background-color: var(--color-surface-navigation);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .header[data-scrolled="true"][data-surface="dark"] .envelope {
+    background-color: var(--color-surface-guarantees);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .header .contact svg {
     transform: none;
