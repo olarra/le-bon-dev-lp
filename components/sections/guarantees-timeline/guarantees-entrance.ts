@@ -23,10 +23,18 @@ const textClip = {
 
 /** One-shot entrances on outer artwork wrappers and text. The inner morph,
  * foil and card stack continue to own their respective transforms. */
-export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
+export function mountGuaranteesEntrance(root: HTMLElement) {
   gsap.registerPlugin(ScrollTrigger, CustomEase)
   const revealEase = CustomEase.create("guarantee-reveal", entrance.ease)
   const media = gsap.matchMedia()
+  let lenis: Lenis | undefined
+  let detachScroll: (() => void) | undefined
+  let retryPending: (() => void) | undefined
+  let disposed = false
+  const bindScroll = () => {
+    detachScroll?.()
+    detachScroll = lenis && retryPending ? lenis.on("scroll", retryPending) : undefined
+  }
 
   media.add({
     desktop: "(min-width: 810px)",
@@ -90,7 +98,7 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
     } = {}) => {
       const triggerViewport = options.viewport ?? viewport
       const start = () => Math.max(0, layoutTop(anchor, section) - window.innerHeight * triggerViewport)
-      // Preserve completed entrances across breakpoint/Lenis changes, but let
+      // Preserve completed entrances across breakpoint changes, but let
       // visible content animate on a fresh mount at a restored scroll position.
       if (anchor.hasAttribute("data-guarantee-entered")) {
         options.onComplete?.()
@@ -209,7 +217,8 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
       if (copies[0]) stage(copies[0], Array.from(copies[0].children) as HTMLElement[])
     }
 
-    const detachScroll = lenis?.on("scroll", () => pending.forEach(play => play()))
+    retryPending = () => pending.forEach(play => play())
+    bindScroll()
     const refresh = () => {
       if (!active || !ready || frame) return
       frame = requestAnimationFrame(() => {
@@ -242,7 +251,8 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
     return () => {
       active = false
       pending.clear()
-      detachScroll?.()
+      retryPending = undefined
+      bindScroll()
       floatObserver?.disconnect()
       document.removeEventListener("visibilitychange", syncFloat)
       observer.disconnect()
@@ -252,5 +262,20 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
     }
   }, root)
 
-  return () => media.revert()
+  return {
+    setLenis(next: Lenis | undefined) {
+      if (disposed || next === lenis) return
+      lenis = next
+      bindScroll()
+      // A replaced or removed instance must not leave a snap-delayed entrance
+      // waiting on the previous instance's scroll events.
+      retryPending?.()
+    },
+    dispose() {
+      disposed = true
+      media.revert()
+      detachScroll?.()
+      detachScroll = undefined
+    },
+  }
 }

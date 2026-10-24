@@ -25,14 +25,21 @@ export function useHeader() {
     let previousSurface = ""
     let currentSection: HTMLElement | undefined
     let previousVisibleBar = Number.NaN
+    let navigationWidth = 0
+    let previousNavigationWidth = Number.NaN
 
     // Measure the actual links, including after the local font loads.
     const measureNavigation = () => {
-      header.style.setProperty("--navigation-width", `${navigation.getBoundingClientRect().width}px`)
+      navigationWidth = navigation.getBoundingClientRect().width
     }
     const measureTopBar = () => {
       // The wrapper stays full height while its inner surface fades away.
       topBarHeight = topBar?.getBoundingClientRect().height ?? 0
+    }
+    const applyNavigationWidth = () => {
+      if (navigationWidth === previousNavigationWidth) return
+      previousNavigationWidth = navigationWidth
+      header.style.setProperty("--navigation-width", `${navigationWidth}px`)
     }
     const updateScroll = () => {
       const heroVisibleBottom = hero?.getBoundingClientRect().bottom ?? null
@@ -49,10 +56,6 @@ export function useHeader() {
         ? currentSection
         : themedSections.find(containsHeader)
       const surface = currentSection?.dataset.headerTheme ?? "light"
-      if (surface !== previousSurface) {
-        previousSurface = surface
-        header.dataset.surface = surface
-      }
 
       // Retain the full-size navigation until the hero leaves the viewport.
       // A small hysteresis keeps it steady when reversing at that boundary.
@@ -60,16 +63,24 @@ export function useHeader() {
       const nextScrolled = heroVisibleBottom === null
         ? (wasScrolled ? y >= 32 : y > 80)
         : (wasScrolled ? heroVisibleBottom < 48 : heroVisibleBottom <= 0)
-      if (nextScrolled !== wasScrolled) {
-        wasScrolled = nextScrolled
-        setScrolled(nextScrolled)
-      }
 
       // The utility strip now scrolls with the hero. Follow its actual edge
       // so the fixed navigation moves up as soon as that strip leaves.
       const visibleBar = topBar
         ? Math.min(topBarHeight, Math.max(0, topBar.getBoundingClientRect().bottom))
         : 0
+
+      // Finish geometry reads before changing styles or React state. The
+      // decorative navigation width does not need rewriting on every resize.
+      applyNavigationWidth()
+      if (surface !== previousSurface) {
+        previousSurface = surface
+        header.dataset.surface = surface
+      }
+      if (nextScrolled !== wasScrolled) {
+        wasScrolled = nextScrolled
+        setScrolled(nextScrolled)
+      }
       if (visibleBar !== previousVisibleBar) {
         previousVisibleBar = visibleBar
         header.style.setProperty("--topbar-offset", `${visibleBar}px`)
@@ -87,6 +98,8 @@ export function useHeader() {
     const measureLayout = () => {
       measureNavigation()
       measureTopBar()
+      // Preserve the same-frame font/resize adjustment after both reads.
+      applyNavigationWidth()
       scheduleUpdate()
     }
 

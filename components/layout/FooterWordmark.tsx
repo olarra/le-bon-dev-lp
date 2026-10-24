@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { BrandLogo } from "@/components/atoms/BrandLogo"
 import { FOOTER_WORDMARK } from "@/lib/motion"
 import { createScrollTriggerRefresh } from "@/lib/scroll-trigger-refresh"
+import { prepareNearViewport } from "@/lib/prepare-near-viewport"
 import styles from "./SiteFooter.module.css"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -22,84 +23,89 @@ export function FooterWordmark({ label }: { label: string }) {
     const frame = frameRef.current
     const wordmark = wordmarkRef.current
     if (!motion || !frame || !wordmark) return
-    const media = gsap.matchMedia()
-    let revealed = false
-    media.add({
-      animate: "(prefers-reduced-motion: no-preference)",
-      reduced: "(prefers-reduced-motion: reduce)",
-    }, context => {
-      if (context.conditions?.reduced) {
-        revealed = true
-        wordmark.dataset.wordmarkRevealed = ""
-        return
-      }
-      gsap.fromTo(motion, {
-        y: () => -Math.min(frame.clientHeight * FOOTER_WORDMARK.heightRatio, FOOTER_WORDMARK.maxDistance),
-      }, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: frame,
-          start: "clamp(top bottom)",
-          end: "max",
-          scrub: FOOTER_WORDMARK.scrub,
-          invalidateOnRefresh: true,
-        },
-      })
+    return prepareNearViewport(frame, () => {
+      const media = gsap.matchMedia()
+      let revealed = false
+      media.add({
+        animate: "(prefers-reduced-motion: no-preference)",
+        reduced: "(prefers-reduced-motion: reduce)",
+      }, context => {
+        if (context.conditions?.reduced) {
+          revealed = true
+          wordmark.dataset.wordmarkRevealed = ""
+          return
+        }
+        gsap.fromTo(motion, {
+          y: () => -Math.min(frame.clientHeight * FOOTER_WORDMARK.heightRatio, FOOTER_WORDMARK.maxDistance),
+        }, {
+          y: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: frame,
+            start: "clamp(top bottom)",
+            end: "max",
+            scrub: FOOTER_WORDMARK.scrub,
+            invalidateOnRefresh: true,
+          },
+        })
 
-      if (revealed) return
-      const entrance = gsap.fromTo(wordmark, {
-        y: () => parseFloat(getComputedStyle(frame).getPropertyValue("--wordmark-rise")),
-        opacity: 0,
-      }, {
-        y: 0,
-        opacity: 1,
-        duration: FOOTER_WORDMARK.revealDuration,
-        ease: "power1.inOut",
-        paused: true,
-        immediateRender: true,
-        clearProps: "transform,opacity",
-      })
-      const play = () => {
         if (revealed) return
-        revealed = true
-        wordmark.dataset.wordmarkRevealed = ""
-        entrance.play()
-      }
-      const trigger = ScrollTrigger.create({
-        trigger: frame,
-        start: () => Math.max(0, Math.min(
-          window.scrollY + frame.getBoundingClientRect().top - innerHeight * FOOTER_WORDMARK.revealViewport,
-          ScrollTrigger.maxScroll(window) - 1,
-        )),
-        once: true,
-        onEnter: play,
-        onRefresh: self => {
+        const entrance = gsap.fromTo(wordmark, {
+          y: () => parseFloat(getComputedStyle(frame).getPropertyValue("--wordmark-rise")),
+          opacity: 0,
+        }, {
+          y: 0,
+          opacity: 1,
+          duration: FOOTER_WORDMARK.revealDuration,
+          ease: "power1.inOut",
+          paused: true,
+          immediateRender: true,
+          clearProps: "transform,opacity",
+        })
+        const play = () => {
           if (revealed) return
-          entrance.invalidate()
-          if (self.scroll() >= self.start) play()
-        },
+          revealed = true
+          wordmark.dataset.wordmarkRevealed = ""
+          entrance.play()
+        }
+        const trigger = ScrollTrigger.create({
+          trigger: frame,
+          start: () => Math.max(0, Math.min(
+            window.scrollY + frame.getBoundingClientRect().top - innerHeight * FOOTER_WORDMARK.revealViewport,
+            ScrollTrigger.maxScroll(window) - 1,
+          )),
+          once: true,
+          onEnter: play,
+          onRefresh: self => {
+            if (revealed) return
+            entrance.invalidate()
+            if (self.scroll() >= self.start) play()
+          },
+        })
+        // Play the entrance on a direct load at the footer too; never settle it
+        // merely because the browser has restored an already-visible position.
+        if (trigger.scroll() >= trigger.start) play()
+
+        const onFocus = () => {
+          revealed = true
+          wordmark.dataset.wordmarkRevealed = ""
+          entrance.progress(1).pause()
+          trigger.kill()
+        }
+        wordmark.addEventListener("focus", onFocus)
+        // A direct keyboard jump can prepare this controller from focusin,
+        // after the link's non-bubbling focus event has already fired.
+        if (wordmark.contains(document.activeElement)) onFocus()
+        return () => { wordmark.removeEventListener("focus", onFocus) }
       })
-      // Play the entrance on a direct load at the footer too; never settle it
-      // merely because the browser has restored an already-visible position.
-      if (trigger.scroll() >= trigger.start) play()
 
-      const onFocus = () => {
-        revealed = true
-        wordmark.dataset.wordmarkRevealed = ""
-        entrance.progress(1).pause()
-        trigger.kill()
+      const refresh = createScrollTriggerRefresh()
+      if (document.fonts.status === "loading") void document.fonts.ready.then(refresh.request)
+      return () => {
+        refresh.dispose()
+        media.revert()
       }
-      wordmark.addEventListener("focus", onFocus)
-      return () => { wordmark.removeEventListener("focus", onFocus) }
     })
-
-    const refresh = createScrollTriggerRefresh()
-    void document.fonts.ready.then(refresh.request)
-    return () => {
-      refresh.dispose()
-      media.revert()
-    }
   }, [])
 
   return (

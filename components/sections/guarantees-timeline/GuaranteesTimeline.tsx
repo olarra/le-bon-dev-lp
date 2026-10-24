@@ -27,11 +27,21 @@ function ArtworkEntrance({ children }: { children: ReactNode }) {
 
 export function GuaranteesTimeline({ heading, steps }: { heading: ReactNode; steps: Dictionary["guarantees"]["steps"] }) {
   const ref = useRef<HTMLDivElement>(null)
+  const entranceRef = useRef<ReturnType<typeof mountGuaranteesEntrance> | null>(null)
   const lenis = useLenis()
 
   useLayoutEffect(() => {
     if (!ref.current) return
-    return mountGuaranteesEntrance(ref.current, lenis)
+    const entrance = mountGuaranteesEntrance(ref.current)
+    entranceRef.current = entrance
+    return () => {
+      entranceRef.current = null
+      entrance.dispose()
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    entranceRef.current?.setLenis(lenis)
   }, [lenis])
 
   useEffect(() => {
