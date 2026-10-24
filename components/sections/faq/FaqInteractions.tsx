@@ -29,6 +29,7 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
     let outgoingGroup: HTMLElement | undefined
     let refreshFrame = 0
     let anchorFrame = 0
+    let viewportWidth = window.innerWidth
     let previousAnchoring: { value: string; priority: string } | undefined
     const documentStyle = document.documentElement.style
 
@@ -279,6 +280,12 @@ export function FaqInteractions({ children, className }: { children: ReactNode; 
       if (!transitions.size) refreshLayout()
     }
     const resize = () => {
+      // Safari's toolbar changes viewport height during native scrolling.
+      // FAQ layout only needs settling when its available width changes;
+      // a global refresh here would interrupt the ongoing scroll gesture.
+      const width = window.innerWidth
+      if (width === viewportWidth) return
+      viewportWidth = width
       settleAll()
       orientTopics()
     }

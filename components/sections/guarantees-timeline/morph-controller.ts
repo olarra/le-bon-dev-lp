@@ -180,6 +180,12 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
 
   function schedule(value: number) {
     if (disposed) return
+    // ScrollTrigger already updates on the scroll frame. Native sticky cards
+    // must recede on that frame too, especially when the gesture reverses.
+    if (mobileStack) {
+      update(value)
+      return
+    }
     current = value
     if (!frame) frame = requestAnimationFrame(() => {
       frame = 0

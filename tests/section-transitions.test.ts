@@ -203,6 +203,36 @@ test("reversing the guarantees entrance cancels the snap and immediately restore
   rig.dispose()
 })
 
+test("reversing pending upward inertia cannot pull the page backward to the hero's reading edge", () => {
+  const rig = setup(undefined, false, true)
+  rig.targets[0].height = 1000
+  rig.targets[1].top = 1000
+  rig.position(350)
+  rig.lenis.targetScroll = 100
+  rig.lenis.isScrolling = "smooth"
+
+  rig.wheel(80, 0)
+  assert.equal(rig.calls[0].top, 350, "Discard only the old gesture's pending distance")
+  assert.equal(rig.calls[0].options.immediate, true)
+  assert.equal(rig.calls[1].top, 1000, "The next transition must follow the new downward gesture")
+  rig.frame(0.5)
+  assert.ok(rig.lenis.actualScroll > 350)
+  rig.dispose()
+})
+
+test("an upward wheel reversal starts from the visible position in later sections", () => {
+  const rig = setup(undefined, false, true)
+  rig.position(1400)
+  rig.lenis.targetScroll = 1900
+  rig.lenis.isScrolling = "smooth"
+
+  const result = rig.wheel(-100, 0)
+  assert.equal(result.accepted, true)
+  assert.equal(rig.calls[0].top, 1400)
+  assert.equal(rig.lenis.targetScroll, 1300)
+  rig.dispose()
+})
+
 test("long sections scroll freely and a large fling preserves the final reading screen before the next transition", () => {
   const rig = setup()
   rig.position(1200)

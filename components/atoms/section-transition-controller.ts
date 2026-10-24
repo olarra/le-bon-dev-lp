@@ -91,14 +91,26 @@ export function attachSectionTransitions(
       || deltaY === 0 || Math.abs(deltaX) >= Math.abs(deltaY) || !event.cancelable
       || lenis.prefersReducedMotion || lenis.isStopped || lenis.isLocked || !lenis.options.smoothWheel
       || (event as Event & { lenisStopPropagation?: boolean }).lenisStopPropagation
-      || belongsToNestedScroll(data)
-      // A single entrance must not pull readers back to it from later sections.
-      || (options.forwardOnly && deltaY < 0)) {
+      || belongsToNestedScroll(data)) {
       release()
       return true
     }
 
     const nextDirection = Math.sign(deltaY)
+    // Reverse from the visible position, not the old gesture's destination.
+    // Otherwise a reading edge can be behind the reader and send the page
+    // against their new gesture while the previous wheel inertia is pending.
+    if (lenis.isScrolling === "smooth"
+      && (lenis.targetScroll - lenis.actualScroll) * nextDirection < -config.epsilon) {
+      const position = lenis.actualScroll
+      release()
+      if (lenis.targetScroll !== position) lenis.scrollTo(position, { immediate: true })
+    }
+    // A single entrance must not pull readers back to it from later sections.
+    if (options.forwardOnly && deltaY < 0) {
+      release()
+      return true
+    }
     // Do not cancel a navigation link or another component's scroll animation.
     if (arrival && lenis.userData !== arrival) release()
     if (arrival && nextDirection !== direction) release()

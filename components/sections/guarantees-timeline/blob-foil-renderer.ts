@@ -12,7 +12,7 @@ type FoilSurface = {
   index: number
   cornerRadius: number
   travel?: number
-  drawn?: boolean
+  drawnTravel?: number
   output?: Surface
   shader?: Effect
 }
@@ -149,8 +149,8 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
         if (Math.abs(target - travel) > 0.0005) settling = true
         else travel = target
         item.travel = travel
-        if (!resized && item.drawn && previousTravel !== undefined
-          && Math.abs(travel - previousTravel) < 0.0005) continue
+        if (!resized && item.drawnTravel !== undefined
+          && Math.abs(travel - item.drawnTravel) < 0.0005) continue
         const yaw = (travel - 0.5) * 0.32
         const pitch = (0.5 - travel) * 0.24
         // Cards keep their stack alignment; their material still reflects
@@ -176,7 +176,7 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
       if (dirty.length) {
         frame(gpu, current => dirty.forEach(item => current.pass(item.output!, item.shader!)))
         dirty.forEach(item => {
-          item.drawn = true
+          item.drawnTravel = item.travel
           item.canvas.style.opacity = "1"
         })
       }
