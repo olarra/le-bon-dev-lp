@@ -58,6 +58,14 @@ La Politique de confidentialité comporte huit rubriques : responsable et
 contact ; demandes de contact et d’estimation avec leurs bases légales ; accès
 aux données et prestataires ; durées de conservation ; cookies et brouillon ;
 sécurité ; exercice des droits et recours auprès de la CNIL ; modifications.
+Une rubrique « Mesure d’audience » s’ajoute lorsque les alertes de visite
+sont activées en production. Sa rédaction est courte dans les trois langues :
+finalité, base légale et opposition. Le détail des données de navigation, de
+l’IP et de la localisation approximative est accessible dans un élément natif
+`details` intitulé « Données utilisées », fermé initialement et utilisable sans
+JavaScript. Cette présentation en deux niveaux conserve l’information complète.
+L’acheminement par e-mail et les rôles de Vercel et Mailjet sont regroupés dans
+« Accès aux données » ; les 90 jours restent indiqués dans « Durées de conservation ».
 La sécurité décrit HTTPS, la collecte limitée et les destinataires autorisés.
 La rubrique Modifications renvoie à la date `LEGAL_UPDATED_AT` déjà affichée
 en haut de page. Le stockage du brouillon est distingué de la conservation
@@ -97,7 +105,7 @@ des messages des boîtes e-mail ou des données conservées par les prestataires
 Les renseignements doivent correspondre aux pratiques effectives avant mise
 en ligne. Actualiser `LEGAL_UPDATED_AT` lors de la finalisation.
 
-Sources de rédaction consultées le 23 octobre 2026 :
+Sources de rédaction consultées les 23 et 24 octobre 2026 :
 
 - [Ministère de l’Économie — mentions obligatoires](https://www.economie.gouv.fr/entreprises/developper-son-entreprise/innover-et-numeriser-son-entreprise/mentions-sur-votre-site-internet-les-obligations-respecter).
 - [CNIL — exemples d’information sur les formulaires](https://www.cnil.fr/fr/exemples-de-formulaire-de-collecte-de-donnees-caractere-personnel).

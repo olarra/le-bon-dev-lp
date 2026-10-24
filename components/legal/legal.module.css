@@ -167,6 +167,24 @@
 .content dd { margin: 0; color: #203e33; }
 .content address { white-space: pre-line; }
 
+.dataDetails { margin-top: 16px; }
+
+.dataDetails summary {
+  display: list-item;
+  width: fit-content;
+  padding-block: 8px;
+  color: #203e33;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dataDetails summary:focus-visible {
+  outline: 2px solid #203e33;
+  outline-offset: 5px;
+}
+
+.dataDetails > p { margin-top: 8px; }
+
 .footer {
   flex-wrap: wrap;
   min-height: 88px;

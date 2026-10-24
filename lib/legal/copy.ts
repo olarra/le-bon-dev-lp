@@ -16,8 +16,9 @@ type LegalCopy = {
   privacy: {
     introduction: string; controller: string; controllerText: string; controllerLink: string
     purposes: string; collected: string; required: string; basis: string
-    visits: string; visitsText: string; visitsProtection: string; visitsChoice: string; visitsRetentionPending: string
-    visitsRetentionText: (days: number) => string
+    visits: string; visitsText: string; visitsDataTitle: string; visitsData: string
+    visitsProtection: string; visitsChoice: string; visitsRetentionPending: string
+    visitsRetentionText: (days: number) => string; visitsRecipients: string
     recipients: string; recipientsText: string; mailjet: string; mailjetLink: string; hostingPending: string; hostingLink: string
     retention: string; retentionText: (months: number) => string; retentionPending: string; clients: string
     storage: string; draftStorage: string; trackers: string
@@ -57,12 +58,15 @@ const copies: Record<Locale, LegalCopy> = {
       collected: "Les formulaires recueillent vos coordonnées (nom ou prénom, e-mail, entreprise et téléphone si renseignés) et les informations sur votre projet : message, besoins, budget ou délai. La langue, la date d’envoi et l’offre à l’origine d’une estimation accompagnent la demande.",
       required: "Sans nom ou prénom, e-mail et message ou type de projet, l’envoi n’est pas possible. L’entreprise, le téléphone et les précisions complémentaires sont facultatifs.",
       basis: "Ces données servent à vous répondre et à préparer une proposition. Les demandes d’estimation relèvent des mesures précontractuelles (article 6.1.b du RGPD) ; les autres échanges, de notre intérêt légitime à répondre à vos sollicitations (article 6.1.f).",
-      visits: "Notifications de visite",
-      visitsText: "Au chargement de l’accueil ou de l’estimation, le studio peut recevoir un e-mail contenant la page, sa langue, l’heure, l’adresse IP et sa localisation estimée par Vercel : ville, région, pays, code postal et coordonnées approximatives, lorsque ces informations sont disponibles. Cet e-mail ne contient aucune donnée saisie dans les formulaires. La localisation peut correspondre à un VPN ou à un relais réseau.",
-      visitsProtection: "Vercel traite les données techniques de connexion pour filtrer les robots, estimer la localisation de l’IP et limiter les envois répétés. Les notifications sont acheminées par Mailjet vers la messagerie du studio. Ce suivi ponctuel et sa protection reposent sur notre intérêt légitime à suivre l’activité du site et prévenir les abus (article 6.1.f du RGPD).",
-      visitsChoice: "Le dispositif n’ajoute pas d’identifiant de visiteur ni de stockage de suivi dans votre navigateur. Il n’envoie pas de notification si votre navigateur transmet le signal Do Not Track ou Global Privacy Control. Vous pouvez également nous contacter pour exercer votre droit d’opposition.",
-      visitsRetentionPending: "Notifications de visite : durée de conservation dans la messagerie à définir avant activation.",
-      visitsRetentionText: days => `Les notifications de visite sont conservées dans la messagerie du studio pendant ${days} jours au maximum à compter de leur réception, puis supprimées.`,
+      visits: "Mesure d’audience",
+      visitsText: "Nous mesurons l’audience du site pour comprendre sa fréquentation et les pages consultées.",
+      visitsDataTitle: "Données utilisées",
+      visitsData: "Sur l’accueil et la page d’estimation, nous recueillons la page consultée, sa langue, la date et l’heure de visite, ainsi que l’adresse IP et la localisation approximative qui en est déduite.",
+      visitsProtection: "Ces données servent à connaître la fréquentation du site et à prévenir les abus, sur la base de notre intérêt légitime (article 6.1.f du RGPD).",
+      visitsChoice: "Ce suivi n’ajoute pas d’identifiant de visiteur dans votre navigateur. Vous pouvez vous y opposer en nous contactant ; les signaux Do Not Track et Global Privacy Control sont aussi respectés.",
+      visitsRetentionPending: "Informations de visite : durée de conservation dans la messagerie à définir avant activation.",
+      visitsRetentionText: days => `Les informations de visite sont conservées dans la messagerie du studio pendant ${days} jours au maximum après réception, puis supprimées.`,
+      visitsRecipients: "Les informations de visite sont transmises par e-mail au studio via Mailjet. Vercel fournit les données techniques utilisées pour cette mesure et filtre les accès automatisés.",
       recipients: "Accès aux données",
       recipientsText: "Vos demandes arrivent dans la messagerie du studio. L’hébergeur et les prestataires de messagerie traitent les informations nécessaires à leurs services.",
       mailjet: "Les envois et confirmations passent par Mailjet (Sinch). Les garanties applicables aux transferts internationaux figurent dans son accord de traitement.",
@@ -116,12 +120,15 @@ const copies: Record<Locale, LegalCopy> = {
       collected: "The forms collect your contact details (name, email, and company and phone number if provided) and project information: your message, needs, budget or timing. Your request also includes the language, submission date and the offer that led you to an estimate.",
       required: "A name, email and message or project type are needed to submit a request. Company, phone number and further project details are optional.",
       basis: "We use this information to reply and prepare a proposal. Estimate requests are processed as steps prior to a contract (GDPR Article 6(1)(b)); other enquiries rely on our legitimate interest in answering your questions (Article 6(1)(f)).",
-      visits: "Visit notifications",
-      visitsText: "When the home or estimate page loads, the studio may receive an email containing the page, its language, the time, the IP address and its location estimated by Vercel: city, region, country, postal code and approximate coordinates, where available. The email contains no information entered in forms. The location may correspond to a VPN or network relay.",
-      visitsProtection: "Vercel processes technical connection data to filter bots, estimate the IP’s location and limit repeated notifications. Mailjet delivers the notifications to the studio’s mailbox. This occasional monitoring and its protection rely on our legitimate interest in following website activity and preventing abuse (GDPR Article 6(1)(f)).",
-      visitsChoice: "The feature does not add a visitor identifier or tracking storage to your browser. It does not send a notification if your browser transmits a Do Not Track or Global Privacy Control signal. You can also contact us to exercise your right to object.",
-      visitsRetentionPending: "Visit notifications: mailbox retention period to be defined before activation.",
-      visitsRetentionText: days => `Visit notifications are kept in the studio’s mailbox for up to ${days} days after receipt, then deleted.`,
+      visits: "Audience measurement",
+      visitsText: "We measure website traffic to understand how often the site is visited and which pages are viewed.",
+      visitsDataTitle: "Data used",
+      visitsData: "On the home and estimate pages, we collect the page viewed, its language, the date and time of the visit, and the IP address and approximate location derived from it.",
+      visitsProtection: "We use this data to understand website traffic and prevent abuse, based on our legitimate interest (GDPR Article 6(1)(f)).",
+      visitsChoice: "This monitoring does not add a visitor identifier to your browser. You can object by contacting us; Do Not Track and Global Privacy Control signals are also respected.",
+      visitsRetentionPending: "Visit information: mailbox retention period to be defined before activation.",
+      visitsRetentionText: days => `Visit information is kept in the studio’s mailbox for up to ${days} days after receipt, then deleted.`,
+      visitsRecipients: "Visit information is emailed to the studio through Mailjet. Vercel provides the technical data used for this measurement and filters automated traffic.",
       recipients: "Access to your data",
       recipientsText: "Your requests arrive in the studio’s mailbox. Hosting and email providers process the information needed to deliver their services.",
       mailjet: "Requests and confirmations are sent through Mailjet (Sinch). Its data processing agreement describes the safeguards for international transfers.",
@@ -175,12 +182,15 @@ const copies: Record<Locale, LegalCopy> = {
       collected: "Los formularios recogen tus datos de contacto (nombre, correo y, si los indicas, empresa y teléfono) y la información de tu proyecto: mensaje, necesidades, presupuesto o plazos. La solicitud también incluye el idioma, la fecha de envío y la oferta desde la que accediste a la estimación.",
       required: "Para enviar una solicitud se necesitan un nombre, un correo y un mensaje o tipo de proyecto. La empresa, el teléfono y los detalles adicionales son opcionales.",
       basis: "Usamos estos datos para responderte y preparar una propuesta. Las estimaciones se basan en medidas precontractuales (artículo 6.1.b del RGPD); las demás consultas, en nuestro interés legítimo en atender tus preguntas (artículo 6.1.f).",
-      visits: "Notificaciones de visita",
-      visitsText: "Al cargar la página de inicio o de estimación, el estudio puede recibir un correo con la página, su idioma, la hora, la dirección IP y su ubicación estimada por Vercel: ciudad, región, país, código postal y coordenadas aproximadas, cuando estén disponibles. El correo no contiene datos introducidos en los formularios. La ubicación puede corresponder a una VPN o a un relé de red.",
-      visitsProtection: "Vercel trata los datos técnicos de conexión para filtrar robots, estimar la ubicación de la IP y limitar los envíos repetidos. Mailjet entrega las notificaciones al buzón del estudio. Este seguimiento puntual y su protección se basan en nuestro interés legítimo en conocer la actividad del sitio y prevenir abusos (artículo 6.1.f del RGPD).",
-      visitsChoice: "El dispositivo no añade un identificador de visitante ni almacenamiento de seguimiento en tu navegador. No envía notificaciones si tu navegador transmite la señal Do Not Track o Global Privacy Control. También puedes contactarnos para ejercer tu derecho de oposición.",
-      visitsRetentionPending: "Notificaciones de visita: plazo de conservación en el buzón por definir antes de la activación.",
-      visitsRetentionText: days => `Las notificaciones de visita se conservan en el buzón del estudio durante un máximo de ${days} días desde su recepción y después se eliminan.`,
+      visits: "Medición de audiencia",
+      visitsText: "Medimos la audiencia del sitio para conocer su afluencia y las páginas consultadas.",
+      visitsDataTitle: "Datos utilizados",
+      visitsData: "En las páginas de inicio y estimación recogemos la página consultada, su idioma, la fecha y hora de la visita, y la dirección IP con la ubicación aproximada que se deduce de ella.",
+      visitsProtection: "Usamos estos datos para conocer la afluencia al sitio y prevenir abusos, sobre la base de nuestro interés legítimo (artículo 6.1.f del RGPD).",
+      visitsChoice: "Este seguimiento no añade un identificador de visitante a tu navegador. Puedes oponerte contactándonos; también respetamos las señales Do Not Track y Global Privacy Control.",
+      visitsRetentionPending: "Información de visita: plazo de conservación en el buzón por definir antes de la activación.",
+      visitsRetentionText: days => `La información de visita se conserva en el buzón del estudio durante un máximo de ${days} días desde su recepción y después se elimina.`,
+      visitsRecipients: "La información de visita se envía al estudio por correo electrónico a través de Mailjet. Vercel proporciona los datos técnicos utilizados para esta medición y filtra el tráfico automatizado.",
       recipients: "Acceso a los datos",
       recipientsText: "Tus solicitudes llegan al buzón del estudio. Los proveedores de alojamiento y correo tratan la información necesaria para prestar sus servicios.",
       mailjet: "Los envíos y las confirmaciones pasan por Mailjet (Sinch). Su acuerdo de tratamiento describe las garantías aplicables a las transferencias internacionales.",

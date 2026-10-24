@@ -73,10 +73,15 @@ export function LegalDocumentPage({ locale, document }: { locale: Locale; docume
           <p>{copy.privacy.visitsText}</p>
           <p>{copy.privacy.visitsProtection}</p>
           <p>{copy.privacy.visitsChoice}</p>
+          <details className={styles.dataDetails}>
+            <summary>{copy.privacy.visitsDataTitle}</summary>
+            <p>{copy.privacy.visitsData}</p>
+          </details>
         </section>}
         <section aria-labelledby="privacy-recipients">
           <h2 id="privacy-recipients">{copy.privacy.recipients}</h2>
           <p>{copy.privacy.recipientsText}</p>
+          {visitsEnabled && <p>{copy.privacy.visitsRecipients}</p>}
           <p>{copy.privacy.mailjet} <a href="https://www.mailjet.com/legal/dpa/">{copy.privacy.mailjetLink}</a>.</p>
           <p className={host ? undefined : styles.pending}>
             {host ? <>{host.dataProcessing[locale]} <a href={host.dataProcessingUrl}>{copy.privacy.hostingLink}</a>.</> : copy.privacy.hostingPending}
