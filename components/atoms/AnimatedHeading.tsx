@@ -14,25 +14,30 @@ type Props = {
   textClassName?: string
   className?: string
   textAlign?: "left" | "center" | "right"
+  staggerBy?: "heading" | "line"
   controls?: AnimationControls
 }
 
 export function AnimatedHeading({
   text, children, id, effect = HEADING_REVEAL, as: Tag = "h2",
   textClassName, className, textAlign = "center", controls: externalControls,
+  staggerBy = "heading",
 }: Props) {
-  const { ref, controls } = useHeadingReveal(effect.threshold, externalControls)
+  const { ref, controls, characterOrder } = useHeadingReveal(effect.threshold, externalControls, staggerBy === "line")
   const Container = Tag === "span" ? "span" : "div"
   const isHeading = Tag !== "span" && Tag !== "p"
   const variants: Variants = {
     hidden: effect.effect,
-    visible: (index: number) => ({
-      opacity: 1, scale: 1, rotateY: 0,
-      transition: {
-        ...effect.transition,
-        delay: effect.startDelay + index * effect.transition.delay,
-      },
-    }),
+    visible: (index: number) => {
+      const position = staggerBy === "line" ? characterOrder.current[index] ?? index : index
+      return {
+        opacity: 1, scale: 1, rotateY: 0,
+        transition: {
+          ...effect.transition,
+          delay: effect.startDelay + position * effect.transition.delay,
+        },
+      }
+    },
   }
   const count = Array.from(text.replace(/\s/g, "")).length
   let index = 0
@@ -44,7 +49,7 @@ export function AnimatedHeading({
         return String(child).split(/(\s+)/).map((word, wordIndex) => {
           if (!word.trim()) return word
           return (
-            <span key={wordIndex} style={{ whiteSpace: "nowrap" }}>
+            <span key={wordIndex} data-heading-word style={{ whiteSpace: "nowrap" }}>
               {Array.from(word).map((letter) => {
                 const position = index++
                 return (

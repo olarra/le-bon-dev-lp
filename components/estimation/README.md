@@ -40,7 +40,7 @@ latérale sur desktop et compacte sur mobile ; les questions conservent leurs
 groupes, choix multiples ou uniques et champs conditionnels. Les budgets sont
 des tranches, sans estimation automatique ni curseur numérique artificiel.
 Le récapitulatif permet de modifier les étapes déjà visitées.
-La dernière étape indique l’usage des données et ouvre la page Confidentialité
+La dernière étape indique l’usage des données et ouvre la Politique de confidentialité
 dans un nouvel onglet, sans quitter le formulaire.
 
 Les transitions d’étape utilisent Web Animations (opacité et transform).

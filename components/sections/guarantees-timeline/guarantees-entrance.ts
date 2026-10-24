@@ -15,10 +15,9 @@ function layoutTop(element: HTMLElement, section: HTMLElement) {
   return top
 }
 
-// Leave room around the text mask for the highlighted title.
+// Leave room around the guarantee copy titles during their lateral entrance.
 const textClip = {
   left: "inset(-18% 100% -18% 0%)",
-  right: "inset(-18% 0% -18% 100%)",
   open: "inset(-18% -6% -18% -6%)",
 }
 
@@ -43,7 +42,7 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
     const visualColumn = root.querySelector<HTMLElement>("[data-guarantee-visual]")
     const mobileArt = root.querySelector<HTMLElement>("[data-guarantee-mobile-art]")
     const copies = Array.from(root.querySelectorAll<HTMLElement>("[data-guarantee-copy]"))
-    const anchors = [label, title, intro, art, mobileArt, ...copies].filter((element): element is HTMLElement => !!element)
+    const anchors = [label, intro, art, mobileArt, ...copies].filter((element): element is HTMLElement => !!element)
     if (reduced) {
       anchors.forEach(element => { element.dataset.guaranteeEntered = "" })
       return
@@ -120,18 +119,13 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
       }
       const delay = options.delay ?? entrance.copyDelay
       items.forEach((item, index) => {
-        const titleLine = item.hasAttribute("data-guarantee-title-line")
-        const horizontal = titleLine || item.tagName === "H3"
-        const at = delay + index * (titleLine ? entrance.titleStagger : entrance.copyStagger)
-        if (horizontal) {
-          const fromRight = titleLine && index % 2 === 1
-          const distance = desktop
-            ? (titleLine ? entrance.titleDistance : entrance.copyDistance)
-            : entrance.mobileDistance
+        const at = delay + index * entrance.copyStagger
+        if (item.tagName === "H3") {
+          const distance = desktop ? entrance.copyDistance : entrance.mobileDistance
           reveal.fromTo(item, {
-            x: fromRight ? distance : -distance,
+            x: -distance,
             y: entrance.textRise,
-            clipPath: fromRight ? textClip.right : textClip.left,
+            clipPath: textClip.left,
           }, {
             x: 0, y: 0, clipPath: textClip.open,
             duration: entrance.titleDuration, ease: revealEase,
@@ -191,9 +185,6 @@ export function mountGuaranteesEntrance(root: HTMLElement, lenis?: Lenis) {
 
     if (label) stage(label, Array.from(label.children) as HTMLElement[], {
       viewport: 0.8, distance: 12, delay: entrance.badgeDelay,
-    })
-    if (title) stage(title, Array.from(title.querySelectorAll<HTMLElement>("[data-guarantee-title-line]")), {
-      viewport: 0.8, delay: entrance.titleDelay, waitForSnap: true,
     })
     if (intro) stage(intro, Array.from(intro.children) as HTMLElement[], {
       distance: 12, delay: entrance.introDelay,

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/types"
 import { estimationHref } from "@/lib/estimation/schema"
@@ -15,7 +16,7 @@ export function FaqSection({ copy, locale }: { copy: Dictionary["faq"]; locale: 
           <aside className={styles.introduction}>
             <header className={styles.header} data-reveal-group>
               <p className={styles.eyebrow} data-reveal>{copy.eyebrow}</p>
-              <h2 className={styles.title} id="faq-title" data-reveal>{copy.title}</h2>
+              <SectionHeading id="faq-title" text={copy.title} textClassName={styles.title} textAlign="left" />
               <p className={styles.description} data-reveal>{copy.description}</p>
             </header>
             <nav className={styles.topics} aria-label={copy.topicsLabel} data-reveal>

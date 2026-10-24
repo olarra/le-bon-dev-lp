@@ -251,6 +251,11 @@
   dependencies:
     csstype "^3.2.2"
 
+"@vercel/firewall@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@vercel/firewall/-/firewall-1.2.6.tgz#7b16c2346dd7342c7af9e8229c10de4bdf3f155c"
+  integrity sha512-89ybsa2rnVNdw6RI3jGOVvqUJaBj6Umm4IagC1o3PKtr/MXxBKOLek+yyUgF0csA0O5W+dzcpdIhKxVXhgVVtA==
+
 "@vgpu/adapter-mock@0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@vgpu/adapter-mock/-/adapter-mock-0.5.0.tgz#c248cba234ce38d025ed9350d35088fbea69941d"
@@ -289,6 +294,11 @@
   version "0.1.74"
   resolved "https://registry.yarnpkg.com/@webgpu/types/-/types-0.1.74.tgz#e0e0417074a90da1929c7bf710d6bb970aa91b13"
   integrity sha512-lgiI4hbuLcI9unnm2cL/tvCaQU45dp0xcLWJh5uB/9MBGvIA4F8XIk7nSiBeg+K4xWGYwgZKn80LmERI5CxoTA==
+
+botid@^1.5.11:
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/botid/-/botid-1.5.11.tgz#6ad27a45cb96f14c66fc40be813eeff3f6534305"
+  integrity sha512-KOO1A3+/vFVJk5aFoG3sNwiogKFPVR+x4aw4gQ1b2e0XoE+i5xp48/EZn+WqR07jRHeDGwHWQUOtV5WVm7xiww==
 
 caniuse-lite@^1.0.30001579:
   version "1.0.30001810"

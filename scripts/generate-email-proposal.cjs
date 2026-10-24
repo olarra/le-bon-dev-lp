@@ -33,6 +33,7 @@ const source = filename => loadSource(path.join(root, filename))
 const { CONTACT } = source("lib/contact")
 const { contactConfirmationEmail, contactNotificationEmail } = source("lib/email/contact")
 const { estimationConfirmationEmail, estimationNotificationEmail } = source("lib/email/estimation")
+const { visitNotificationEmail } = source("lib/email/visit")
 const { freshDraft, submissionFromDraft } = source("lib/estimation/schema")
 const { LOCALES, LANGUAGE_NAMES } = source("lib/i18n/config")
 const { escapeEmailText } = source("lib/email/layout")
@@ -43,6 +44,7 @@ const variants = [
   { id: "contact-studio", label: "Contact · Studio", studio: true },
   { id: "estimation-visitor", label: "Estimation · Visiteur", studio: false },
   { id: "estimation-studio", label: "Estimation · Studio", studio: true },
+  { id: "visit-studio", label: "Visite · Studio", studio: true },
 ]
 const examples = {
   fr: { company: "Atelier Exemple", name: "Un site pour notre atelier", message: "Bonjour, nous souhaitons présenter notre atelier et permettre à nos clients de prendre rendez-vous. Nous avons déjà notre logo et nos photos." },
@@ -71,6 +73,11 @@ for (const locale of LOCALES) {
     "contact-studio": contactNotificationEmail(submission, contact, receivedAt),
     "estimation-visitor": estimationConfirmationEmail(estimate, estimation),
     "estimation-studio": estimationNotificationEmail(estimate, estimation, receivedAt),
+    "visit-studio": visitNotificationEmail({ path: `/${locale}`, locale, kind: "studio" }, receivedAt, {
+      // Documentation-only IP and illustrative location; no real visitor data.
+      ip: "203.0.113.42", city: "Paris", region: "IDF", country: "France",
+      postalCode: "75001", latitude: 48.8566, longitude: 2.3522,
+    }),
   }
   emails[locale] = Object.fromEntries(variants.map(variant => [variant.id, {
     label: variant.label,
@@ -131,7 +138,7 @@ const html = `<!doctype html>
   <header class="intro">
     <p class="eyebrow">Le bon dev / E-mails</p>
     <h1>Le studio, dans votre boîte mail.</h1>
-    <p>Contact et estimation : les confirmations visiteurs et les notifications au studio.</p>
+    <p>Contact, estimation et visites : les confirmations visiteurs et les notifications au studio.</p>
   </header>
   <div class="toolbar"><div class="controls">
     <div class="variants" role="group" aria-label="E-mail à afficher">
@@ -155,7 +162,7 @@ const html = `<!doctype html>
         <p class="example">Données fictives · Aucun e-mail envoyé</p>
       </div>
       <iframe id="email-preview" title="${initial.label}" sandbox="allow-same-origin"></iframe>
-      <noscript>Activez JavaScript pour afficher les quatre modèles de ce fichier.</noscript>
+      <noscript>Activez JavaScript pour afficher les modèles de ce fichier.</noscript>
     </div>
     <p class="note">Cet aperçu reprend le HTML des envois et les images hébergées sur LWS. Le rendu des polices et des images peut varier selon la messagerie.</p>
   </main>
@@ -212,4 +219,4 @@ const html = `<!doctype html>
 
 const destination = path.join(root, "design/email-proposal/index.html")
 fs.writeFileSync(destination, html)
-console.log("Updated design/email-proposal/index.html — four templates, three languages; no e-mail sent.")
+console.log("Updated design/email-proposal/index.html — five templates; no e-mail sent.")

@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { LOCALES, type Locale } from "@/lib/i18n/config"
 import { socialMetadata } from "@/lib/seo/social"
 import { getLegalCopy } from "./copy"
-import { LEGAL_COMPLETE } from "./details"
 import { LEGAL_LABELS, legalHref, type LegalDocument } from "./navigation"
 
 export function legalMetadata(locale: Locale, document: LegalDocument): Metadata {
@@ -11,7 +10,8 @@ export function legalMetadata(locale: Locale, document: LegalDocument): Metadata
   return {
     title,
     description,
-    robots: { index: LEGAL_COMPLETE, follow: true },
+    // Keep the owner's legal identity out of search results, including after completion.
+    robots: { index: false, follow: true },
     alternates: {
       canonical: legalHref(locale, document),
       languages: {

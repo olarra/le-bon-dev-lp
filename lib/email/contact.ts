@@ -58,7 +58,6 @@ export function contactNotificationEmail(submission: ContactSubmission, contact:
       copy.notificationIntro,
       ...rows.map(row => `${row.label} : ${row.value}`),
       copy.notificationReply,
-      signatureText(submission.locale),
       copy.notificationFootnote,
     ].join("\n\n"),
     ...renderEmail({
@@ -71,6 +70,7 @@ export function contactNotificationEmail(submission: ContactSubmission, contact:
         + recap({ title: copy.contact.notificationRecap, rows })
         + paragraph(copy.notificationReply),
       footnote: copy.notificationFootnote,
+      audience: "studio",
     }),
   }
 }

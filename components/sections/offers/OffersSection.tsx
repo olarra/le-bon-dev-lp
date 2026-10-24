@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react"
 import Link from "next/link"
 import type { Offer } from "./offers.content"
 import type { Dictionary } from "@/lib/i18n/types"
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { OfferSticker } from "@/components/offer-icons/OfferSticker"
 import { MetalFinish } from "@/components/ui/metal-sticker"
 import { useStickerMotion } from "@/hooks/use-sticker-motion"
@@ -25,9 +26,9 @@ export function OffersSection({ copy }: { copy: Dictionary["offers"] }) {
       <noscript><style>{"#offres { --offers-pending-opacity: 1; }"}</style></noscript>
       <div className={styles.light} aria-hidden="true" />
       <div className={styles.inner}>
-        <header className={styles.header} data-offers-heading>
-          <p className={styles.eyebrow}>{copy.eyebrow}</p>
-          <h2 id="offres-title" className={styles.title}>{copy.title}</h2>
+        <header className={styles.header}>
+          <p className={styles.eyebrow} data-reveal>{copy.eyebrow}</p>
+          <SectionHeading id="offres-title" text={copy.title} textClassName={styles.title} />
         </header>
 
         <div className={styles.entry} data-offers-entry>

@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useEffect, useRef, useState, type CSSProperties } from "react"
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { INTEGRATION_ROWS, STUDIO_INTEGRATIONS } from "./integrations.content"
 import type { Dictionary } from "@/lib/i18n/types"
 import styles from "./studio-ecosystem.module.css"
@@ -35,7 +36,7 @@ export function StudioEcosystem({ copy }: { copy: Dictionary["studio"]["ecosyste
     >
       <header className={styles.header} data-reveal-group>
         <p className={styles.eyebrow} data-reveal>{copy.eyebrow}</p>
-        <h3 className={styles.title} id="studio-ecosystem-title" data-reveal>{copy.title}</h3>
+        <SectionHeading as="h3" id="studio-ecosystem-title" text={copy.title} textClassName={styles.title} />
       </header>
 
       <div className={styles.stage}>

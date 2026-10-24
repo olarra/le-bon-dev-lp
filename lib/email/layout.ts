@@ -5,13 +5,9 @@ import { EMAIL_ASSETS } from "./assets"
 import { getEmailCopy } from "./copy"
 import { emailImageSource, getEmailAssetBaseUrl } from "./media"
 import type { EmailRow, EmailTitle, RenderedEmail } from "./types"
+import { EMAIL_THEME } from "./theme"
 
-const bodyFont = "'Outfit',Arial,Helvetica,sans-serif"
-const headingFont = "'Morna','Outfit',Arial,Helvetica,sans-serif"
-const monoFont = "'SFMono-Regular',Consolas,'Liberation Mono',monospace"
-const forest = "#203e33"
-const paper = "#fffef9"
-const muted = "#4e5d52"
+const { bodyFont, headingFont, monoFont, forest, paper, muted } = EMAIL_THEME
 
 /** Submitted values are always text, never HTML or link destinations. */
 export function escapeEmailText(value: string): string {
@@ -104,7 +100,7 @@ function signature(locale: Locale, assetBaseUrl: string | null) {
   </td></tr></table>`
 }
 
-export function renderEmail({ locale, subject, eyebrow, title, preheader, body, footnote, withSignature = true }: {
+export function renderEmail({ locale, subject, eyebrow, title, preheader, body, footnote, audience = "visitor" }: {
   locale: Locale
   subject: string
   eyebrow: string
@@ -112,9 +108,10 @@ export function renderEmail({ locale, subject, eyebrow, title, preheader, body, 
   preheader: string
   body: string
   footnote: string
-  withSignature?: boolean
+  audience?: "visitor" | "studio"
 }): RenderedEmail {
   const copy = getEmailCopy(locale)
+  const isStudio = audience === "studio"
   const siteUrl = escapeEmailText(`${SITE.url}/${locale}`)
   const assetBaseUrl = getEmailAssetBaseUrl()
   const assetOrigin = escapeEmailText(assetBaseUrl ?? SITE.url)
@@ -159,6 +156,7 @@ export function renderEmail({ locale, subject, eyebrow, title, preheader, body, 
       .signature-contact{display:block!important;}
       .signature-separator{display:none!important;}
       .email-footer{padding:20px 24px!important;}
+      .studio-footer{padding:18px 24px!important;}
       .footer-copy,.footer-link{display:block!important;width:100%!important;text-align:left!important;}
       .footer-link{padding:9px 0 0!important;}
     }
@@ -183,15 +181,20 @@ export function renderEmail({ locale, subject, eyebrow, title, preheader, body, 
           <td class="email-symbol" width="90" align="right" valign="bottom" style="padding:0 0 6px 14px;"><img src="${escapeEmailText(emailImageSource("lebondev-mark-lime", assetBaseUrl))}" alt="" width="76" height="46" style="display:block;width:76px;height:auto;border:0;opacity:.66;"></td>
         </tr></table>
       </td></tr>
-      <tr><td class="email-body" bgcolor="${paper}" style="padding:36px 40px 38px;background-color:${paper};">${body}${withSignature ? signature(locale, assetBaseUrl) : ""}</td></tr>
-      <tr><td class="email-footer" bgcolor="#f4f2ec" style="padding:21px 40px;background-color:#f4f2ec;border-top:1px solid #e0e3d9;">
+      <tr><td class="email-body" bgcolor="${paper}" style="padding:36px 40px 38px;background-color:${paper};">${body}${isStudio ? "" : signature(locale, assetBaseUrl)}</td></tr>
+      ${isStudio ? `<tr><td class="studio-footer" bgcolor="#f4f2ec" style="padding:18px 40px;background-color:#f4f2ec;border-top:1px solid #dce1d7;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          <td valign="middle" style="color:${muted};font-family:${bodyFont};font-size:11px;line-height:1.6;">${escapeEmailText(footnote)}</td>
+          <td align="right" valign="middle" style="padding-left:12px;white-space:nowrap;font-family:${bodyFont};font-size:12px;line-height:1.6;"><a href="${siteUrl}" style="color:${forest};font-weight:600;text-decoration:none;">${escapeEmailText(copy.studioLink)} <span aria-hidden="true">&#8599;&#65038;</span></a></td>
+        </tr></table>
+      </td></tr>` : `<tr><td class="email-footer" bgcolor="#f4f2ec" style="padding:21px 40px;background-color:#f4f2ec;border-top:1px solid #e0e3d9;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
           <td class="footer-copy" valign="middle" style="color:#687366;font-family:${bodyFont};font-size:11px;line-height:1.65;">${escapeEmailText(copy.tagline)}<br>${escapeEmailText(copy.description)}</td>
           <td class="footer-link" align="right" valign="middle" style="padding-left:16px;white-space:nowrap;"><a href="${siteUrl}" style="color:${forest};font-family:${bodyFont};font-size:12px;font-weight:500;text-decoration:none;">lebondev.fr&nbsp; <span aria-hidden="true">&#8599;&#65038;</span></a></td>
         </tr></table>
-      </td></tr>
+      </td></tr>`}
     </table>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;"><tr><td align="center" style="padding:18px 12px 0;color:#687366;font-family:${bodyFont};font-size:11px;line-height:1.7;">${lines(footnote)}</td></tr></table>
+    ${isStudio ? "" : `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;"><tr><td align="center" style="padding:18px 12px 0;color:#687366;font-family:${bodyFont};font-size:11px;line-height:1.7;">${lines(footnote)}</td></tr></table>`}
     <!--[if mso]></td></tr></table><![endif]-->
   </td></tr></table>
 </body>

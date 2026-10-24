@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props) {
   return legalMetadata(lang, "privacy")
 }
 
-export default async function Privacy({ params }: Props) {
+export default async function PrivacyPolicy({ params }: Props) {
   const { lang } = await params
   if (!isLocale(lang)) notFound()
   return <LegalDocumentPage locale={lang} document="privacy" />

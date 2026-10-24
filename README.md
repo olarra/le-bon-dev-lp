@@ -23,6 +23,7 @@ Les variables sont décrites dans [.env.example](.env.example) :
 - `SITE_URL` : domaine public utilisé pour le référencement et les partages.
 - `MAIL_MJ_API_KEY_PUBLIC`, `MAIL_MJ_API_KEY_PRIVATE`, `MAIL_USERNAME` : clés Mailjet et expéditeur autorisé pour les formulaires.
 - `MAIL_ASSET_BASE_URL` : adresse HTTPS des images et polices utilisées dans les e-mails.
+- `VISIT_NOTIFICATIONS_ENABLED` : alertes de visite en production, avec [filtrage anti-robots et limite d’envoi](lib/visits/README.md).
 
 Les clés Mailjet restent côté serveur. Le site peut être consulté sans elles ;
 l'envoi des formulaires nécessite leur configuration.
@@ -61,7 +62,7 @@ serveur ; les composants clients prennent en charge les interactions.
 - **Textes et traductions** : `lib/i18n/` et les fichiers `*.content.ts` des sections.
 - **Coordonnées et domaine** : `lib/contact.ts` et `lib/site.ts`.
 - **Estimation** : `lib/estimation/` et `components/estimation/`.
-- **E-mails** : `lib/email/`, avec une mise en page commune et les variantes contact/estimation. Le HTML est envoyé par l'API Mailjet ; les templates sont gérés dans le code.
+- **E-mails** : `lib/email/`, avec les variantes contact/estimation et une alerte de visite compacte. Le HTML est envoyé par l'API Mailjet ; les templates sont gérés dans le code.
 - **Informations légales** : `lib/legal/details.ts`.
 
 Les README des composants documentent les comportements propres à chaque section.

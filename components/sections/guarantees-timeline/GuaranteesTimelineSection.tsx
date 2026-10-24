@@ -1,3 +1,4 @@
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import type { Dictionary } from "@/lib/i18n/types"
 import { GuaranteesTimeline } from "./GuaranteesTimeline"
@@ -12,12 +13,16 @@ export function GuaranteesTimelineSection({ copy }: { copy: Dictionary["guarante
         </div>
         <div className={styles.titleSlot} data-guarantee-title-slot>
           <div className={styles.titleWrapper} data-guarantee-title>
-            <h2 id="garanties-timeline-title" className={styles.title}>
-              <span className={styles.titleLine} data-guarantee-title-line>
+            <SectionHeading
+              id="garanties-timeline-title"
+              text={`${copy.titleBefore}${copy.titleHighlight}${copy.titleAfter} ${copy.titleEnd}`}
+              textClassName={styles.title}
+            >
+              <span className={styles.titleLine}>
                 {copy.titleBefore}<span className={styles.highlight}>{copy.titleHighlight}</span>{copy.titleAfter}
               </span>{" "}
-              <span className={styles.titleLine} data-guarantee-title-line>{copy.titleEnd}</span>
-            </h2>
+              <span className={styles.titleLine}>{copy.titleEnd}</span>
+            </SectionHeading>
           </div>
         </div>
         <div className={styles.subtitleReveal} data-guarantee-intro>

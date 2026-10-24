@@ -10,12 +10,11 @@ type Props = {
   document: LegalDocument
   introduction: string
   updatedAt?: string
-  draftNotice?: string
   children: ReactNode
 }
 
 /** Quiet, server-rendered reading layout shared by both legal documents. */
-export function LegalPage({ locale, document, introduction, updatedAt, draftNotice, children }: Props) {
+export function LegalPage({ locale, document, introduction, updatedAt, children }: Props) {
   const labels = LEGAL_LABELS[locale]
   return (
     <div className={styles.page}>
@@ -56,7 +55,6 @@ export function LegalPage({ locale, document, introduction, updatedAt, draftNoti
               day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris",
             }).format(new Date(`${updatedAt}T12:00:00Z`))}</time></small>}
           </header>
-          {draftNotice && <p className={styles.draftNotice} role="note">{draftNotice}</p>}
           <div className={styles.content}>{children}</div>
         </article>
       </main>

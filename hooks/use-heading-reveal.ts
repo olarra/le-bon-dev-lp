@@ -5,8 +5,9 @@ import { useAnimationControls } from "motion/react"
 import type { AnimationControls } from "@/lib/motion"
 
 /** Server markup stays visible; only mounted, motion-enabled headings animate. */
-export function useHeadingReveal(threshold: number, externalControls?: AnimationControls) {
+export function useHeadingReveal(threshold: number, externalControls?: AnimationControls, staggerByLine = false) {
   const elementRef = useRef<HTMLElement | null>(null)
+  const characterOrder = useRef<number[]>([])
   const ref = useCallback((element: HTMLElement | null) => { elementRef.current = element }, [])
   const controls = useAnimationControls()
 
@@ -29,6 +30,24 @@ export function useHeadingReveal(threshold: number, externalControls?: Animation
       controls.set("hidden")
       observer = new IntersectionObserver(([entry]) => {
         if (!entry.isIntersecting || entry.intersectionRatio < threshold) return
+        if (staggerByLine) {
+          // Word wrappers keep their layout while the individual letters scale.
+          // Measure at the reveal so wrapping follows the current viewport.
+          const order: number[] = []
+          let lineTop: number | undefined
+          let position = 0
+          element.querySelectorAll<HTMLElement>("[data-heading-word]").forEach(word => {
+            const top = word.getBoundingClientRect().top
+            if (lineTop === undefined || Math.abs(top - lineTop) > 1) {
+              lineTop = top
+              position = 0
+            }
+            word.querySelectorAll("[data-heading-character]").forEach(() => {
+              order.push(position++)
+            })
+          })
+          characterOrder.current = order
+        }
         void controls.start("visible")
         observer?.disconnect()
       }, { threshold })
@@ -42,7 +61,7 @@ export function useHeadingReveal(threshold: number, externalControls?: Animation
       reduced.removeEventListener("change", onPreference)
       show()
     }
-  }, [controls, threshold, externalControls])
+  }, [controls, threshold, externalControls, staggerByLine])
 
-  return { ref, controls: externalControls ?? controls }
+  return { ref, controls: externalControls ?? controls, characterOrder }
 }

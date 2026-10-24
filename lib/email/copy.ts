@@ -3,6 +3,7 @@ import type { EmailTitle } from "./types"
 
 type EmailCopy = {
   studio: string
+  studioLink: string
   webMobile: string
   role: string
   signoff: string
@@ -35,7 +36,7 @@ type EmailCopy = {
 
 const copies: Record<Locale, EmailCopy> = {
   fr: {
-    studio: "LE STUDIO", webMobile: "WEB · MOBILE",
+    studio: "LE STUDIO", studioLink: "Le studio", webMobile: "WEB · MOBILE",
     role: "Développeur · Fondateur de Le bon dev", signoff: "À bientôt,",
     tagline: "Votre vision. Notre savoir-faire.", description: "Studio de développement web et mobile.",
     next: "LA SUITE", replyPrompt: "Un détail à corriger ou à compléter ?",
@@ -43,7 +44,7 @@ const copies: Record<Locale, EmailCopy> = {
     recapTitle: "Votre projet, en quelques lignes.", recapSubtitle: "Les informations transmises au studio.",
     contactDetails: "Vos coordonnées", notificationIntro: "Une nouvelle demande est arrivée depuis le site.",
     notificationReply: "Répondez directement à cet e-mail pour joindre votre contact.",
-    notificationFootnote: "Notification du formulaire du site · Réservée au studio.",
+    notificationFootnote: "Notification privée du studio",
     language: "Langue", receivedAt: "Demande reçue le", source: "Source", generalSource: "Générale",
     contact: {
       eyebrow: "Contact / Confirmation",
@@ -69,7 +70,7 @@ const copies: Record<Locale, EmailCopy> = {
     },
   },
   en: {
-    studio: "THE STUDIO", webMobile: "WEB · MOBILE",
+    studio: "THE STUDIO", studioLink: "The studio", webMobile: "WEB · MOBILE",
     role: "Developer · Founder of Le bon dev", signoff: "Speak soon,",
     tagline: "Your vision. Our expertise.", description: "Web and mobile development studio.",
     next: "WHAT’S NEXT", replyPrompt: "Something to correct or add?",
@@ -77,7 +78,7 @@ const copies: Record<Locale, EmailCopy> = {
     recapTitle: "Your project at a glance.", recapSubtitle: "The information sent to the studio.",
     contactDetails: "Your contact details", notificationIntro: "A new request has arrived through the website.",
     notificationReply: "Reply directly to this email to reach your contact.",
-    notificationFootnote: "Website form notification · For the studio only.",
+    notificationFootnote: "Private studio notification",
     language: "Language", receivedAt: "Request received on", source: "Source", generalSource: "General",
     contact: {
       eyebrow: "Contact / Confirmation",
@@ -103,7 +104,7 @@ const copies: Record<Locale, EmailCopy> = {
     },
   },
   es: {
-    studio: "EL ESTUDIO", webMobile: "WEB · MÓVIL",
+    studio: "EL ESTUDIO", studioLink: "El estudio", webMobile: "WEB · MÓVIL",
     role: "Desarrollador · Fundador de Le bon dev", signoff: "Hasta pronto,",
     tagline: "Tu visión. Nuestra experiencia.", description: "Estudio de desarrollo web y móvil.",
     next: "LO QUE SIGUE", replyPrompt: "¿Algo que corregir o añadir?",
@@ -111,7 +112,7 @@ const copies: Record<Locale, EmailCopy> = {
     recapTitle: "Tu proyecto, en pocas palabras.", recapSubtitle: "La información enviada al estudio.",
     contactDetails: "Tus datos de contacto", notificationIntro: "Ha llegado una nueva solicitud desde el sitio web.",
     notificationReply: "Responde directamente a este correo para comunicarte con tu contacto.",
-    notificationFootnote: "Notificación del formulario web · Solo para el estudio.",
+    notificationFootnote: "Notificación privada del estudio",
     language: "Idioma", receivedAt: "Solicitud recibida el", source: "Origen", generalSource: "General",
     contact: {
       eyebrow: "Contacto / Confirmación",

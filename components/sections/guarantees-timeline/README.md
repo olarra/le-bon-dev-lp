@@ -144,20 +144,20 @@ Les ressources GPU, observateurs et écouteurs
 sont libérés au démontage ; une perte du GPU masque la surcouche. Les filtres
 SVG restent fixes et les ombres peuvent dépasser le SVG.
 
-Les entrées adaptent l'inspiration fournie : dévoilement latéral des titres
+Les entrées adaptent l'inspiration fournie : dévoilement latéral des titres de garantie
 et montée avec zoom du groupe illustration. Elles utilisent GSAP / ScrollTrigger,
 déjà responsables des entrées de cette section. Elles se déclenchent une
 fois au scroll, puis se jouent sur une durée fixe. La courbe `CustomEase`
 reprend les valeurs `[0.25, 0.4, 0.25, 1]` de la référence.
 
-Le titre de section est un `h2` serveur, avec deux blocs de texte qui gardent
-leurs retours naturels à la ligne dans chaque langue. À 80 % du viewport,
-le premier se dévoile depuis la gauche, le second depuis la droite :
-déplacement de ±48 px et montée de 12 px sur 800 ms, avec des départs à
-100 et 200 ms. Sur mobile, le déplacement horizontal est limité à ±24 px.
-Le surlignage fait partie de la ligne animée. Le masque déborde légèrement
-autour du texte et est retiré en fin d'entrée pour préserver ses ornements.
-Cette entrée remplace l'animation lettre par lettre dans cette section.
+Le titre de section utilise `SectionHeading`, comme les autres titres de page.
+Le `h2` conserve ses deux blocs de texte, leurs retours naturels à la ligne
+et le surlignage. La révélation utilise directement `HEADING_REVEAL`, comme le
+Hero : départ dès l'entrée à l'écran, sans délai initial, puis lettres espacées
+de 30 ms avec le même ressort de 1,5 s. Chaque ligne recommence sa séquence
+en parallèle ; les lignes sont repérées au déclenchement selon la mise en page.
+Le contrôleur GSAP ne masque ni ne déplace ce titre.
+Le texte reste visible sans JavaScript et en mouvement réduit.
 
 À partir de 810 px, chaque texte de garantie commence lorsque son emplacement
 au repos atteint 72 % du viewport. Phase, titre et description se suivent à
@@ -185,7 +185,7 @@ quand l'onglet est masqué. Il n'ajoute pas de parallaxe au scroll.
 Le déclenchement du visuel est indépendant des trois textes : sa plage
 couvre toute la colonne sticky, y compris si la page est rechargée devant
 la deuxième ou la troisième garantie.
-Pendant le snap Hero → Garanties, le titre et la première composition
+Pendant le snap Hero → Garanties, la première composition
 attendent aussi que le haut de la section atteigne 12 % du viewport
 (`snapStart`), près de l'arrivée du snap.
 
@@ -223,7 +223,7 @@ sans empilement, notamment en mouvement réduit, garde les cartes complètes.
 
 `GUARANTEE_ENTRANCE`, dans `guarantees-timeline.content.ts`, centralise les
 réglages : `startViewport` / `mobileStartViewport` pour le déclenchement,
-`titleDuration` pour la durée des titres, `titleStagger` / `copyStagger`
+`titleDuration` pour la durée des titres de garantie, `copyStagger`
 pour la cadence, et `ease` pour la courbe du texte. `artSpring` règle le
 ressort du groupe illustration ; `artDelay`, `artFadeDelay` et
 `artFadeDuration` règlent son départ et son fondu.
@@ -250,8 +250,9 @@ qu'elle soit visible. Les styles sont retirés
 à la fin de chaque entrée. Sans JavaScript ou avec `prefers-reduced-motion`,
 ces contenus restent visibles. Le contexte GSAP nettoie animations et triggers,
 avec retrait de l'écoute Lenis, des observateurs et de l'écoute de visibilité
-au démontage. Ces ajustements n'ont pas été vérifiés visuellement ni par des
-commandes automatisées.
+au démontage. Le propriétaire a validé les dernières retouches des titres de
+section le 24 octobre 2026. Aucun contrôle visuel ni test supplémentaire n'a
+été exécuté par l'agent.
 
 ## Traductions
 

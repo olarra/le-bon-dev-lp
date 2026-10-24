@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
 import { CONTACT } from "@/lib/contact"
@@ -19,7 +20,7 @@ export function ContactSection({ copy, locale }: { copy: Dictionary["estimate"];
             <MetalSticker src="/images/contact/stickers/message-disc.svg" className={styles.callBadge} tone="light" />
           </div>
 
-          <h2 className={styles.title} id="estimation-title" data-reveal>{copy.title}</h2>
+          <SectionHeading id="estimation-title" text={copy.title} textClassName={styles.title} />
           <p className={styles.description} data-reveal>
             {copy.description}
             <span className={styles.response}>{copy.response}</span>

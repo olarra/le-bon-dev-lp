@@ -6,7 +6,6 @@ import { mountOfferShimmer } from "./offers-shimmer"
 // The recorded reference keeps the fade and rise visible through the same beat.
 // Distances grow with the viewport so a large display does not swallow the rise.
 const ENTRANCE = {
-  headingTrigger: 0.85,
   trigger: 0.6,
   mobileTrigger: 0.68,
   rise: { viewport: 0.13, min: 120, max: 190 },
@@ -25,9 +24,7 @@ export function mountOffersEntrance(section: HTMLElement) {
   gsap.registerPlugin(CustomEase)
   // Gentle acceleration leaves real travel to see once the surfaces become opaque.
   const entranceEase = CustomEase.create("offers-entrance", "0.22,0.1,0.22,1")
-  const headingEase = CustomEase.create("offers-heading", "0.22,0.8,0.3,1")
   const find = (selector: string) => section.querySelector<HTMLElement>(selector)!
-  const heading = find("[data-offers-heading]")
   const entry = find("[data-offers-entry]")
   const support = find("[data-offers-support]")
   const shell = find("[data-offers-shell]")
@@ -36,7 +33,6 @@ export function mountOffersEntrance(section: HTMLElement) {
   const applicationPlane = find("[data-offers-ivory]")
   const landingShadow = find("[data-offers-landing-shadow]")
   const media = gsap.matchMedia()
-  let headingSeen = false
   let sectionSeen = false
   let applicationSeen = false
 
@@ -46,7 +42,7 @@ export function mountOffersEntrance(section: HTMLElement) {
     reduced: "(prefers-reduced-motion: reduce)",
   }, context => {
     if (context.conditions!.reduced) {
-      headingSeen = sectionSeen = applicationSeen = true
+      sectionSeen = applicationSeen = true
       section.setAttribute("data-offers-ready", "")
       return
     }
@@ -54,9 +50,6 @@ export function mountOffersEntrance(section: HTMLElement) {
     const trigger = mobile ? ENTRANCE.mobileTrigger : ENTRANCE.trigger
     const distance = mobile ? ENTRANCE.mobileRise : ENTRANCE.rise
     const rise = gsap.utils.clamp(distance.min, distance.max, window.innerHeight * distance.viewport)
-    const title = gsap.fromTo(heading, { opacity: 0, y: 16 }, {
-      opacity: 1, y: 0, duration: 0.65, ease: headingEase, paused: true,
-    })
     const scene = gsap.timeline({ paused: true })
     const card = mobile ? gsap.timeline({ paused: true }) : scene
     const rising = mobile ? [shell, website] : support
@@ -126,7 +119,6 @@ export function mountOffersEntrance(section: HTMLElement) {
       pending.add(entrance)
       observe()
     }
-    reveal(heading, title, headingSeen, () => { headingSeen = true }, ENTRANCE.headingTrigger)
     reveal(entry, scene, sectionSeen, () => {
       sectionSeen = true
       if (!mobile) applicationSeen = true
@@ -154,8 +146,7 @@ export function mountOffersEntrance(section: HTMLElement) {
       // Navigation links focus the section on arrival; that must not cut its entrance short.
       if (!(event.target instanceof Element) || !event.target.closest("[data-offer-kind]")) return
       clearPending()
-      headingSeen = sectionSeen = applicationSeen = true
-      title.progress(1, true).pause()
+      sectionSeen = applicationSeen = true
       scene.progress(1, true).pause()
       card.progress(1, true).pause()
     }

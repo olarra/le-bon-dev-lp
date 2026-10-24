@@ -1,6 +1,7 @@
 import { CONTACT } from "@/lib/contact"
 import type { Locale } from "@/lib/i18n/config"
 import type { Dictionary } from "@/lib/i18n/types"
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { MetalSticker } from "@/components/ui/metal-sticker"
 import { StickerSurface } from "@/components/ui/sticker-surface"
 import { ContactForm } from "./ContactForm"
@@ -13,7 +14,12 @@ export function ContactFormSection({ locale, copy }: { locale: Locale; copy: Dic
         <div className={styles.introduction} data-reveal-group>
           <header className={styles.header}>
             <p className={styles.eyebrow} data-reveal="left">{copy.eyebrow}</p>
-            <h2 className={styles.title} id="contact-title" data-reveal="left">{copy.titleBefore}<span>{copy.titleHighlight}</span></h2>
+            <SectionHeading
+              id="contact-title" text={`${copy.titleBefore}${copy.titleHighlight}`}
+              textClassName={styles.title} textAlign="left"
+            >
+              {copy.titleBefore}<span className={styles.titleAccent}>{copy.titleHighlight}</span>
+            </SectionHeading>
           </header>
           <p className={styles.description} data-reveal="left">{copy.description}</p>
 

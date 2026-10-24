@@ -4,10 +4,7 @@ export const MOBILE_METAL_CARDS_ENABLED = true
 /** Entrance timing in seconds; independent of the scroll-driven morph. */
 export const GUARANTEE_ENTRANCE = {
   badgeDelay: 0.08,
-  titleDelay: 0.1,
   titleDuration: 0.8,
-  titleStagger: 0.1,
-  titleDistance: 48,
   ease: "0.25, 0.4, 0.25, 1",
   introDelay: 0.08,
   copyDelay: 0.12,

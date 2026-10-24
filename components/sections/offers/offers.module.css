@@ -38,10 +38,7 @@
 
 /* Reserve the final layout while the client installs the initial poses. */
 @media (prefers-reduced-motion: no-preference) {
-  .section:not([data-offers-ready]) :is(
-    [data-offers-heading],
-    [data-offers-support]
-  ) {
+  .section:not([data-offers-ready]) [data-offers-support] {
     opacity: var(--offers-pending-opacity, 0);
   }
 }

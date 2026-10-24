@@ -5,8 +5,11 @@ du fichier fourni `Section tarifs — montée + recul.html`. Les deux offres
 occupent leurs places finales dès le départ. La section défile normalement ;
 l’entrée se joue sur sa propre horloge lorsque le haut du support atteint 60 %
 de la hauteur de fenêtre. Ce départ laisse assez de place à l’écran pour voir
-la montée, au lieu de la commencer au bord inférieur. Le titre garde un seuil
-indépendant à 85 %.
+la montée, au lieu de la commencer au bord inférieur. Le titre utilise
+`SectionHeading` : les réglages du Hero, sans délai initial, dès l'entrée à
+l'écran. Chaque ligne démarre sa séquence en parallèle, avec 30 ms entre
+lettres et le même ressort de 1,5 s. La pastille conserve son entrée
+`data-reveal` indépendante.
 
 ## Mouvement
 
@@ -41,7 +44,8 @@ grande hauteur de contenu ne fait pas partir le panneau de son centre hors champ
 
 L’ombre finale reste définie en CSS. Une couche décorative supplémentaire suit
 la carte et s’efface pendant la pose ; seul son alpha est animé, sans recalculer
-un grand flou à chaque image. Le titre conserve sa courte entrée indépendante.
+un grand flou à chaque image. `offers-entrance.ts` anime les offres ;
+`SectionHeading` possède l'entrée du titre, sans fondu sur son conteneur.
 
 Une fois Applications posée, `offers-shimmer.ts` lance le **reflet métallique vert** :
 un reflet fini, légèrement courbe, qui traverse la carte du coin supérieur gauche

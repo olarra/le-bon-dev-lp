@@ -50,7 +50,7 @@
   text-wrap: balance;
   color: #153f32;
 }
-.title span { color: #9cda20; }
+.titleAccent { color: #9cda20; }
 .subtitle {
   max-width: 62ch;
   margin: 0;
@@ -84,5 +84,5 @@
   .monitorVisual { width: 100%; }
 }
 @media (forced-colors: active) {
-  .title span { color: CanvasText; }
+  .titleAccent { color: CanvasText; }
 }

@@ -1,3 +1,4 @@
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { MethodIcon } from "@/components/method-icons/MethodIcon"
 import { MethodTimeline } from "./MethodTimeline"
 import { METHOD_STEPS } from "./method.content"
@@ -12,7 +13,7 @@ export function MethodSection({ copy }: { copy: Dictionary["method"] }) {
       <div className={styles.inner}>
         <header className={styles.header} data-reveal-group>
           <p className={styles.eyebrow} data-reveal>{copy.eyebrow}</p>
-          <h2 className={styles.title} id="methode-title" data-reveal>{copy.title}</h2>
+          <SectionHeading id="methode-title" text={copy.title} textClassName={styles.title} />
         </header>
 
         <MethodTimeline>

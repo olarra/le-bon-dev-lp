@@ -2,7 +2,11 @@
 
 - `StudioSection.tsx` assemble le contenu serveur, les chiffres et les convictions.
 - `studio.content.ts` contient les textes, images et réglages de la photo.
-- `StudioHeading` utilise `AnimatedHeading` et `HEADING_REVEAL` de `lib/motion.ts`.
+- `StudioHeading` et le titre des technologies utilisent `SectionHeading`,
+  partagé avec les autres sections. Ils reprennent directement `HEADING_REVEAL`
+  dans `lib/motion.ts` : départ dès l'entrée à l'écran, sans délai initial,
+  30 ms entre lettres et ressort de 1,5 s. Chaque ligne démarre sa propre
+  séquence en parallèle, y compris les retours naturels sur mobile.
   Les positions de couleur des lettres sont définies dans le rendu React.
 - `StudioScene` et `studio-scene-motion.ts` séparent la vue de la séquence
   jour → coucher de soleil → nuit. La photo démarre lorsqu’elle est visible,
@@ -24,12 +28,12 @@
   Aucun composant dédié au studio. Sur mobile, un appui près d’une icône garde
   son effet jusqu’au relâchement, même si le doigt défile ensuite. Les autres
   gestes de défilement n’activent pas les icônes ; les gestes natifs restent libres.
-- La pastille, chaque repère, les convictions et l’en-tête des technologies
+- La pastille, chaque repère, les convictions et la pastille des technologies
   portent `data-reveal`. Les repères, convictions et en-têtes forment des
   `data-reveal-group` distincts. Les repères sous le bouton et les convictions
   du bandeau inférieur utilisent `data-reveal-viewport="0.9"` : leur arrivée
   commence à 90% du viewport sur desktop, tablette et téléphone, dès que cette
-  zone entre à l’écran. La pastille et l’en-tête des technologies gardent 68%
+  zone entre à l'écran. Les pastilles du studio et des technologies gardent 68%
   (72% sur téléphone). Séquence de 120 ms plafonnée à 240 ms, opacité en 0,7 s
   et pose en 1,1 s.
   Les convictions empilées attendent leur propre position de lecture ; les

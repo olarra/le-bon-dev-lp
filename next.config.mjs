@@ -21,7 +21,9 @@ const nextConfig = {
       { source: "/", destination: "/fr", permanent: true },
       { source: "/estimation", destination: "/fr/estimation", permanent: true },
       { source: "/mentions-legales", destination: "/fr/mentions-legales", permanent: true },
-      { source: "/confidentialite", destination: "/fr/confidentialite", permanent: true },
+      { source: "/politique-de-confidentialite", destination: "/fr/politique-de-confidentialite", permanent: true },
+      { source: "/confidentialite", destination: "/fr/politique-de-confidentialite", permanent: true },
+      { source: "/:lang(fr|en|es)/confidentialite", destination: "/:lang/politique-de-confidentialite", permanent: true },
       { source: "/legacy", destination: "/fr", permanent: true },
       { source: "/index.html", destination: "/fr", permanent: true },
     ]

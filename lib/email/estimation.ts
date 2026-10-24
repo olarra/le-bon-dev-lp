@@ -73,7 +73,6 @@ export function estimationNotificationEmail(submission: EstimateSubmission, esti
       estimateEmailBody(submission, estimation),
       ...metadata.map(row => `${row.label} : ${row.value}`),
       copy.notificationReply,
-      signatureText(submission.locale),
       copy.notificationFootnote,
     ].join("\n\n"),
     ...renderEmail({
@@ -91,6 +90,7 @@ export function estimationNotificationEmail(submission: EstimateSubmission, esti
         })
         + paragraph(copy.notificationReply),
       footnote: copy.notificationFootnote,
+      audience: "studio",
     }),
   }
 }

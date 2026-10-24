@@ -38,11 +38,6 @@ export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
     }, context => {
       if (context.conditions?.reduced) return
       const mobile = Boolean(context.conditions?.mobile)
-      const heading = section.querySelector<HTMLElement>("[data-showcase-heading]")!
-      const headingReveal = gsap.fromTo(heading, { opacity: 0 }, {
-        opacity: 1, duration: 0.7, ease: fade, paused: true,
-      })
-      let headingPlayed = false
       let alive = true
       let scrollFrame = 0
       let resizeFrame = 0
@@ -78,10 +73,6 @@ export function useShowcaseMotion(sectionRef: RefObject<HTMLElement | null>) {
         scrollFrame = 0
         if (!alive) return
         const viewport = window.innerHeight
-        if (!headingPlayed && heading.getBoundingClientRect().top < viewport * 0.85) {
-          headingPlayed = true
-          headingReveal.play()
-        }
         reveals.forEach(reveal => {
           if (reveal.project.getBoundingClientRect().top > viewport + 1) {
             if (reveal.started) {

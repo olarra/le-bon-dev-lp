@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef } from "react"
+import { SectionHeading } from "@/components/atoms/SectionHeading"
 import { useStickerMotion } from "@/hooks/use-sticker-motion"
 import { FRENCH_PIXEL_GALLERY } from "./realisations.content"
 import type { Dictionary } from "@/lib/i18n/types"
@@ -14,6 +15,7 @@ import styles from "./showcase.module.css"
 
 export function ShowcaseContent({ copy }: { copy: Dictionary["showcase"] }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const title = `${copy.titleLines.join(" ").replace(/\.$/, "")}.`
   useShowcaseMotion(sectionRef)
   useMiauReveal(sectionRef)
   useFpsReveal(sectionRef)
@@ -22,12 +24,12 @@ export function ShowcaseContent({ copy }: { copy: Dictionary["showcase"] }) {
   return (
     <section ref={sectionRef} className={styles.section} id="realisations" aria-labelledby="realisations-title">
       <div className={styles.content}>
-        <header className={styles.sectionHeader} data-showcase-heading>
-          <p className={styles.eyebrow}>{copy.eyebrow}</p>
-          <h2 id="realisations-title" className={styles.title}>
-            {copy.titleLines.join(" ").replace(/\.$/, "")}<span>.</span>
-          </h2>
-          <p className={styles.subtitle}>{copy.subtitle}</p>
+        <header className={styles.sectionHeader} data-reveal-group>
+          <p className={styles.eyebrow} data-reveal>{copy.eyebrow}</p>
+          <SectionHeading id="realisations-title" text={title} textClassName={styles.title}>
+            {title.slice(0, -1)}<span className={styles.titleAccent}>.</span>
+          </SectionHeading>
+          <p className={styles.subtitle} data-reveal>{copy.subtitle}</p>
         </header>
 
         <article className={styles.project} aria-labelledby="miau-title" data-project="miau">

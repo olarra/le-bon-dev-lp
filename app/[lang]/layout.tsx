@@ -9,6 +9,10 @@ import "lenis/dist/lenis.css"
 import "../globals.css"
 import { caveat, morna, outfit } from "../fonts"
 import { Providers } from "../providers"
+import { BotIdClient } from "botid/client"
+import { VisitNotification } from "@/components/visit-notification/VisitNotification"
+import { VISIT_PROTECTED_ROUTES } from "@/lib/visits/config"
+import { visitNotificationsEnabled } from "@/lib/visits/server"
 
 type Props = {
   children: ReactNode
@@ -40,13 +44,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function RootLayout({ children, estimate, params }: Props) {
   const { lang } = await params
   if (!isLocale(lang)) notFound()
+  const visitsEnabled = visitNotificationsEnabled()
   return (
     <html lang={lang} className={`${outfit.variable} ${morna.variable} ${caveat.variable}`}>
+      <head>
+        {visitsEnabled && <BotIdClient protect={VISIT_PROTECTED_ROUTES} />}
+      </head>
       <body>
         <noscript>
           <style>{'[data-scroll-reveal="pending"], [data-reveal] { opacity: 1 !important; transform: none !important; }'}</style>
         </noscript>
         <Providers key={lang}>{children}{estimate}</Providers>
+        <VisitNotification enabled={visitsEnabled} />
       </body>
     </html>
   )
