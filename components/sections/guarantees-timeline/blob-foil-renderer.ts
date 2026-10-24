@@ -72,10 +72,11 @@ export function createBlobFoilRenderer(root: HTMLElement): BlobFoilRenderer {
     // the next arrival, or the completed pile leaving for the last card.
     const stickyTop = parseFloat(root.style.getPropertyValue("--mobile-sticky-top")) || 0
     const layerGap = parseFloat(root.style.getPropertyValue("--mobile-layer-gap")) || 0
+    const stableViewportHeight = parseFloat(root.style.getPropertyValue("--mobile-viewport-height")) || viewportHeight
     const pinnedTop = stickyTop + index * layerGap
     const arrival = (step?: HTMLElement) => clamp(parseFloat(step?.dataset.arrival ?? "") || 0)
     const rise = index === 0
-      ? clamp((viewportHeight - rect.top) / Math.max(1, viewportHeight - pinnedTop))
+      ? clamp((stableViewportHeight - rect.top) / Math.max(1, stableViewportHeight - pinnedTop))
       : arrival(steps[index])
     const next = steps[index + 1]
     const exit = next ? arrival(next) : clamp((pinnedTop - rect.top) / Math.max(1, rect.height * 0.5))

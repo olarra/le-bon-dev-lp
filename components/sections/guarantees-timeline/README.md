@@ -207,6 +207,9 @@ Chaque carte suivante glisse par-dessus depuis le bas et s'épingle 16 px plus b
 celles-ci reculent depuis ce bord, de 8 % d'échelle par carte qui les recouvre
 (`MOBILE_STACK_DEPTH_SCALE`), linéairement avec l'arrivée. Leur hauteur reste
 fixe, adaptée à l'espace disponible sous le header (`fitMobileStack`).
+La mesure se base sur `100svh`, stable pendant l'ouverture et la fermeture des
+barres du navigateur mobile. Le support `position: sticky` ne porte aucune
+transformation : seule la surface intérieure de la carte change d'échelle.
 L'écart de flux entre deux cartes vaut `cardGap + layerGap` : un pixel défilé
 correspond à un pixel de montée, et une carte s'épingle après exactement une
 hauteur de carte plus 24 px de scroll (`getStackState`, dans `morph-progress.ts`,

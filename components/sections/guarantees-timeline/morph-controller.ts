@@ -21,6 +21,11 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   const fill = find<HTMLElement>("[data-guarantee-fill]")
   const shapes = Array.from(root.querySelectorAll<SVGPathElement>("[data-morph-shape]"))
   const steps = Array.from(root.querySelectorAll<HTMLElement>("[data-guarantee-step]"))
+  const cards = steps.map((step) => {
+    const card = step.querySelector<HTMLElement>("[data-guarantee-card]")
+    if (!card) throw new Error("Missing guarantee card")
+    return card
+  })
   const list = find<HTMLElement>("[data-guarantee-cards]")
   const copies = Array.from(root.querySelectorAll<HTMLElement>("[data-guarantee-copy]"))
   const heading = find<HTMLElement>("[data-guarantee-heading]")
@@ -28,6 +33,15 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   const desktop = window.matchMedia("(min-width: 810px)")
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
   const contrast = window.matchMedia("(forced-colors: active)")
+  // Safari changes innerHeight and visualViewport.height as its bars collapse.
+  // The small viewport unit keeps the sticky pile's geometry fixed during a swipe.
+  const viewportProbe = document.createElement("div")
+  viewportProbe.style.cssText = "position:fixed;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none"
+  document.body.appendChild(viewportProbe)
+  const smallViewportHeight = () => Math.round(viewportProbe.getBoundingClientRect().height)
+    || Math.min(window.innerHeight, window.visualViewport?.height ?? window.innerHeight)
+  let viewportWidth = window.innerWidth
+  let viewportHeight = smallViewportHeight()
   let disposed = false
   let current = 0
   let frame = 0
@@ -46,12 +60,13 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   const mobileProperties = [
     "--mobile-card-height", "--mobile-art-size", "--mobile-card-padding",
     "--mobile-art-gap", "--mobile-sticky-top", "--mobile-layer-gap",
-    "--mobile-card-gap", "--mobile-stack-tail",
+    "--mobile-card-gap", "--mobile-stack-tail", "--mobile-viewport-height",
   ]
 
   function resetMobileLayout() {
     mobileProperties.forEach((property) => root.style.removeProperty(property))
     gsap.set(steps, { clearProps: "transform" })
+    gsap.set(cards, { clearProps: "transform" })
     steps.forEach((step) => { delete step.dataset.arrival })
   }
 
@@ -66,7 +81,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     // Measure natural copy at the standard padding without collapsing an
     // already-sticky scroll reservation during a resize or font refresh.
     root.style.removeProperty("--mobile-card-padding")
-    const viewportHeight = Math.min(window.innerHeight, window.visualViewport?.height ?? window.innerHeight)
+    const viewportHeight = smallViewportHeight()
     // The utility bar above the header has already left by this section.
     const top = header
       ? (parseFloat(getComputedStyle(header).getPropertyValue("--header-base-offset")) || 12) + header.offsetHeight + 12
@@ -101,12 +116,14 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
       "--mobile-layer-gap": fit.layerGap,
       "--mobile-card-gap": fit.cardGap,
       "--mobile-stack-tail": MOBILE_STACK_SPACING.tail,
+      "--mobile-viewport-height": viewportHeight,
     }
     Object.entries(dimensions).forEach(([property, value]) => root.style.setProperty(property, `${value}px`))
     root.dataset.mobileStack = "true"
-    // Sticky positioning owns every card's place: clear any translation GSAP
-    // may still cache for these elements, so only the recession is applied.
-    gsap.set(steps, { x: 0, y: 0, scale: 1, transformOrigin: "50% 0" })
+    // Never transform the sticky element itself: Safari can shift its pinning
+    // during fast reverse scrolls. Only its visual card recedes.
+    gsap.set(steps, { clearProps: "transform" })
+    gsap.set(cards, { scale: 1 })
   }
 
   // Each pair owns a separate, hidden path. Returning to a previously used
@@ -134,7 +151,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
       // Covered cards recede from their top edge as the next card slides over
       // them; the foil reads each arrival to carry its light off the metal.
       steps.forEach((step, index) => {
-        gsap.set(step, { scale: stack.scales[index] })
+        gsap.set(cards[index], { scale: stack.scales[index] })
         step.dataset.arrival = stack.arrivals[index].toFixed(4)
       })
     } else {
@@ -249,6 +266,14 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   function onVisibility() {
     if (document.visibilityState === "visible") refresh()
   }
+  function onViewportResize() {
+    const width = window.innerWidth
+    const height = smallViewportHeight()
+    if (width === viewportWidth && height === viewportHeight) return
+    viewportWidth = width
+    viewportHeight = height
+    refresh()
+  }
 
   configureLayout()
   // The list's own box ignores its sticky children: progress starts when the
@@ -286,8 +311,7 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
   reduced.addEventListener("change", onPreference)
   contrast.addEventListener("change", startFoil)
   window.addEventListener("pageshow", refresh)
-  window.addEventListener("resize", refresh)
-  window.visualViewport?.addEventListener("resize", refresh)
+  window.addEventListener("resize", onViewportResize)
   document.addEventListener("visibilitychange", onVisibility)
   void document.fonts?.ready.then(() => { if (!disposed) refresh() })
 
@@ -306,9 +330,9 @@ export function mountGuaranteesMorph(root: HTMLElement, assets: readonly string[
     reduced.removeEventListener("change", onPreference)
     contrast.removeEventListener("change", startFoil)
     window.removeEventListener("pageshow", refresh)
-    window.removeEventListener("resize", refresh)
-    window.visualViewport?.removeEventListener("resize", refresh)
+    window.removeEventListener("resize", onViewportResize)
     document.removeEventListener("visibilitychange", onVisibility)
+    viewportProbe.remove()
     // Restore the SSR state for React Strict Mode's setup/cleanup/setup.
     root.dataset.renderer = "static"
     root.dataset.active = "0"
